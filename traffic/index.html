@@ -1,0 +1,1932 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FCFCFD">
+<title>노리짱 트래픽센트 · 실시간 트렌드 레이더 (프로토타입)</title>
+<!--
+  노리짱 트래픽센트 · 단일 HTML 프로토타입
+  - 외부 CDN/빌드 도구 없이 동작합니다. (폰트는 기기에 설치된 Pretendard/Apple SD Gothic Neo/Noto Sans KR 순으로 대체)
+  - 화면의 모든 게시글·가격·지표는 실제 수집 결과가 아닌 '예시(샘플)' 데이터입니다.
+  - 2단계에서 fetch('./data.json')으로 교체하면 같은 화면이 실데이터로 동작하도록 설계했습니다.
+-->
+<style>
+  :root{
+    --bg:#FCFCFD;
+    --card:#FFFFFF;
+    --line:#EBECEF;
+    --line-soft:#F4F4F5;
+    --ink:#09090B;
+    --ink-2:#3F3F46;
+    --ink-3:#71717A;
+    --ink-4:#A1A1AA;
+    --amber:#F59E0B;
+    --amber-2:#FBBF24;
+    --amber-soft:#FEF3C7;
+    --amber-deep:#B45309;
+    --charcoal:#111827;
+    --charcoal-2:#1E293B;
+    --radius:16px;
+    --radius-sm:10px;
+    --shadow:0 1px 2px rgba(9,9,11,.04), 0 10px 30px -18px rgba(9,9,11,.18);
+    --shadow-lift:0 2px 4px rgba(9,9,11,.05), 0 18px 40px -22px rgba(9,9,11,.28);
+    --mom-bg:#FFF1F2; --mom-fg:#BE123C;
+    --estate-bg:#EFF6FF; --estate-fg:#1D4ED8;
+    --ai-bg:#F5F3FF; --ai-fg:#6D28D9;
+    --apptech-bg:#ECFDF5; --apptech-fg:#047857;
+    --build-bg:#FFFBEB; --build-fg:#B45309;
+    --sans:-apple-system, BlinkMacSystemFont, 'Pretendard Variable', Pretendard, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Noto Sans CJK KR', 'Malgun Gothic', system-ui, sans-serif, 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji';
+    --mono:'SFMono-Regular', ui-monospace, 'JetBrains Mono', Menlo, Consolas, monospace;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:var(--sans);font-size:15px;line-height:1.55;
+    -webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+    word-break:keep-all;overflow-wrap:break-word;
+  }
+  [hidden]{display:none !important}
+  button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+  input,textarea{font:inherit;color:inherit}
+  a{color:inherit}
+  h1,h2,h3,h4,p,ul,ol{margin:0}
+  ul,ol{padding:0;list-style:none}
+  :focus-visible{outline:2px solid var(--amber);outline-offset:2px;border-radius:6px}
+
+  /* ---------- 공통 ---------- */
+  .wrap{max-width:1280px;margin:0 auto;padding:0 24px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    height:38px;padding:0 14px;border-radius:10px;border:1px solid var(--line);
+    background:var(--card);font-size:13.5px;font-weight:600;color:var(--ink-2);
+    transition:background .16s ease, border-color .16s ease, transform .16s ease, box-shadow .16s ease;
+    white-space:nowrap;
+  }
+  .btn:hover{background:#FAFAFB;border-color:#DCDDE1}
+  .btn:active{transform:translateY(1px)}
+  .btn-amber{background:var(--amber);border-color:var(--amber);color:#1C1206;box-shadow:0 6px 18px -10px rgba(245,158,11,.9)}
+  .btn-amber:hover{background:#F59E0B;border-color:#F59E0B;filter:brightness(1.03)}
+  .btn-dark{background:var(--charcoal);border-color:var(--charcoal);color:#fff}
+  .btn-dark:hover{background:#1F2937;border-color:#1F2937}
+  .btn-sm{height:32px;padding:0 11px;font-size:12.5px;border-radius:9px}
+  .btn-block{width:100%}
+  .pill{
+    display:inline-flex;align-items:center;gap:4px;height:20px;padding:0 7px;border-radius:999px;
+    background:#F4F4F5;color:var(--ink-2);font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;
+  }
+  .pill-amber{background:var(--amber-soft);color:var(--amber-deep)}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+  /* ---------- 상단 헤더 ---------- */
+  .topbar{
+    position:sticky;top:0;z-index:60;
+    background:rgba(252,252,253,.88);
+    -webkit-backdrop-filter:saturate(180%) blur(14px);backdrop-filter:saturate(180%) blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .topbar-inner{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:11px 0}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex:0 0 auto;min-width:0}
+  .brand-mark{
+    width:34px;height:34px;flex:0 0 34px;border-radius:11px;display:grid;place-items:center;font-size:17px;
+    background:linear-gradient(140deg,#FDE68A,#F59E0B 70%);color:#3B2606;
+    box-shadow:0 6px 14px -8px rgba(245,158,11,.9);
+  }
+  .brand-text{display:flex;flex-direction:column;line-height:1.2;min-width:0}
+  .brand-text strong{font-size:15.5px;font-weight:800;letter-spacing:-.02em;white-space:nowrap}
+  .brand-text small{font-size:10.5px;font-weight:600;color:var(--ink-4);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+
+  .searchwrap{position:relative;flex:1 1 300px;min-width:0;max-width:560px;order:2}
+  .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;opacity:.5;pointer-events:none}
+  .search-input{
+    width:100%;height:40px;padding:0 76px 0 34px;border-radius:11px;border:1px solid var(--line);
+    background:#F7F7F8;color:var(--ink);font-size:14px;transition:background .16s,border-color .16s,box-shadow .16s;
+  }
+  .search-input::placeholder{color:var(--ink-4)}
+  .search-input:focus{outline:none;background:#fff;border-color:#FCD34D;box-shadow:0 0 0 3px rgba(245,158,11,.14)}
+  .search-kbd{
+    position:absolute;right:10px;top:50%;transform:translateY(-50%);
+    display:flex;gap:4px;align-items:center;pointer-events:none;
+  }
+  .search-kbd kbd{
+    font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--ink-3);
+    background:#fff;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 5px;
+  }
+  .search-clear{
+    position:absolute;right:8px;top:50%;transform:translateY(-50%);
+    width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#E9E9EC;color:var(--ink-2);font-size:11px;
+  }
+  .search-clear:hover{background:#DEDEE2}
+  .topbar-actions{display:flex;align-items:center;gap:8px;margin-left:auto;order:3}
+  .topbar-actions .lbl{display:inline}
+
+  /* ---------- 히어로 ---------- */
+  .page{padding:22px 0 8px}
+  .layout{
+    display:grid;gap:20px;
+    grid-template-columns:minmax(0,1fr) 348px;
+    grid-template-areas:
+      "hero    rank"
+      "comm    rank"
+      "brief   rank"
+      "deal    scrap"
+      "indie   scrap"
+      "chart   struct";
+    align-items:start;
+  }
+  .area-hero{grid-area:hero}
+  .area-comm{grid-area:comm}
+  .area-brief{grid-area:brief}
+  .area-deal{grid-area:deal}
+  .area-indie{grid-area:indie}
+  .area-chart{grid-area:chart}
+  .area-rank{grid-area:rank;position:sticky;top:82px}
+  .area-scrap{grid-area:scrap}
+  .area-struct{grid-area:struct}
+
+  .hero{position:relative;overflow:hidden;padding:24px 24px 20px}
+  .hero::before{
+    content:"";position:absolute;inset:-40% -10% auto auto;width:520px;height:420px;
+    background:radial-gradient(circle at 70% 30%, rgba(254,243,199,.95), rgba(254,243,199,0) 62%);
+    pointer-events:none;
+  }
+  .hero::after{
+    content:"";position:absolute;right:-90px;top:-90px;width:300px;height:300px;border-radius:50%;
+    border:1px dashed rgba(245,158,11,.35);pointer-events:none;
+  }
+  .hero-head{position:relative;display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap}
+  .hero-chip{
+    display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 11px;border-radius:999px;
+    background:#fff;border:1px solid #FDE68A;color:var(--amber-deep);font-size:11.5px;font-weight:700;
+    box-shadow:0 4px 12px -8px rgba(245,158,11,.8);
+  }
+  .dot-live{width:7px;height:7px;border-radius:50%;background:#EF4444;box-shadow:0 0 0 3px rgba(239,68,68,.16);animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .hero-title{font-size:30px;line-height:1.2;font-weight:800;letter-spacing:-.035em;margin-top:12px}
+  .hero-title span{background:linear-gradient(180deg,transparent 62%,#FDE68A 62%);padding:0 2px}
+  .hero-sub{margin-top:8px;color:var(--ink-3);font-size:14px;max-width:660px;text-wrap:balance}
+  .sample-badge{
+    position:relative;display:inline-block;margin-top:12px;max-width:100%;
+    padding:6px 11px;border-radius:9px;background:#FFF8E6;border:1px dashed #F5C77E;color:#8A5A08;
+    font-size:11.5px;font-weight:600;line-height:1.5;
+  }
+  .sample-badge b{color:#6B4405;font-weight:800}
+  .quicknav{position:relative;display:flex;gap:10px;margin-top:18px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+  .quicknav::-webkit-scrollbar{display:none}
+  .qbtn{
+    flex:1 1 0;min-width:104px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;
+    padding:12px 12px 11px;border-radius:13px;background:#fff;border:1px solid var(--line);
+    text-align:left;transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+  }
+  .qbtn:hover{transform:translateY(-2px);box-shadow:var(--shadow-lift);border-color:#E1E2E6}
+  .qbtn em{font-size:17px;font-style:normal;line-height:1}
+  .qbtn b{font-size:12.5px;font-weight:700;letter-spacing:-.02em;white-space:nowrap}
+  .qbtn small{font-size:10.5px;color:var(--ink-4);white-space:nowrap}
+  .hero-stats{position:relative;display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:16px;padding-top:14px;border-top:1px dashed #EDE3CF}
+  .hstat{font-size:11.5px;color:var(--ink-3)}
+  .hstat b{color:var(--ink);font-variant-numeric:tabular-nums;font-weight:800}
+
+  /* ---------- 섹션 공통 ---------- */
+  .sec{padding:18px 18px 16px;min-width:0}
+  #community,#brief,#deal,#indie,#chart,#rank,#scrapBox,#struct{scroll-margin-top:96px}
+  .sec-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .sec-ico{
+    width:28px;height:28px;flex:0 0 28px;border-radius:9px;display:grid;place-items:center;font-size:14px;
+    background:#F4F4F5;
+  }
+  .sec-ico.amber{background:var(--amber-soft)}
+  .sec-title{font-size:16.5px;font-weight:800;letter-spacing:-.03em}
+  .sec-sub{font-size:11.5px;color:var(--ink-4);margin-top:1px}
+  .sec-tools{margin-left:auto;display:flex;align-items:center;gap:8px}
+  .seg{display:inline-flex;padding:3px;border-radius:10px;background:#F4F4F5}
+  .seg button{height:28px;padding:0 11px;border-radius:8px;font-size:12.5px;font-weight:700;color:var(--ink-3)}
+  .seg button[aria-pressed="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(9,9,11,.12)}
+  .tabs{display:flex;gap:7px;margin-top:14px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{
+    flex:0 0 auto;height:31px;padding:0 12px;border-radius:999px;border:1px solid var(--line);
+    background:#fff;font-size:12.5px;font-weight:600;color:var(--ink-3);white-space:nowrap;
+    transition:background .14s,border-color .14s,color .14s;
+  }
+  .tab:hover{border-color:#D8D9DE;color:var(--ink-2)}
+  .tab[aria-selected="true"]{background:var(--charcoal);border-color:var(--charcoal);color:#fff}
+  .tab.amber[aria-selected="true"]{background:var(--amber);border-color:var(--amber);color:#1C1206}
+
+  /* ---------- 게시글 ---------- */
+  .filterbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;min-height:0}
+  .filter-note{font-size:11.5px;color:var(--ink-3);display:inline-block;line-height:1.6}
+  .filter-note b{color:var(--ink);font-variant-numeric:tabular-nums}
+  .kw-chip{
+    display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 6px 0 10px;border-radius:999px;
+    background:var(--amber-soft);border:1px solid #FCD34D;color:#8A5A08;font-size:12px;font-weight:700;
+  }
+  .kw-chip button{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:rgba(0,0,0,.06);font-size:10px}
+  .post-list{margin-top:6px}
+  .post{
+    display:grid;grid-template-columns:34px 54px minmax(0,1fr) auto;gap:12px;align-items:start;
+    padding:14px 8px;border-top:1px solid var(--line-soft);border-radius:12px;
+    transition:background .14s ease;
+  }
+  .post:first-child{border-top:0}
+  .post:hover{background:#FAFAFB}
+  .post-rank{display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:2px}
+  .post-rank b{font-size:13px;font-weight:800;color:var(--ink-4);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .post:nth-child(1) .post-rank b,.post:nth-child(2) .post-rank b,.post:nth-child(3) .post-rank b{color:var(--amber-deep)}
+  .rise{
+    display:inline-flex;align-items:center;gap:1px;font-size:10px;font-weight:800;color:#C2410C;
+    background:#FFF1E7;border-radius:5px;padding:1px 4px;font-variant-numeric:tabular-nums;white-space:nowrap;
+  }
+  .post-thumb{
+    width:54px;height:54px;border-radius:12px;display:grid;place-items:center;font-size:22px;
+    border:1px solid rgba(9,9,11,.04);
+  }
+  .post-body{min-width:0;display:flex;flex-direction:column;gap:5px}
+  .post-top{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .badge{
+    display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:6px;
+    font-size:10.5px;font-weight:800;letter-spacing:-.01em;white-space:nowrap;
+  }
+  .b-mom{background:var(--mom-bg);color:var(--mom-fg)}
+  .b-estate{background:var(--estate-bg);color:var(--estate-fg)}
+  .b-ai{background:var(--ai-bg);color:var(--ai-fg)}
+  .b-apptech{background:var(--apptech-bg);color:var(--apptech-fg)}
+  .b-build{background:var(--build-bg);color:var(--build-fg)}
+  .post-time{font-size:11px;color:var(--ink-4)}
+  .post-title{
+    font-size:14.5px;font-weight:600;line-height:1.42;color:var(--ink);letter-spacing:-.02em;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  .post-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:11.5px;color:var(--ink-4)}
+  .post-meta .kw{color:var(--ink-3);background:#F4F4F5;border-radius:5px;padding:1px 6px;font-size:10.5px}
+  .post-actions{display:flex;gap:6px;align-items:center;padding-top:1px}
+  .act{
+    display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 9px;border-radius:8px;
+    border:1px solid var(--line);background:#fff;font-size:11.5px;font-weight:600;color:var(--ink-3);
+    transition:all .14s ease;white-space:nowrap;
+  }
+  .act:hover{border-color:#D8D9DE;background:#FAFAFB;color:var(--ink-2)}
+  .act[aria-pressed="true"],.act.on{background:var(--amber-soft);border-color:#FCD34D;color:#8A5A08}
+  .act .ico{font-size:12px;line-height:1}
+  .post.is-scrapped{background:#FFFDF6}
+  .post.is-scrapped:hover{background:#FFF9EA}
+  .empty{padding:34px 12px;text-align:center;color:var(--ink-3);font-size:13.5px}
+  .empty b{display:block;font-size:15px;color:var(--ink);margin-bottom:6px}
+  .list-more{display:flex;justify-content:center;margin-top:10px}
+
+  /* ---------- 데일리 브리프 ---------- */
+  .brief{display:grid;grid-template-columns:186px minmax(0,1fr);gap:20px;padding:18px}
+  .brief-thumb{
+    position:relative;display:flex;flex-direction:column;justify-content:space-between;gap:10px;
+    min-height:196px;padding:16px;border-radius:13px;overflow:hidden;
+    background:radial-gradient(120% 90% at 15% 0%, #26324A 0%, #111827 55%, #0B1220 100%);
+    color:#fff;border:1px solid #1F2937;
+  }
+  .brief-thumb::after{
+    content:"";position:absolute;right:-30px;bottom:-40px;width:150px;height:150px;border-radius:50%;
+    background:radial-gradient(circle at 40% 40%, rgba(245,158,11,.42), rgba(245,158,11,0) 70%);
+  }
+  .bt-top{display:flex;align-items:center;justify-content:space-between;gap:8px;position:relative}
+  .bt-label{font-size:9.5px;font-weight:800;letter-spacing:.16em;color:#FCD34D}
+  .bt-no{
+    font-family:var(--mono);font-size:10px;font-weight:700;color:#111827;background:var(--amber-2);
+    padding:1px 6px;border-radius:4px;
+  }
+  .bt-mid{position:relative}
+  .bt-issue{font-size:26px;font-weight:800;letter-spacing:-.04em;line-height:1.05}
+  .bt-date{font-size:10.5px;letter-spacing:.08em;color:#94A3B8;margin-top:4px;font-weight:600}
+  .bt-metrics{position:relative;display:flex;gap:14px;border-top:1px solid rgba(255,255,255,.12);padding-top:9px}
+  .bt-metrics div{font-size:9.5px;color:#94A3B8;line-height:1.3}
+  .bt-metrics b{display:block;font-size:15px;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .brief-main{min-width:0;display:flex;flex-direction:column;gap:9px}
+  .eyebrow{font-size:11.5px;font-weight:700;color:var(--amber-deep);letter-spacing:-.01em}
+  .brief-h{font-size:18px;font-weight:800;line-height:1.38;letter-spacing:-.03em}
+  .brief-sum{font-size:13px;color:var(--ink-2);line-height:1.62}
+  .brief-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+  .chip{display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:7px;font-size:11.5px;font-weight:700}
+  .brief-foot{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
+  .brief-metrics-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
+  .mcard{
+    flex:1 1 90px;min-width:88px;padding:8px 10px;border-radius:10px;background:#FAFAFB;border:1px solid var(--line-soft);
+  }
+  .mcard small{display:block;font-size:10px;color:var(--ink-4);font-weight:600}
+  .mcard b{font-size:14px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .mcard b.up{color:#C2410C}
+  .mcard b.down{color:#1D4ED8}
+
+  /* ---------- 급상승 키워드 ---------- */
+  .rank{padding:16px 16px 12px}
+  .rank-head{display:flex;align-items:center;gap:8px}
+  .rank-tabs{display:flex;gap:5px;margin-top:11px;overflow-x:auto;scrollbar-width:none}
+  .rank-tabs::-webkit-scrollbar{display:none}
+  .rtab{
+    flex:0 0 auto;height:26px;padding:0 9px;border-radius:7px;font-size:11.5px;font-weight:700;color:var(--ink-4);
+    background:transparent;
+  }
+  .rtab[aria-selected="true"]{background:#F4F4F5;color:var(--ink)}
+  .rank-list{margin-top:8px}
+  .rank-item{
+    display:grid;grid-template-columns:20px minmax(0,1fr) auto;gap:9px;align-items:center;
+    width:100%;padding:9px 6px;border-radius:9px;text-align:left;transition:background .14s ease;
+  }
+  .rank-item:hover{background:#FAFAFB}
+  .rank-item + .rank-item{border-top:1px solid var(--line-soft)}
+  .rk-no{font-size:12px;font-weight:800;color:var(--ink-4);font-variant-numeric:tabular-nums}
+  .rank-item:nth-child(1) .rk-no{color:#B45309}
+  .rank-item:nth-child(2) .rk-no{color:#9A6A2A}
+  .rank-item:nth-child(3) .rk-no{color:#7C7C86}
+  .rk-body{min-width:0}
+  .rk-kw{display:block;font-size:13px;font-weight:700;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rk-bar{display:block;height:3px;border-radius:2px;background:#F4F4F5;margin-top:5px;overflow:hidden}
+  .rk-bar i{display:block;height:100%;border-radius:2px;background:linear-gradient(90deg,#FDE68A,#F59E0B)}
+  .rk-up{font-size:11px;font-weight:800;color:#C2410C;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .rank-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px;padding-top:10px;border-top:1px dashed var(--line)}
+  .rank-foot span{font-size:10.5px;color:var(--ink-4)}
+  .rank-extra{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+  .re-head{display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:800;color:var(--ink-3);margin-bottom:4px}
+  .re-item{display:flex;gap:8px;align-items:flex-start;width:100%;text-align:left;padding:7px 4px;border-radius:8px}
+  .re-item:hover{background:#FAFAFB}
+  .re-no{font-size:11px;font-weight:800;color:var(--ink-4);font-variant-numeric:tabular-nums;padding-top:1px}
+  .re-body{min-width:0;flex:1}
+  .re-body b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:11.5px;font-weight:700;line-height:1.4;color:var(--ink)}
+  .re-body i{display:block;font-style:normal;font-size:10px;color:var(--ink-4);margin-top:2px}
+
+  /* ---------- 핫딜 ---------- */
+  .deal-nav{display:flex;gap:5px}
+  .nav-btn{width:28px;height:28px;border-radius:8px;border:1px solid var(--line);display:grid;place-items:center;font-size:12px;background:#fff;color:var(--ink-2)}
+  .nav-btn:hover{background:#FAFAFB}
+  .deal-track{
+    display:flex;gap:12px;margin-top:13px;overflow-x:auto;scroll-snap-type:x mandatory;
+    scrollbar-width:none;padding-bottom:4px;
+  }
+  .deal-track::-webkit-scrollbar{display:none}
+  .deal{
+    flex:0 0 224px;scroll-snap-align:start;border:1px solid var(--line);border-radius:13px;padding:12px;
+    display:flex;flex-direction:column;gap:8px;background:linear-gradient(180deg,#fff,#FDFDFE);
+  }
+  .deal-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+  .deal-off{font-size:17px;font-weight:800;color:#DC2626;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1}
+  .deal-store{font-size:10px;font-weight:700;color:var(--ink-3);background:#F4F4F5;border-radius:5px;padding:2px 6px}
+  .deal-name{font-size:12.5px;font-weight:700;line-height:1.4;min-height:35px;letter-spacing:-.02em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .deal-price{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+  .deal-price b{font-size:15px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+  .deal-price s{font-size:11px;color:var(--ink-4);font-variant-numeric:tabular-nums}
+  .deal-note{font-size:10.5px;color:var(--ink-4);line-height:1.4}
+  .deal .btn{margin-top:auto}
+
+  /* ---------- 인디 프로젝트 ---------- */
+  .indie-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(212px,1fr));gap:12px;margin-top:13px}
+  .indie{
+    text-align:left;border:1px solid var(--line);border-radius:13px;padding:13px;background:#fff;
+    display:flex;flex-direction:column;gap:7px;transition:transform .16s,box-shadow .16s,border-color .16s;
+  }
+  .indie:hover{transform:translateY(-2px);box-shadow:var(--shadow-lift);border-color:#E1E2E6}
+  .indie-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .indie-emoji{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;font-size:16px;background:#F7F7F8;border:1px solid var(--line-soft)}
+  .indie-cat{font-size:10px;font-weight:700;color:var(--ink-4)}
+  .indie-name{font-size:13.5px;font-weight:800;letter-spacing:-.03em;line-height:1.35}
+  .indie-desc{font-size:11.5px;color:var(--ink-3);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .indie-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:2px;font-size:10.5px;color:var(--ink-4)}
+
+  /* ---------- 방문 추이 ---------- */
+  .chart-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .chart-num{display:flex;align-items:baseline;gap:8px}
+  .chart-num b{font-size:23px;font-weight:800;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+  .chart-num span{font-size:12px;font-weight:700}
+  .trend-up{color:#C2410C;background:#FFF1E7;border-radius:6px;padding:2px 7px}
+  .chart-legend{display:flex;gap:12px;font-size:10.5px;color:var(--ink-4);margin-top:4px}
+  .legend-dot{display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--amber);margin-right:4px;vertical-align:-1px}
+  .plot{
+    position:relative;margin-top:18px;padding:52px 2px 0;border-radius:12px;
+    background:
+      repeating-linear-gradient(180deg, rgba(9,9,11,.05) 0 1px, transparent 1px 46px);
+  }
+  .bars{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;height:168px;padding:0 4px}
+  .barwrap{position:relative;flex:1 1 0;max-width:46px;height:100%;display:flex;align-items:flex-end;min-width:0}
+  .bar{
+    position:relative;width:100%;border-radius:7px 7px 3px 3px;border:1px solid #F2C46A;
+    background:linear-gradient(180deg,#FDE68A,#FBBF24);transition:filter .15s ease, transform .15s ease;
+  }
+  .bar:hover,.bar:focus-visible,.bar.is-on{filter:brightness(1.06);transform:translateY(-1px)}
+  .bar.is-today{background:linear-gradient(180deg,#F59E0B,#B45309);border-color:#8A4207}
+  .bar-tip{
+    position:absolute;bottom:calc(100% + 9px);left:50%;transform:translateX(-50%);
+    min-width:102px;padding:7px 9px;border-radius:9px;background:var(--charcoal);color:#fff;
+    font-size:10.5px;line-height:1.45;text-align:center;white-space:nowrap;pointer-events:none;
+    opacity:0;transition:opacity .14s ease;box-shadow:0 10px 24px -12px rgba(0,0,0,.6);z-index:3;
+  }
+  .bar-tip::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--charcoal)}
+  .bar-tip b{display:block;font-size:12px;font-variant-numeric:tabular-nums}
+  .bar-tip i{font-style:normal;color:#FCD34D;font-size:10px}
+  .bar:hover .bar-tip,.bar:focus-visible .bar-tip,.bar.is-on .bar-tip{opacity:1}
+  .barwrap:first-child .bar-tip{left:0;transform:none}
+  .barwrap:first-child .bar-tip::after{left:24px}
+  .barwrap:last-child .bar-tip{left:auto;right:0;transform:none}
+  .barwrap:last-child .bar-tip::after{left:auto;right:24px}
+  .axis{display:flex;gap:8px;margin-top:8px}
+  .axis div{flex:1 1 0;text-align:center;font-size:10.5px;color:var(--ink-4);line-height:1.35;min-width:0}
+  .axis b{display:block;font-size:11px;font-weight:700;color:var(--ink-2);font-variant-numeric:tabular-nums}
+  .axis .today{color:var(--amber-deep);font-weight:800}
+
+  /* ---------- 사이드 카드 ---------- */
+  .side-card{padding:16px}
+  .side-title{display:flex;align-items:center;gap:7px;font-size:13.5px;font-weight:800;letter-spacing:-.02em}
+  .scrap-list{margin-top:10px;display:flex;flex-direction:column;gap:7px}
+  .scrap-item{
+    display:flex;align-items:flex-start;gap:8px;padding:9px;border-radius:9px;background:#FAFAFB;border:1px solid var(--line-soft);
+  }
+  .scrap-item .si-emoji{font-size:13px;line-height:1.4}
+  .scrap-item .si-body{min-width:0;flex:1}
+  .scrap-item .si-title{font-size:11.5px;font-weight:700;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .scrap-item .si-meta{font-size:10px;color:var(--ink-4);margin-top:2px}
+  .side-empty{margin-top:10px;padding:16px 12px;border:1px dashed var(--line);border-radius:10px;text-align:center;font-size:11.5px;color:var(--ink-4);line-height:1.5}
+  .side-foot{display:flex;gap:6px;margin-top:10px}
+  .side-foot .btn{flex:1 1 0}
+  .pipe{display:flex;flex-direction:column;gap:0;margin-top:11px}
+  .pipe-step{display:flex;gap:9px;align-items:flex-start;padding:6px 0}
+  .pipe-dot{
+    width:20px;height:20px;flex:0 0 20px;border-radius:7px;display:grid;place-items:center;
+    background:var(--amber-soft);color:var(--amber-deep);font-size:9.5px;font-weight:800;
+  }
+  .pipe-step div{font-size:11.5px;color:var(--ink-2);line-height:1.45}
+  .pipe-step b{display:block;font-size:11.5px;font-weight:700;color:var(--ink)}
+  .pipe-line{width:2px;height:8px;background:var(--line);margin-left:9px}
+  .zero-badge{display:inline-flex;align-items:center;gap:5px;margin-top:10px;padding:6px 9px;border-radius:8px;background:#F0FDF4;border:1px solid #BBF7D0;color:#15803D;font-size:10.5px;font-weight:700}
+
+  /* ---------- 푸터 ---------- */
+  .footer{margin-top:26px;border-top:1px solid var(--line);background:#fff}
+  .footer-inner{py:0;padding:22px 0 30px;display:flex;flex-wrap:wrap;gap:14px 24px;justify-content:space-between}
+  .foot-note{max-width:720px;font-size:11.5px;color:var(--ink-3);line-height:1.65}
+  .foot-note b{color:var(--ink-2)}
+  .foot-links{display:flex;flex-direction:column;gap:6px;font-size:11.5px;color:var(--ink-4)}
+  .foot-links button{text-align:left;font-size:11.5px;color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}
+  .foot-links code{font-family:var(--mono);font-size:10.5px;color:var(--ink-3);background:#F4F4F5;padding:2px 5px;border-radius:4px}
+
+  /* ---------- 모달 ---------- */
+  .modal-root{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+  .modal-backdrop{position:absolute;inset:0;background:rgba(9,9,11,.45);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+  .modal{
+    position:relative;width:100%;max-width:720px;max-height:86vh;display:flex;flex-direction:column;
+    background:#fff;border-radius:18px;box-shadow:0 30px 80px -30px rgba(0,0,0,.5);overflow:hidden;
+    animation:pop .18s ease-out;
+  }
+  @keyframes pop{from{opacity:0;transform:translateY(10px) scale(.99)}to{opacity:1;transform:none}}
+  .modal-head{display:flex;align-items:flex-start;gap:14px;padding:20px 20px 14px;border-bottom:1px solid var(--line-soft)}
+  .modal-eyebrow{font-size:10.5px;font-weight:800;letter-spacing:.1em;color:var(--amber-deep);text-transform:uppercase}
+  .modal-title{font-size:19px;font-weight:800;letter-spacing:-.03em;line-height:1.35;margin-top:4px}
+  .modal-x{width:30px;height:30px;flex:0 0 30px;margin-left:auto;border-radius:9px;background:#F4F4F5;display:grid;place-items:center;font-size:12px;color:var(--ink-2)}
+  .modal-x:hover{background:#E9E9EC}
+  .modal-body{padding:18px 20px;overflow-y:auto;overscroll-behavior:contain;font-size:13.5px;line-height:1.65;color:var(--ink-2)}
+  .modal-foot{padding:14px 20px;border-top:1px solid var(--line-soft);display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:#FCFCFD}
+  .modal-foot .spacer{margin-left:auto}
+  .mb-h{font-size:14.5px;font-weight:800;color:var(--ink);letter-spacing:-.02em;margin:18px 0 6px}
+  .mb-h:first-child{margin-top:0}
+  .mb-p{margin:0 0 8px}
+  .mb-list{display:flex;flex-direction:column;gap:6px;margin:6px 0 4px}
+  .mb-list li{position:relative;padding-left:14px;font-size:13px}
+  .mb-list li::before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%;background:var(--amber)}
+  .brief-section{border:1px solid var(--line);border-radius:12px;padding:13px 14px;margin-bottom:10px}
+  .brief-section h4{font-size:13.5px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:7px;margin-bottom:6px}
+  .brief-section p{font-size:12.5px;color:var(--ink-2);line-height:1.62}
+  .brief-section .mini{font-size:11.5px;color:var(--ink-4);margin-top:6px;display:flex;gap:8px;flex-wrap:wrap}
+  .issue-row{display:flex;align-items:center;gap:12px;width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;text-align:left;background:#fff}
+  .issue-row:hover{background:#FAFAFB}
+  .issue-no{font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--ink-3);background:#F4F4F5;border-radius:6px;padding:3px 7px;flex:0 0 auto}
+  .issue-t{min-width:0;flex:1}
+  .issue-t b{display:block;font-size:12.5px;font-weight:700;color:var(--ink);line-height:1.4}
+  .issue-t span{font-size:10.5px;color:var(--ink-4)}
+  .arch-flow{display:flex;flex-direction:column;gap:0;margin:6px 0 12px}
+  .arch-step{display:flex;gap:11px;align-items:flex-start;padding:9px 0}
+  .arch-n{
+    width:24px;height:24px;flex:0 0 24px;border-radius:8px;display:grid;place-items:center;font-size:11px;font-weight:800;
+    background:var(--charcoal);color:#FCD34D;
+  }
+  .arch-step div{font-size:12.5px;line-height:1.55;color:var(--ink-2)}
+  .arch-step b{color:var(--ink);font-weight:800}
+  .arch-connector{width:2px;height:10px;background:var(--line);margin-left:11px}
+  .arch-code{
+    font-family:var(--mono);font-size:11px;background:#0F172A;color:#E2E8F0;border-radius:10px;
+    padding:12px 13px;overflow-x:auto;line-height:1.7;
+  }
+  .arch-code .c{color:#94A3B8}
+  .arch-code .k{color:#FCD34D}
+  .table-mini{width:100%;border-collapse:collapse;font-size:11.5px;margin:6px 0 10px}
+  .table-mini th,.table-mini td{border-bottom:1px solid var(--line-soft);padding:7px 8px;text-align:left;vertical-align:top}
+  .table-mini th{background:#FAFAFB;font-weight:700;color:var(--ink-2);font-size:11px}
+  .memo-field{width:100%;min-height:104px;resize:vertical;padding:11px 12px;border-radius:11px;border:1px solid var(--line);background:#FAFAFB;font-size:13px;line-height:1.6}
+  .memo-field:focus{outline:none;background:#fff;border-color:#FCD34D;box-shadow:0 0 0 3px rgba(245,158,11,.14)}
+  .memo-hint{font-size:11px;color:var(--ink-4);margin-top:7px}
+  .scrap-row{display:flex;gap:11px;padding:12px;border:1px solid var(--line);border-radius:12px;margin-bottom:9px;align-items:flex-start}
+  .scrap-row .sr-body{min-width:0;flex:1}
+  .scrap-row .sr-title{font-size:12.5px;font-weight:700;line-height:1.45;color:var(--ink)}
+  .scrap-row .sr-meta{font-size:10.5px;color:var(--ink-4);margin-top:3px;display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+  .scrap-row .sr-memo{margin-top:7px;padding:8px 10px;border-radius:8px;background:#FFFDF4;border:1px dashed #F5D48B;font-size:11.5px;color:#6B4A0B;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+  .sr-actions{display:flex;flex-direction:column;gap:5px;flex:0 0 auto}
+  .icon-mini{width:26px;height:26px;border-radius:7px;border:1px solid var(--line);display:grid;place-items:center;font-size:11px;background:#fff}
+  .icon-mini:hover{background:#FAFAFB}
+  .empty-box{padding:30px 16px;text-align:center;border:1px dashed var(--line);border-radius:12px;color:var(--ink-4);font-size:12.5px;line-height:1.6}
+
+  /* ---------- 토스트 ---------- */
+  .toast{
+    position:fixed;left:50%;bottom:22px;transform:translate(-50%,14px);z-index:300;
+    display:flex;align-items:center;gap:8px;padding:11px 16px;border-radius:12px;
+    background:var(--charcoal);color:#fff;font-size:12.5px;font-weight:600;
+    box-shadow:0 20px 40px -18px rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:opacity .2s ease, transform .2s ease;
+    max-width:calc(100vw - 32px);
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+
+  /* ---------- 반응형 ---------- */
+  @media (max-width:1180px){
+    .layout{grid-template-columns:minmax(0,1fr) 312px}
+  }
+  @media (max-width:1000px){
+    .layout{
+      grid-template-columns:minmax(0,1fr);
+      grid-template-areas:"hero" "rank" "comm" "brief" "deal" "indie" "chart" "scrap" "struct";
+    }
+    .area-rank{position:static}
+    .rank-list{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+    .rank-item + .rank-item{border-top:0}
+    .rank-item{border-top:1px solid var(--line-soft)}
+    .rank-item:nth-child(-n+2){border-top:0}
+  }
+  @media (max-width:760px){
+    .wrap{padding:0 16px}
+    .search-kbd{display:none}
+    .search-input{padding-right:36px}
+    .topbar-actions .pill-amber{display:none}
+    .page{padding:14px 0 4px}
+    .layout{gap:14px}
+    .hero{padding:20px 16px 16px}
+    .hero-title{font-size:24px}
+    .hero-sub{font-size:13px}
+    .brief{grid-template-columns:1fr;gap:14px;padding:16px}
+    .brief-thumb{min-height:0;flex-direction:column;align-items:stretch;gap:9px;padding:14px}
+    .bt-issue{font-size:24px}
+    .bt-metrics{border-top:1px solid rgba(255,255,255,.12);padding-top:8px;flex-direction:row;gap:22px}
+    .sec{padding:16px 14px 14px}
+    .rank{padding:14px}
+    .rank-list{grid-template-columns:1fr}
+    .rank-item:nth-child(2){border-top:1px solid var(--line-soft)}
+    .rank-item:nth-child(-n+2){border-top:1px solid var(--line-soft)}
+    .rank-item:first-child{border-top:0}
+    .post{grid-template-columns:46px minmax(0,1fr);gap:10px;padding:13px 4px}
+    .post-rank{display:none}
+    .post-thumb{width:46px;height:46px;font-size:19px;border-radius:10px}
+    .post-actions{grid-column:1 / -1;justify-content:flex-end}
+    .act .lbl{display:none}
+    .act{padding:0 10px}
+    .bars{padding:0}
+    .plot{margin-top:14px;padding-top:44px}
+    .pipe{display:none}
+    .modal-root{padding:10px;align-items:flex-end}
+    .modal{max-height:92vh;border-radius:16px}
+    .modal-head{padding:16px 16px 12px}
+    .modal-body{padding:14px 16px}
+    .modal-foot{padding:12px 16px}
+  }
+  @media (max-width:620px){
+    .topbar-inner{gap:9px;padding:9px 0}
+    .searchwrap{order:3;flex:1 1 100%;max-width:none}
+    .topbar-actions{order:2}
+    .topbar-actions .lbl{display:none}
+    .topbar-actions .btn{padding:0 10px}
+    #community,#brief,#deal,#indie,#chart,#rank,#scrapBox,#struct{scroll-margin-top:132px}
+    .chart-head > .btn{display:none}
+    .brand-text small{display:none}
+    .hero-title{font-size:21.5px;letter-spacing:-.04em}
+    .qbtn{min-width:92px;padding:10px}
+    .brief-h{font-size:15.5px}
+    .chart-num b{font-size:20px}
+    .bars{gap:5px;height:150px}
+    .axis{gap:5px}
+    .bar-tip{min-width:88px;font-size:10px}
+    .footer-inner{padding:18px 0 26px}
+  }
+  @media (max-width:380px){
+    .hero-title{font-size:20px}
+    .post-title{font-size:13.5px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.001ms !important;transition-duration:.001ms !important}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="#top" aria-label="노리짱 트래픽센트 홈">
+      <span class="brand-mark" aria-hidden="true">⚡</span>
+      <span class="brand-text">
+        <strong>노리짱 트래픽센트</strong>
+        <small>Nori Trend Radar · Prototype</small>
+      </span>
+    </a>
+
+    <div class="searchwrap">
+      <span class="search-icon" aria-hidden="true">🔍</span>
+      <label class="sr-only" for="searchInput">인기글 검색</label>
+      <input id="searchInput" class="search-input" type="search" autocomplete="off"
+             placeholder="지금 뜨는 키워드, 맘카페, 부동산, 부업을 검색해보세요" data-testid="search-input">
+      <span class="search-kbd" aria-hidden="true"><kbd>⌘</kbd><kbd>K</kbd></span>
+      <button id="searchClear" class="search-clear" type="button" aria-label="검색어 지우기" hidden>✕</button>
+    </div>
+
+    <div class="topbar-actions">
+      <span class="pill pill-amber" title="이 화면의 모든 데이터는 예시입니다">샘플 데이터</span>
+      <button id="openScrapBox" class="btn btn-sm" type="button" data-testid="open-scrap-box">
+        <span aria-hidden="true">⭐</span><span class="lbl">내 스크랩함</span>
+        <span id="scrapCount" class="pill">0</span>
+      </button>
+      <button id="openArch" class="btn btn-sm btn-dark" type="button" data-testid="arch-open">
+        <span aria-hidden="true">⚙️</span><span class="lbl">수집·요약 구조</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="page" id="top">
+  <div class="wrap layout">
+
+    <!-- ===== 1. 히어로 ===== -->
+    <section class="card hero area-hero" aria-labelledby="heroTitle">
+      <div class="hero-head">
+        <div>
+          <span class="hero-chip"><span class="dot-live" aria-hidden="true"></span>실시간 트렌드 레이더 · 1호 (11.21 토)</span>
+          <h1 class="hero-title" id="heroTitle">노리짱 <span>트래픽센트</span></h1>
+          <p class="hero-sub">맘카페·부동산·AI 부업·앱테크 인기글을 한 화면에. 오늘 쓸 소재를 고르고, 스크랩하고, 글감 메모까지 이 자리에서.</p>
+          <span class="sample-badge">🧪 프로토타입 — 아래 모든 게시글·가격·지표는 <b>예시(샘플) 데이터</b>입니다</span>
+        </div>
+      </div>
+
+      <nav class="quicknav" aria-label="섹션 바로가기">
+        <button class="qbtn" type="button" data-goto="community"><em aria-hidden="true">💬</em><b>커뮤니티 인기글</b><small>10개 출처 · 20건</small></button>
+        <button class="qbtn" type="button" data-goto="brief"><em aria-hidden="true">📋</em><b>데일리 브리프</b><small>하루 1회 요약</small></button>
+        <button class="qbtn" type="button" data-goto="rank"><em aria-hidden="true">📈</em><b>급상승 키워드</b><small>1~7위 랭킹</small></button>
+        <button class="qbtn" type="button" data-goto="deal"><em aria-hidden="true">🏷️</em><b>오늘의 핫딜</b><small>숏츠 소재 후보</small></button>
+        <button class="qbtn" type="button" data-goto="indie"><em aria-hidden="true">🧩</em><b>인디 프로젝트</b><small>바이브코딩 사례</small></button>
+        <button class="qbtn" type="button" data-goto="chart"><em aria-hidden="true">📊</em><b>방문 추이</b><small>최근 7일</small></button>
+      </nav>
+
+      <div class="hero-stats">
+        <span class="hstat">수집 출처 <b>10</b>곳</span>
+        <span class="hstat">오늘 수집 글 <b>142</b>건</span>
+        <span class="hstat">교차 확인 출처 <b>142</b></span>
+        <span class="hstat">마지막 갱신 <b>11.21 07:40</b></span>
+        <span class="hstat">다음 요약 <b>11.22 07:00</b></span>
+      </div>
+    </section>
+
+    <!-- ===== 2. 커뮤니티 인기글 ===== -->
+    <section class="card sec area-comm" id="community" aria-labelledby="commTitle">
+      <div class="sec-head">
+        <span class="sec-ico amber" aria-hidden="true">💬</span>
+        <div>
+          <h2 class="sec-title" id="commTitle">커뮤니티 인기글</h2>
+          <p class="sec-sub">맘카페 · 부동산 · AI 부업 · 건축입찰 인기글 모아보기</p>
+        </div>
+        <div class="sec-tools">
+          <div class="seg" role="group" aria-label="정렬 방식">
+            <button type="button" id="sortHot" aria-pressed="true" data-testid="sort-hot">인기글</button>
+            <button type="button" id="sortRising" aria-pressed="false" data-testid="sort-rising">급상승</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tabs" role="tablist" aria-label="카테고리 필터" id="catTabs">
+        <button class="tab" type="button" role="tab" aria-selected="true" data-cat="all" data-testid="cat-all">전체</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-cat="mom" data-testid="cat-mom">맘카페·육아</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-cat="estate" data-testid="cat-estate">부동산·경매</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-cat="ai" data-testid="cat-ai">AI·부업</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-cat="apptech" data-testid="cat-apptech">앱테크·핫딜</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-cat="build" data-testid="cat-build">건축·입찰</button>
+      </div>
+
+      <div class="filterbar">
+        <span class="filter-note" id="resultNote"></span>
+        <span class="kw-chip" id="kwChip" hidden>
+          <span id="kwChipText"></span>
+          <button type="button" id="kwChipClear" aria-label="키워드 필터 해제">✕</button>
+        </span>
+      </div>
+
+      <div class="post-list" id="postList" data-testid="post-list"></div>
+      <div class="list-more">
+        <button class="btn btn-sm" type="button" id="moreBtn">샘플 20건 전체 표시</button>
+      </div>
+    </section>
+
+    <!-- ===== 3. 데일리 브리프 ===== -->
+    <section class="card area-brief" id="brief" aria-labelledby="briefTitle" style="padding:0">
+      <div class="brief">
+        <div class="brief-thumb" aria-hidden="true">
+          <div class="bt-top">
+            <span class="bt-label">DAILY BRIEF</span>
+            <span class="bt-no">No.01</span>
+          </div>
+          <div class="bt-mid">
+            <div class="bt-issue">11.21</div>
+            <div class="bt-date">NORI TREND RADAR</div>
+          </div>
+          <div class="bt-metrics">
+            <div>교차 출처<b>142</b></div>
+            <div>핵심 이슈<b>4</b></div>
+          </div>
+        </div>
+
+        <div class="brief-main">
+          <p class="eyebrow">오늘의 AI 트렌드 리포트 · 2026.11.21 (토) · 1호</p>
+          <h2 class="brief-h" id="briefTitle">전세 심리지수 3주 상승, 겨울방학 숲체험 문의 폭주, 클로드 코드 부업 후기 확산</h2>
+          <p class="brief-sum">서울 전세 심리지수가 3주 연속 오르며 내년 1월 이사 수요가 움직이고, 맘카페에서는 겨울방학 유아·초등 숲체험 프로그램 문의가 하루 만에 두 배로 늘었습니다. AI 쪽은 클로드 코드로 만든 생활형 웹앱 후기와 첫 수익 인증 글이 X·모두의AI실험실에서 동시에 확산됐고, 앱테크 게시판은 오전 퀴즈 정답과 쿠팡 파트너스 정산 인증이 상위를 채웠습니다.</p>
+          <div class="brief-chips">
+            <span class="chip b-mom">맘카페</span>
+            <span class="chip b-estate">부동산</span>
+            <span class="chip b-ai">AI 부업</span>
+            <span class="chip b-apptech">앱테크</span>
+          </div>
+          <div class="brief-metrics-row">
+            <div class="mcard"><small>서울 전세 심리지수</small><b class="up">+8.4p ▲</b></div>
+            <div class="mcard"><small>숲체험 문의</small><b class="up">+112% ▲</b></div>
+            <div class="mcard"><small>AI 부업 게시글</small><b>38건</b></div>
+          </div>
+          <div class="brief-foot">
+            <button class="btn btn-amber" type="button" id="openBrief" data-testid="brief-open">▶ 전문 읽기</button>
+            <button class="btn" type="button" id="openPast" data-testid="brief-past">지난 호 보기</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 4. 오늘의 핫딜 ===== -->
+    <section class="card sec area-deal" id="deal" aria-labelledby="dealTitle">
+      <div class="sec-head">
+        <span class="sec-ico" aria-hidden="true">🏷️</span>
+        <div>
+          <h2 class="sec-title" id="dealTitle">오늘의 핫딜</h2>
+          <p class="sec-sub">쿠팡 · 오늘의집 · 네이버플러스 · 알리 할인 (가격은 예시)</p>
+        </div>
+        <div class="sec-tools deal-nav">
+          <button class="nav-btn" type="button" id="dealPrev" aria-label="이전 핫딜">‹</button>
+          <button class="nav-btn" type="button" id="dealNext" aria-label="다음 핫딜">›</button>
+        </div>
+      </div>
+      <div class="deal-track" id="dealTrack" data-testid="deal-track"></div>
+    </section>
+
+    <!-- ===== 5. 인디 프로젝트 ===== -->
+    <section class="card sec area-indie" id="indie" aria-labelledby="indieTitle">
+      <div class="sec-head">
+        <span class="sec-ico" aria-hidden="true">🧩</span>
+        <div>
+          <h2 class="sec-title" id="indieTitle">인디 프로젝트 (바이브코딩)</h2>
+          <p class="sec-sub">요즘 개인들이 직접 만든 생활형 웹앱 사례</p>
+        </div>
+      </div>
+      <div class="tabs" role="tablist" aria-label="인디 프로젝트 분류" id="indieTabs">
+        <button class="tab" type="button" role="tab" aria-selected="true" data-indie="all">전체</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-indie="life">생활·앱테크</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-indie="ai">AI 도우미</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-indie="util">웹 유틸</button>
+      </div>
+      <div class="indie-grid" id="indieGrid" data-testid="indie-grid"></div>
+    </section>
+
+    <!-- ===== 6. 방문 추이 ===== -->
+    <section class="card sec area-chart" id="chart" aria-labelledby="chartTitle">
+      <div class="chart-head">
+        <div>
+          <div class="sec-head" style="gap:8px">
+            <span class="sec-ico" aria-hidden="true">📊</span>
+            <h2 class="sec-title" id="chartTitle">일별 방문 추이</h2>
+            <span class="pill">최근 7일</span>
+          </div>
+          <div class="chart-num" style="margin-top:10px">
+            <b id="chartTotal">9,860</b>
+            <span>방문</span>
+            <span class="trend-up">▲ 17.7% (전일 대비)</span>
+          </div>
+          <div class="chart-legend">
+            <span><i class="legend-dot"></i>일간 방문수</span>
+            <span>최고 <b>11.21 · 1,660</b></span>
+            <span>일 평균 <b>1,409</b></span>
+          </div>
+        </div>
+        <button class="btn btn-sm" type="button" data-goto="community">소재 고르기 →</button>
+      </div>
+      <div class="plot">
+        <div class="bars" id="chartBars" data-testid="chart-bars" role="group" aria-label="11월 15일부터 21일까지 일별 방문수 막대 차트"></div>
+      </div>
+      <div class="axis" id="chartAxis"></div>
+    </section>
+
+    <!-- ===== 7. 급상승 키워드 랭킹 (사이드) ===== -->
+    <aside class="card rank area-rank" id="rank" aria-labelledby="rankTitle">
+      <div class="rank-head">
+        <span class="sec-ico amber" aria-hidden="true">📈</span>
+        <div>
+          <h2 class="sec-title" id="rankTitle" style="font-size:15px">급상승 키워드</h2>
+          <p class="sec-sub">지금 24시간 상승률 순</p>
+        </div>
+        <span class="pill pill-amber" style="margin-left:auto">LIVE</span>
+      </div>
+      <div class="rank-tabs" role="tablist" aria-label="급상승 키워드 분야" id="rankTabs">
+        <button class="rtab" type="button" role="tab" aria-selected="true" data-rank="all">전체</button>
+        <button class="rtab" type="button" role="tab" aria-selected="false" data-rank="mom">맘카페</button>
+        <button class="rtab" type="button" role="tab" aria-selected="false" data-rank="estate">부동산</button>
+        <button class="rtab" type="button" role="tab" aria-selected="false" data-rank="ai">AI·부업</button>
+      </div>
+      <div class="rank-list" id="rankList" data-testid="rank-list"></div>
+      <div class="rank-foot">
+        <span>키워드를 누르면 인기글이 필터됩니다</span>
+        <button class="btn btn-sm" type="button" data-goto="community">전체 보기</button>
+      </div>
+      <div class="rank-extra">
+        <p class="re-head">많이 읽는 글 <span class="pill" style="height:18px;font-size:10px">샘플</span></p>
+        <button class="re-item" type="button" data-kw="숲놀이 후기">
+          <span class="re-no">1</span>
+          <span class="re-body"><b>초1 방과후 숲놀이 12주 등록 후기</b><i>레몬테라스 · 댓글 96</i></span>
+        </button>
+        <button class="re-item" type="button" data-kw="강변 테크노마트">
+          <span class="re-no">2</span>
+          <span class="re-body"><b>강변 테크노마트 10평 사무실 시세</b><i>부동산스터디 · 댓글 88</i></span>
+        </button>
+        <button class="re-item" type="button" data-kw="클로드 코드">
+          <span class="re-no">3</span>
+          <span class="re-body"><b>클로드 코드로 만든 실거래가 대시보드</b><i>모두의AI실험실 · 댓글 143</i></span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ===== 8. 내 스크랩함 (사이드) ===== -->
+    <aside class="card side-card area-scrap" id="scrapBox" aria-labelledby="scrapTitle">
+      <div class="side-title"><span aria-hidden="true">⭐</span><span id="scrapTitle">내 스크랩함</span><span class="pill" id="scrapCount2">0</span>
+        <button class="btn btn-sm" type="button" id="openScrapBox2" style="margin-left:auto">모두 보기</button>
+      </div>
+      <div class="scrap-list" id="scrapPreview"></div>
+      <div class="side-foot">
+        <button class="btn btn-sm" type="button" id="exportTop">JSON 내보내기</button>
+        <button class="btn btn-sm" type="button" id="importTop">JSON 불러오기</button>
+      </div>
+      <p style="font-size:10.5px;color:var(--ink-4);margin-top:8px;line-height:1.5">이 브라우저에만 저장됩니다(localStorage). 기기를 바꾸면 JSON으로 옮겨 주세요.</p>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+    </aside>
+
+    <!-- ===== 9. 수집·요약 구조 (사이드) ===== -->
+    <aside class="card side-card area-struct" id="struct" aria-labelledby="structTitle">
+      <div class="side-title"><span aria-hidden="true">⚙️</span><span id="structTitle">수집·요약 구조</span></div>
+      <div class="pipe" aria-hidden="true">
+        <div class="pipe-step"><span class="pipe-dot">1</span><div><b>수집</b>GitHub Actions 정시 크론</div></div>
+        <div class="pipe-line"></div>
+        <div class="pipe-step"><span class="pipe-dot">2</span><div><b>정규화·중복 제거</b>제목 유사도 0.85 이상 합치기</div></div>
+        <div class="pipe-line"></div>
+        <div class="pipe-step"><span class="pipe-dot">3</span><div><b>AI 요약</b>Gemini Flash 하루 1~2회 배치</div></div>
+        <div class="pipe-line"></div>
+        <div class="pipe-step"><span class="pipe-dot">4</span><div><b>정적 JSON</b>data.json → 무료 호스팅</div></div>
+      </div>
+      <span class="zero-badge">💰 서버비 0원 · 무료 티어 구성</span>
+      <button class="btn btn-dark btn-block" type="button" id="openArch2" style="margin-top:10px" data-testid="arch-open-2">⚙️ 수집·요약 구조 보기</button>
+    </aside>
+
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <div class="foot-note">
+      <b>노리짱 트래픽센트 (프로토타입 1차)</b> — 이 화면의 게시글·출처·가격·방문수는 모두 화면 검증을 위한 <b>예시(샘플) 데이터</b>이며 실제 크롤링 결과가 아닙니다.
+      스크랩과 글감 메모는 이 브라우저의 localStorage에만 저장되고 외부로 전송되지 않습니다.<br>
+      2단계에서 <b>data.json</b>만 연결하면 같은 디자인 그대로 실제 수집 데이터가 흐릅니다.
+    </div>
+    <div class="foot-links">
+      <button type="button" data-open-arch>⚙️ 수집·요약 구조 한눈에 보기</button>
+      <span>설계서 <code>downloads/노리짱_트래픽센트_자동수집_요약_설계서.md</code></span>
+      <span>화면 <code>downloads/노리짱_트래픽센트_프로토타입.html</code></span>
+      <span>© 2026 Nori Trend Radar · 만수르 비서실 제작</span>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<div class="modal-root" id="modalRoot" hidden>
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-head">
+      <div>
+        <p class="modal-eyebrow" id="modalEyebrow"></p>
+        <h2 class="modal-title" id="modalTitle"></h2>
+      </div>
+      <button class="modal-x" type="button" data-close aria-label="닫기" data-testid="modal-close">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot" id="modalFoot"></div>
+  </div>
+</div>
+
+<noscript><p style="padding:20px;text-align:center">이 프로토타입은 자바스크립트가 필요합니다.</p></noscript>
+
+<script>
+(function(){
+  'use strict';
+
+  /* =========================================================
+     0. 공통 유틸
+     ========================================================= */
+  var $  = function(s, el){ return (el || document).querySelector(s); };
+  var $$ = function(s, el){ return Array.prototype.slice.call((el || document).querySelectorAll(s)); };
+  function esc(s){
+    return String(s == null ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  function nfmt(n){ return Number(n).toLocaleString('ko-KR'); }
+  function won(n){ return nfmt(n) + '원'; }
+  function todayStamp(){
+    var d = new Date();
+    var p = function(v){ return String(v).padStart(2,'0'); };
+    return d.getFullYear() + '-' + p(d.getMonth()+1) + '-' + p(d.getDate());
+  }
+
+  var toastTimer = null;
+  function toast(msg){
+    var t = $('#toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+  }
+
+  /* =========================================================
+     1. 데이터 (모두 예시)
+     ========================================================= */
+  var CAT_META = {
+    mom:    { label:'맘카페·육아', cls:'b-mom',    bg:'var(--mom-bg)',    fg:'var(--mom-fg)',    emoji:'🌿' },
+    estate: { label:'부동산·경매', cls:'b-estate', bg:'var(--estate-bg)', fg:'var(--estate-fg)', emoji:'🏢' },
+    ai:     { label:'AI·부업',     cls:'b-ai',     bg:'var(--ai-bg)',     fg:'var(--ai-fg)',     emoji:'🤖' },
+    apptech:{ label:'앱테크·핫딜', cls:'b-apptech',bg:'var(--apptech-bg)',fg:'var(--apptech-fg)',emoji:'💰' },
+    build:  { label:'건축·입찰',   cls:'b-build',  bg:'var(--build-bg)',  fg:'var(--build-fg)',  emoji:'📐' }
+  };
+
+  var POSTS = [
+    { id:'p01', cat:'mom', source:'맘스홀릭', time:'1시간 전', rise:312, hot:98,
+      title:'겨울방학 유아 숲체험 프로그램 어디가 좋아요? 서울 서북권 위주로 아시는 곳',
+      comments:128, views:4210, keywords:['겨울방학 숲체험','유아숲체험','서울 숲체험'] },
+    { id:'p02', cat:'estate', source:'부동산스터디', time:'1시간 전', rise:340, hot:97,
+      title:'전세 심리지수 3주 연속 상승 기사 봤는데, 내년 1월 이사 계획 있으면 지금 움직여야 하나요',
+      comments:112, views:5140, keywords:['전세 심리지수','이사 시즌','전세 시장'] },
+    { id:'p03', cat:'ai', source:'모두의AI실험실', time:'2시간 전', rise:356, hot:96,
+      title:'클로드 코드로 3시간 만에 만든 부동산 실거래가 대시보드 — 만든 과정 그대로 공유',
+      comments:143, views:6320, keywords:['클로드 코드','바이브코딩','부동산 대시보드'] },
+    { id:'p04', cat:'mom', source:'레몬테라스', time:'2시간 전', rise:268, hot:92,
+      title:'초1 아이 방과후로 숲놀이 12주 등록했는데 만족도 후기 (사진 많이 넣었어요)',
+      comments:96, views:3180, keywords:['숲놀이 후기','초등 방과후','겨울방학 숲체험'] },
+    { id:'p05', cat:'estate', source:'부동산스터디', time:'2시간 전', rise:287, hot:91,
+      title:'광진구 강변 테크노마트 근처 10평 사무실, 요즘 실매물 시세 얼마까지 부르나요',
+      comments:88, views:3920, keywords:['강변 테크노마트','소형 사무실','광진구 사무실'] },
+    { id:'p06', cat:'apptech', source:'뽐뿌', time:'1시간 전', rise:285, hot:90,
+      title:'토스 행운퀴즈 11/21 정답 모음 (오전 9시 기준, 계속 업데이트)',
+      comments:87, views:5880, keywords:['토스 행운퀴즈','앱테크 정답','오늘의 퀴즈'] },
+    { id:'p07', cat:'mom', source:'네이버카페', time:'3시간 전', rise:190, hot:84,
+      title:'월드컵공원 숲해설 토요일 10시반반, 이번 주 날씨에 진행될까요?',
+      comments:41, views:1540, keywords:['월드컵공원 숲해설','서울월드컵숲','주말 숲체험'] },
+    { id:'p08', cat:'ai', source:'X(트위터)', time:'4시간 전', rise:241, hot:83,
+      title:'X 수익화 프로그램 개편 이후 노출 회복된 계정들, 공통 패턴만 정리해봤습니다',
+      comments:71, views:3410, keywords:['X 수익화','노출 복구','트위터 알고리즘'] },
+    { id:'p09', cat:'estate', source:'호갱노노', time:'4시간 전', rise:205, hot:82,
+      title:'서울 소형 상가 경매 낙찰가율, 11월 들어 확 올랐다는 기사 보셨나요',
+      comments:57, views:2780, keywords:['소형 상가 경매','낙찰가율','법원경매'] },
+    { id:'p10', cat:'ai', source:'모두의AI실험실', time:'5시간 전', rise:198, hot:80,
+      title:'바이브코딩으로 만든 앱 첫 달 수익 공개 — 광고 12만원, 비용은 0원',
+      comments:98, views:4720, keywords:['바이브코딩 수익','앱 부업','광고 수익'] },
+    { id:'p11', cat:'mom', source:'맘스홀릭', time:'5시간 전', rise:143, hot:76,
+      title:'아이들 얼굴 안 나오게 숲놀이 영상 찍는 팁 공유해요 (모자이크·구도)',
+      comments:63, views:2060, keywords:['아이 얼굴 모자이크','숲놀이 영상','초상권'] },
+    { id:'p12', cat:'apptech', source:'네이버카페', time:'3시간 전', rise:212, hot:75,
+      title:'쿠팡 파트너스 숏츠로 이번 주 8만원 정산 인증 (주방 수전 편)',
+      comments:64, views:2260, keywords:['쿠팡 파트너스 정산','쇼핑 숏츠','수전'] },
+    { id:'p13', cat:'ai', source:'클리앙', time:'6시간 전', rise:172, hot:72,
+      title:'제미나이 Flash 무료 한도 하루 몇 콜까지인지 정리해 봤어요 (요약용)',
+      comments:52, views:2940, keywords:['제미나이 Flash','무료 API','AI 한도'] },
+    { id:'p14', cat:'estate', source:'네이버카페', time:'7시간 전', rise:96, hot:68,
+      title:'망원·서교 소형 사무실 임대 시세 11월 실측 정리 (보증금·관리비 포함)',
+      comments:39, views:1260, keywords:['망원 사무실','서교 사무실','임대 시세'] },
+    { id:'p15', cat:'apptech', source:'뽐뿌', time:'4시간 전', rise:156, hot:67,
+      title:'오늘의집 11월 할인 정보 모음 — 냉장고·건조기 실제 체감가 비교',
+      comments:45, views:1980, keywords:['오늘의집 할인','블랙프라이데이','가전 핫딜'] },
+    { id:'p16', cat:'mom', source:'레몬테라스', time:'6시간 전', rise:121, hot:64,
+      title:'예비초등 엄마들 겨울 프로그램 정보 공유방 있을까요? 서로 정리해요',
+      comments:74, views:2410, keywords:['예비초등','겨울방학 프로그램','맘카페 정보방'] },
+    { id:'p17', cat:'build', source:'네이버카페', time:'5시간 전', rise:118, hot:62,
+      title:'나라장터 소규모 건축설계 용역 공고, 11월 3주차 한 번에 정리했습니다',
+      comments:33, views:1120, keywords:['나라장터 공고','건축설계 용역','입찰 일정'] },
+    { id:'p18', cat:'build', source:'클리앙', time:'8시간 전', rise:104, hot:59,
+      title:'공동수급 분담이행 실적증명, 지분율 표기에서 자주 틀리는 부분',
+      comments:28, views:940, keywords:['분담이행','실적증명','지분율'] },
+    { id:'p19', cat:'build', source:'나라장터', time:'9시간 전', rise:97, hot:57,
+      title:'2027년 공공건축 설계공모 일정 미리 보기 — 상반기 몰리는 달',
+      comments:22, views:780, keywords:['설계공모 일정','공공건축','2027 공모'] },
+    { id:'p20', cat:'estate', source:'부동산스터디', time:'9시간 전', rise:84, hot:55,
+      title:'상가 임대차 10년 계약할 때 권리금 회수 특약, 어떻게 쓰는 게 안전한가요',
+      comments:66, views:2150, keywords:['권리금 회수','상가 임대차','임대차 특약'] }
+  ];
+
+  var RANKS = {
+    all:    [ {k:'겨울방학 숲체험', r:340}, {k:'강변 테크노마트', r:317}, {k:'클로드 코드', r:298},
+              {k:'전세 심리지수', r:264}, {k:'토스 행운퀴즈', r:231}, {k:'소형 상가 경매', r:205},
+              {k:'쿠팡 파트너스 정산', r:188} ],
+    mom:    [ {k:'겨울방학 숲체험', r:358}, {k:'유아숲체험', r:302}, {k:'월드컵공원 숲해설', r:274},
+              {k:'초등 방과후', r:240}, {k:'아이 얼굴 모자이크', r:211}, {k:'예비초등', r:180},
+              {k:'숲놀이 후기', r:152} ],
+    estate: [ {k:'강변 테크노마트', r:324}, {k:'전세 심리지수', r:311}, {k:'소형 상가 경매', r:268},
+              {k:'망원 사무실', r:233}, {k:'권리금 회수', r:197}, {k:'광진구 사무실', r:164},
+              {k:'낙찰가율', r:141} ],
+    ai:     [ {k:'클로드 코드', r:342}, {k:'바이브코딩 수익', r:296}, {k:'X 수익화', r:251},
+              {k:'제미나이 Flash', r:214}, {k:'쇼핑 숏츠', r:188}, {k:'바이브코딩', r:156},
+              {k:'무료 API', r:132} ]
+  };
+
+  var DEALS = [
+    { id:'d1', name:'준앤코 3WAY 폭포수 수전 KF302', off:64, price:39800, original:109000, store:'쿠팡',
+      note:'05편 실물 일치 소재로 재사용 가능' },
+    { id:'d2', name:'샤오미 미지아 무선 진공청소기 2세대', off:52, price:89000, original:189000, store:'쿠팡',
+      note:'살림 꿀템 · 언박싱 숏츠 후보' },
+    { id:'d3', name:'오늘의집 북유럽 원목 3단 수납장', off:41, price:129000, original:219000, store:'오늘의집',
+      note:'집꾸미기 롱폼 소재' },
+    { id:'d4', name:'삼성 비스포크 살균 건조기 19kg', off:38, price:1249000, original:1990000, store:'네이버플러스',
+      note:'고가 · 비교 리뷰형 콘텐츠' },
+    { id:'d5', name:'알리 스테인리스 진공 텀블러 900ml', off:67, price:6900, original:21000, store:'알리',
+      note:'가성비 템 · 3초 훅 소재' },
+    { id:'d6', name:'대용량 김장 매트 2.5m (미끄럼 방지)', off:55, price:12900, original:28900, store:'쿠팡',
+      note:'계절 키워드 ‘김장’ 연동' }
+  ];
+
+  var INDIE = [
+    { id:'i1', tab:'life', emoji:'🌿', cat:'생활·앱테크', name:'숲놀이 사진 자동 정리함',
+      desc:'현장 사진을 날짜·프로그램별로 폴더 정리하고 아이 얼굴 영역을 자동으로 흐리게 만드는 1인용 웹툴.',
+      likes:128, maker:'노리짱 · 클로드 코드',
+      detail:{
+        문제:'현장에서 찍은 사진 수백 장을 매번 손으로 분류하고, 발행 전 얼굴을 하나씩 가리는 데 2시간 이상 썼습니다.',
+        기능:'촬영일·프로그램명으로 자동 폴더 분류 → 얼굴 감지 후 블러 처리 → 발행용 1080×1080 썸네일까지 한 번에 생성.',
+        스택:'HTML + JS(File System API) + 얼굴 감지 라이브러리, 서버 없음',
+        시간:'첫 동작 버전까지 3시간 20분'
+      } },
+    { id:'i2', tab:'life', emoji:'🧾', cat:'생활·앱테크', name:'블로그 예약 발행 체크리스트',
+      desc:'카테고리별 발행 요일·시간과 오늘 쓸 키워드를 보여주고, 발행 후 기록을 남기는 개인용 대시보드.',
+      likes:86, maker:'노리짱 · 제미나이',
+      detail:{
+        문제:'블로그 4곳의 발행 요일이 달라서 오늘 어디에 무엇을 올려야 하는지 매번 헷갈렸습니다.',
+        기능:'요일별 발행표 · 키워드 대기열 · 발행 완료 체크 · 주간 달성률 그래프.',
+        스택:'단일 HTML + localStorage',
+        시간:'2시간'
+      } },
+    { id:'i3', tab:'ai', emoji:'🏠', cat:'AI 도우미', name:'실거래가 알림 봇',
+      desc:'관심 단지·상권을 등록하면 국토부 실거래가 신고가 들어올 때 요약해서 알려주는 봇.',
+      likes:204, maker:'모두의AI실험실 회원',
+      detail:{
+        문제:'관심 지역 실거래가를 매일 아침 직접 검색해서 확인해야 했습니다.',
+        기능:'국토부 실거래가 공개 API를 하루 2회 조회, 신규 거래만 골라 카톡·메일로 요약 발송.',
+        스택:'Python + 공공데이터 API + GitHub Actions(무료 크론)',
+        시간:'주말 이틀'
+      } },
+    { id:'i4', tab:'ai', emoji:'💬', cat:'AI 도우미', name:'맘카페 인기글 요약기',
+      desc:'공개 인기글 제목·댓글 수만 모아 하루 한 장 브리핑으로 만들어 주는 요약 도구.',
+      likes:167, maker:'모두의AI실험실 회원',
+      detail:{
+        문제:'카페 5~6곳을 돌며 인기글을 보느라 아침 40분이 사라졌습니다.',
+        기능:'공개 RSS·검색 API로 제목·댓글 수 수집 → 중복 제거 → AI가 3줄 요약 → 하루 1회 알림.',
+        스택:'Python + Gemini Flash + 정적 JSON',
+        시간:'하루'
+      } },
+    { id:'i5', tab:'util', emoji:'🔗', cat:'웹 유틸', name:'쿠팡 링크 + 고지문 생성기',
+      desc:'상품 링크를 넣으면 추적 링크와 공정위 고지 문구 3종을 한 번에 만들어 주는 유틸.',
+      likes:143, maker:'노리짱 · 클로드 코드',
+      detail:{
+        문제:'숏츠 설명란·고정 댓글·스튜디오 체크까지 고지 문구를 세 번 따로 붙여넣다 보니 빠뜨리기 일썸습니다.',
+        기능:'링크 정규화 → 파트너스 링크 확인 → 고지문 3종 클립보드 복사 → 발행 전 체크리스트.',
+        스택:'단일 HTML + JS',
+        시간:'1시간 30분'
+      } },
+    { id:'i6', tab:'util', emoji:'📊', cat:'웹 유틸', name:'SVG 차트 메이커',
+      desc:'숫자만 붙여넣으면 블로그·카페용 막대·라인 차트 SVG를 만들어 주는 도구.',
+      likes:75, maker:'모두의AI실험실 회원',
+      detail:{
+        문제:'블로그 본문에 넣을 그래프를 만들려고 매번 디자인 툴을 열었습니다.',
+        기능:'CSV 붙여넣기 → 차트 종류 선택 → 색·라벨 조정 → SVG 복사.',
+        스택:'JS + SVG (외부 라이브러리 없음)',
+        시간:'4시간'
+      } }
+  ];
+
+  var VISITS = [
+    { d:'11.15', wd:'일', v:1180 },
+    { d:'11.16', wd:'월', v:1340 },
+    { d:'11.17', wd:'화', v:1290 },
+    { d:'11.18', wd:'수', v:1460 },
+    { d:'11.19', wd:'목', v:1520 },
+    { d:'11.20', wd:'금', v:1410 },
+    { d:'11.21', wd:'토', v:1660 }
+  ];
+
+  var BRIEFS = {
+    today: {
+      no:'No.01', date:'2026.11.21 (토)', title:'전세 심리지수 3주 상승 · 겨울방학 숲체험 문의 폭주 · 클로드 코드 부업 후기 확산',
+      lead:'오늘 수집된 142건 가운데 교차 출처가 2곳 이상인 이슈 4건을 골랐습니다. 맘카페는 겨울방학 프로그램, 부동산은 전세 심리지수, AI는 클로드 코드 생활 앱, 앱테크는 오전 퀴즈 정답이 중심입니다.',
+      sections:[
+        { key:'mom', label:'맘카페·육아', emoji:'🌿',
+          title:'겨울방학 숲체험 문의가 하루 만에 2배로',
+          body:'서북권·서울숲·월드컵공원 키워드가 동시에 올랐습니다. 특히 "12주 등록 후기"처럼 실제 비용과 만족도를 적은 글이 댓글을 끌고 있습니다. 학부모가 궁금한 것은 프로그램 소개보다 (1) 날씨 대비 (2) 아이 얼굴 노출 (3) 형제 할인 세 가지였습니다.',
+          points:['숲체험 프로그램 안내문에 우천 대체안·복장·보호자 동반 여부를 첫 문단에 배치','아이 얼굴 모자이크 팁 글은 우리 채널 초상권 원칙과 그대로 연결됨','겨울방학 4주 단기반으로 쪼갠 안내가 반응 좋음'] },
+        { key:'estate', label:'부동산·경매', emoji:'🏢',
+          title:'전세 심리지수 3주 상승, 1월 이사 수요 미리 움직임',
+          body:'전세 심리지수가 3주 연속 오르며 "지금 계약해야 하나"라는 질문형 글이 늘었습니다. 동시에 강변 테크노마트 인근 10평 사무실 실매물 시세 문의가 올라와, 사무실 이전을 준비하는 쪽과 겹칩니다. 소형 상가 경매 낙찰가율 상승 기사도 같은 흐름입니다.',
+          points:['전세 심리지수는 수치보다 "1월 이사"라는 생활 언어로 풀어야 반응','광진구 사무실 글은 보증금·관리비·권리금 3단 표로 정리하면 완성도 상승','경매 글은 낙찰가율보다 실제 사례 1건이 클릭을 만듦'] },
+        { key:'ai', label:'AI 부업', emoji:'🤖',
+          title:'클로드 코드로 만든 생활 앱, 첫 수익 인증까지',
+          body:'"3시간 만에 만든 대시보드" 후기와 "첫 달 광고 수익 12만원" 인증이 함께 확산됐습니다. 공통점은 거창한 서비스가 아니라 본인이 매일 쓰던 불편을 그대로 앱으로 옮겼다는 점입니다. X 쪽은 수익화 개편 이후 노출 회복 패턴 정리 글이 저장을 끌고 있습니다.',
+          points:['"내가 매일 쓰는 것"을 소재로 잡으면 제작기가 짧아짐','비용 0원·무료 티어 구성이 후기의 신뢰를 만든다','X 수익화 글은 정답 단정보다 계정별 사례 나열이 안전'] },
+        { key:'apptech', label:'앱테크', emoji:'💰',
+          title:'오전 퀴즈 정답 + 쿠팡 파트너스 정산 인증',
+          body:'토스 행운퀴즈·캐시워크 정답 글이 오전 시간대 상위를 차지했고, 쿠팡 파트너스 숏츠 정산 인증이 뒤를 이었습니다. 정산 인증은 금액보다 "어떤 상품으로 만들었는지"가 댓글을 만듭니다.',
+          points:['정답 글은 오전 7~9시 발행이 유리(검색 유입 집중)','정산 인증에는 상품 링크·영상 길이·고지 문구를 함께','핫딜 소재는 실물 사진 확보 후 제작(실물 일치 원칙)'] }
+      ]
+    },
+    past: [
+      { no:'샘플 A', date:'2026.11.20 (금)', title:'금요일 오후 유입 정체 · 주말 숲체험 예약 몰림 · 숏츠 정산 주기 이슈',
+        lead:'금요일 오후는 커뮤니티 유입이 줄고 검색 유입이 늘어나는 구간입니다. 주말 프로그램 예약과 정산 주기 질문이 함께 올라왔습니다.',
+        sections:[
+          { key:'mom', label:'맘카페·육아', emoji:'🌿', title:'주말 숲체험 예약이 금요일 오후에 몰림', body:'토요일 오전반 예약 문의가 금요일 15~18시에 집중됐습니다. 당일 안내문을 오전에 미리 보내는 것이 문의를 줄이는 방법으로 언급됐습니다.', points:['금요일 14시 예약 마감 공지가 효과적'] },
+          { key:'estate', label:'부동산·경매', emoji:'🏢', title:'소형 사무실 문의는 주말 직전에 늘어남', body:'사무실 이전 상담은 주중보다 금요일 오후에 집중됐습니다. 주말에 현장을 보려는 수요입니다.', points:['금요일 오전에 후보 3곳 요약을 보내두면 주말 답사로 이어짐'] },
+          { key:'ai', label:'AI 부업', emoji:'🤖', title:'숏츠 정산 주기 질문 반복', body:'쿠팡 파트너스 정산 주기와 지급일을 묻는 글이 반복해서 올라왔습니다. 한 번 정리해 두면 계속 검색으로 들어옵니다.', points:['정산 주기·지급일 1장 표로 고정'] },
+          { key:'apptech', label:'앱테크', emoji:'💰', title:'금요일 저녁 핫딜 시간대', body:'금요일 19~22시에 핫딜 클릭이 집중됐습니다. 주말 준비 구매가 몰리는 시간대입니다.', points:['금요일 18시 예약 발행이 유리'] }
+        ] },
+      { no:'샘플 B', date:'2026.11.19 (목)', title:'클로드 주간 한도 경고 · 실거래가 신고 증가 · 겨울 프로그램 모집 시작',
+        lead:'AI 도구 사용 한도가 화제가 된 날입니다. 부동산은 실거래 신고 건수가 늘었고, 겨울 프로그램 모집 공지가 본격화됐습니다.',
+        sections:[
+          { key:'mom', label:'맘카페·육아', emoji:'🌿', title:'겨울 프로그램 모집 공지 본격화', body:'12월~1월 프로그램 모집 글이 한꺼번에 올라왔습니다. 정원·대기 순번 안내가 있는 글이 문의를 줄였습니다.', points:['정원과 대기 순번을 명시'] },
+          { key:'estate', label:'부동산·경매', emoji:'🏢', title:'실거래 신고 건수 증가', body:'11월 신고분이 몰리며 관심 단지의 최근 거래가 갱신됐습니다. 신고가 갱신 단지를 정리한 글이 반응을 얻었습니다.', points:['신고가 갱신 3곳만 뽑아 표로'] },
+          { key:'ai', label:'AI 부업', emoji:'🤖', title:'클로드 주간 한도 이야기 확산', body:'주간 사용 한도에 대한 글이 여러 곳에서 올라왔습니다. 한도 관리 루틴을 공유한 글이 저장을 끌었습니다.', points:['작업을 배치로 몰아서 처리하는 루틴 공유'] },
+          { key:'apptech', label:'앱테크', emoji:'💰', title:'저녁 퀴즈 정답 수요', body:'저녁 시간대 퀴즈 정답 검색이 늘었습니다. 정답 글은 발행 후 2~3시간이 피크였습니다.', points:['저녁 19시 발행 테스트'] }
+        ] },
+      { no:'샘플 C', date:'2026.11.18 (수)', title:'맘카페 앱테크 게시판 개편 · 소형 상가 경매 관심 · 노션 템플릿 판매 후기',
+        lead:'카페 게시판이 정리된 날, 회원들이 새 게시판으로 몰렸습니다. 부동산은 소형 상가 경매, AI는 노션 템플릿 판매 후기가 올라왔습니다.',
+        sections:[
+          { key:'mom', label:'맘카페·육아', emoji:'🌿', title:'게시판 개편 이후 첫날', body:'앱테크·살림 게시판으로 글이 몰리며 기존 게시판 조회가 줄었습니다. 공지 한 줄이 재방문을 만들었습니다.', points:['개편 공지에 바로가기 링크 고정'] },
+          { key:'estate', label:'부동산·경매', emoji:'🏢', title:'소형 상가 경매 관심 증가', body:'1억 이하 소형 상가 경매 글이 조회를 끌었습니다. 권리 분석보다 임대 수요 확인이 핵심 질문이었습니다.', points:['임대 수요 확인 방법을 3단계로'] },
+          { key:'ai', label:'AI 부업', emoji:'🤖', title:'노션 템플릿 판매 후기', body:'템플릿 하나로 월 5만원 수익이라는 후기가 확산됐습니다. 제작 시간과 판매 채널이 함께 공개됐습니다.', points:['제작 시간·판매 채널을 함께 공개'] },
+          { key:'apptech', label:'앱테크', emoji:'💰', title:'아침 퀴즈 정답 경쟁', body:'아침 퀴즈 정답 글이 늘면서 발행 시간 경쟁이 심해졌습니다.', points:['정답은 확인 후 발행(오답 리스크)'] }
+        ] }
+    ]
+  };
+
+  /* =========================================================
+     2. 상태 · 저장소
+     ========================================================= */
+  var LS_KEY = 'noriTrafficScraps_v1';
+  var state = { cat:'all', sort:'hot', query:'', keyword:'', rankTab:'all', indieTab:'all', expanded:false };
+
+  function loadScraps(){
+    try{
+      var raw = localStorage.getItem(LS_KEY);
+      if(!raw) return [];
+      var arr = JSON.parse(raw);
+      return Array.isArray(arr) ? arr : [];
+    }catch(e){ return []; }
+  }
+  var scraps = loadScraps();
+
+  function saveScraps(){
+    try{
+      localStorage.setItem(LS_KEY, JSON.stringify(scraps));
+      return true;
+    }catch(e){
+      toast('저장 공간을 쓸 수 없어 이번 화면에서만 유지됩니다');
+      return false;
+    }
+  }
+  function isScrapped(id){ return scraps.some(function(s){ return s.id === id; }); }
+  function findScrap(id){ return scraps.filter(function(s){ return s.id === id; })[0]; }
+
+  function sourceOf(id){
+    var p = POSTS.filter(function(x){ return x.id === id; })[0];
+    if(p) return { type:'post', title:p.title, source:p.source, meta:CAT_META[p.cat].label };
+    var d = DEALS.filter(function(x){ return x.id === id; })[0];
+    if(d) return { type:'deal', title:d.name, source:d.store, meta:d.off + '% 할인 · ' + won(d.price) };
+    return null;
+  }
+
+  function toggleScrap(id){
+    var i = -1;
+    for(var k=0;k<scraps.length;k++){ if(scraps[k].id === id){ i = k; break; } }
+    if(i >= 0){
+      scraps.splice(i,1);
+      saveScraps(); refreshAll();
+      toast('스크랩을 해제했습니다');
+      return false;
+    }
+    var info = sourceOf(id);
+    if(!info) return false;
+    scraps.unshift({
+      id:id, type:info.type, title:info.title, source:info.source, meta:info.meta,
+      memo:'', savedAt:new Date().toISOString()
+    });
+    saveScraps(); refreshAll();
+    toast('스크랩했습니다 · 내 스크랩함에서 볼 수 있어요');
+    return true;
+  }
+
+  /* =========================================================
+     3. 모달
+     ========================================================= */
+  var modalRoot = $('#modalRoot');
+  var lastFocus = null;
+  function openModal(opts){
+    lastFocus = document.activeElement;
+    $('#modalEyebrow').textContent = opts.eyebrow || '';
+    $('#modalTitle').textContent = opts.title || '';
+    $('#modalBody').innerHTML = opts.body || '';
+    var foot = $('#modalFoot');
+    foot.innerHTML = opts.foot || '';
+    modalRoot.hidden = false;
+    document.body.style.overflow = 'hidden';
+    var closeBtn = $('.modal-x');
+    if(closeBtn) closeBtn.focus({ preventScroll:true });
+    var body = $('#modalBody'); if(body) body.scrollTop = 0;
+  }
+  function closeModal(){
+    modalRoot.hidden = true;
+    document.body.style.overflow = '';
+    if(lastFocus && lastFocus.focus){ try{ lastFocus.focus({preventScroll:true}); }catch(e){} }
+  }
+  modalRoot.addEventListener('click', function(e){
+    if(e.target.closest('[data-close]')) closeModal();
+  });
+
+  /* =========================================================
+     4. 게시글 렌더
+     ========================================================= */
+  function matchesQuery(p, q){
+    if(!q) return true;
+    var hay = (p.title + ' ' + p.source + ' ' + p.keywords.join(' ') + ' ' + CAT_META[p.cat].label).toLowerCase();
+    return hay.indexOf(q.toLowerCase()) !== -1;
+  }
+
+  function currentPosts(){
+    var q = state.query.trim();
+    var list = POSTS.filter(function(p){
+      if(state.cat !== 'all' && p.cat !== state.cat) return false;
+      if(!matchesQuery(p, q)) return false;
+      return true;
+    });
+    list.sort(function(a,b){
+      if(state.sort === 'rising') return b.rise - a.rise;
+      return b.hot - a.hot;
+    });
+    return list;
+  }
+
+  function renderPosts(){
+    var box = $('#postList');
+    var list = currentPosts();
+    var total = list.length;
+    var shown = state.expanded ? list : list.slice(0, 12);
+    box.innerHTML = shown.map(function(p, idx){
+      var m = CAT_META[p.cat];
+      var on = isScrapped(p.id);
+      return '' +
+        '<article class="post' + (on ? ' is-scrapped' : '') + '" data-id="' + p.id + '">' +
+          '<div class="post-rank"><b>' + String(idx+1).padStart(2,'0') + '</b>' +
+            '<span class="rise">▲' + p.rise + '%</span></div>' +
+          '<div class="post-thumb" style="background:' + m.bg + '" aria-hidden="true">' + m.emoji + '</div>' +
+          '<div class="post-body">' +
+            '<div class="post-top">' +
+              '<span class="badge ' + m.cls + '">' + esc(p.source) + '</span>' +
+              '<span class="post-time">' + esc(p.time) + '</span>' +
+              '<span class="post-time">· ' + esc(m.label) + '</span>' +
+            '</div>' +
+            '<h3 class="post-title">' + esc(p.title) + '</h3>' +
+            '<div class="post-meta">' +
+              '<span>💬 ' + nfmt(p.comments) + '</span>' +
+              '<span>👁 ' + nfmt(p.views) + '</span>' +
+              p.keywords.slice(0,2).map(function(k){ return '<span class="kw">#' + esc(k) + '</span>'; }).join('') +
+            '</div>' +
+          '</div>' +
+          '<div class="post-actions">' +
+            '<button class="act js-scrap" type="button" data-id="' + p.id + '" aria-pressed="' + on + '" ' +
+              'aria-label="' + esc(p.title) + ' 스크랩" data-testid="scrap-' + p.id + '">' +
+              '<span class="ico" aria-hidden="true">⭐</span><span class="lbl">스크랩</span></button>' +
+            '<button class="act js-memo' + (findScrap(p.id) && findScrap(p.id).memo ? ' on' : '') + '" type="button" data-id="' + p.id + '" ' +
+              'aria-label="' + esc(p.title) + ' 글감 메모" data-testid="memo-' + p.id + '">' +
+              '<span class="ico" aria-hidden="true">✍️</span><span class="lbl">글감 메모</span></button>' +
+          '</div>' +
+        '</article>';
+    }).join('');
+
+    if(total === 0){
+      box.innerHTML = '<div class="empty"><b>조건에 맞는 글이 없습니다</b>' +
+        (state.query ? '‘' + esc(state.query) + '’ 검색 결과가 비어 있습니다. ' : '') +
+        '다른 카테고리를 고르거나 검색어를 지워 보세요.</div>';
+    }
+
+    // 결과 안내
+    var note = $('#resultNote');
+    if(state.query){
+      note.innerHTML = '‘<b>' + esc(state.query) + '</b>’ 검색 결과 <b>' + total + '</b>건';
+    }else if(state.cat !== 'all'){
+      note.innerHTML = esc(CAT_META[state.cat].label) + ' <b>' + total + '</b>건 · 수집 142건 중';
+    }else{
+      note.innerHTML = '수집 142건 중 상위 <b>' + total + '</b>건 · ' + (state.sort === 'rising' ? '급상승률 순' : '인기 순');
+    }
+
+    var more = $('#moreBtn');
+    if(total > 12){
+      more.hidden = false;
+      more.textContent = state.expanded ? '접기 (상위 12건만)' : '샘플 ' + total + '건 전체 표시';
+    }else{
+      more.hidden = true;
+    }
+  }
+
+  // 이벤트 위임
+  $('#postList').addEventListener('click', function(e){
+    var scrapBtn = e.target.closest('.js-scrap');
+    if(scrapBtn){ toggleScrap(scrapBtn.getAttribute('data-id')); return; }
+    var memoBtn = e.target.closest('.js-memo');
+    if(memoBtn){ openMemo(memoBtn.getAttribute('data-id')); return; }
+  });
+
+  $('#moreBtn').addEventListener('click', function(){
+    state.expanded = !state.expanded;
+    renderPosts();
+  });
+
+  /* =========================================================
+     5. 카테고리 · 정렬 · 검색
+     ========================================================= */
+  $('#catTabs').addEventListener('click', function(e){
+    var b = e.target.closest('[data-cat]');
+    if(!b) return;
+    state.cat = b.getAttribute('data-cat');
+    state.expanded = false;
+    $$('#catTabs .tab').forEach(function(t){ t.setAttribute('aria-selected', String(t === b)); });
+    renderPosts();
+  });
+
+  function applySort(mode){
+    state.sort = mode;
+    $('#sortHot').setAttribute('aria-pressed', String(mode === 'hot'));
+    $('#sortRising').setAttribute('aria-pressed', String(mode === 'rising'));
+    renderPosts();
+  }
+  $('#sortHot').addEventListener('click', function(){ applySort('hot'); });
+  $('#sortRising').addEventListener('click', function(){ applySort('rising'); });
+
+  var searchInput = $('#searchInput');
+  function syncPlaceholder(){
+    searchInput.placeholder = window.innerWidth < 760
+      ? '키워드·커뮤니티 검색'
+      : '지금 뜨는 키워드, 맘카페, 부동산, 부업을 검색해보세요';
+  }
+  syncPlaceholder();
+  window.addEventListener('resize', syncPlaceholder);
+  function syncSearchUI(){
+    $('#searchClear').hidden = state.query.length === 0;
+    if(state.keyword){
+      $('#kwChip').hidden = false;
+      $('#kwChipText').textContent = '#' + state.keyword;
+    }else{
+      $('#kwChip').hidden = true;
+    }
+  }
+  function setQuery(q, opts){
+    state.query = q;
+    if(searchInput.value !== q) searchInput.value = q;
+    state.expanded = false;
+    syncSearchUI();
+    renderPosts();
+    if(opts && opts.scroll){
+      var el = $('#community');
+      if(el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+    }
+  }
+  searchInput.addEventListener('input', function(){
+    state.keyword = '';
+    setQuery(searchInput.value);
+  });
+  $('#searchClear').addEventListener('click', function(){
+    state.keyword = '';
+    setQuery('');
+    searchInput.focus();
+  });
+  $('#kwChipClear').addEventListener('click', function(){
+    state.keyword = '';
+    setQuery('');
+  });
+
+  document.addEventListener('keydown', function(e){
+    var k = (e.key || '').toLowerCase();
+    if((e.metaKey || e.ctrlKey) && k === 'k'){
+      e.preventDefault();
+      if(!modalRoot.hidden) closeModal();
+      searchInput.focus();
+      searchInput.select();
+      return;
+    }
+    if(e.key === 'Escape'){
+      if(!modalRoot.hidden){ closeModal(); return; }
+      if(document.activeElement === searchInput){
+        if(searchInput.value){ state.keyword=''; setQuery(''); }
+        searchInput.blur();
+      }
+    }
+  });
+
+  /* =========================================================
+     6. 급상승 키워드
+     ========================================================= */
+  function renderRank(){
+    var list = RANKS[state.rankTab] || RANKS.all;
+    var max = list.reduce(function(a,b){ return Math.max(a, b.r); }, 1);
+    $('#rankList').innerHTML = list.map(function(item, i){
+      var w = Math.round(item.r / max * 100);
+      return '' +
+        '<button class="rank-item" type="button" data-kw="' + esc(item.k) + '" data-testid="rank-kw-' + i + '" ' +
+          'aria-label="' + esc(item.k) + ' 키워드로 인기글 필터">' +
+          '<span class="rk-no">' + (i+1) + '</span>' +
+          '<span class="rk-body"><span class="rk-kw">' + esc(item.k) + '</span>' +
+            '<span class="rk-bar"><i style="width:' + w + '%"></i></span></span>' +
+          '<span class="rk-up">▲' + item.r + '%</span>' +
+        '</button>';
+    }).join('');
+  }
+
+  $('#rankTabs').addEventListener('click', function(e){
+    var b = e.target.closest('[data-rank]');
+    if(!b) return;
+    state.rankTab = b.getAttribute('data-rank');
+    $$('#rankTabs .rtab').forEach(function(t){ t.setAttribute('aria-selected', String(t === b)); });
+    renderRank();
+  });
+
+  function applyKeyword(kw){
+    state.keyword = kw;
+    // 키워드가 다른 카테고리 글이면 카테고리를 전체로 되돌려 결과를 보장
+    state.cat = 'all';
+    $$('#catTabs .tab').forEach(function(t){ t.setAttribute('aria-selected', String(t.getAttribute('data-cat') === 'all')); });
+    searchInput.value = kw;
+    setQuery(kw, { scroll:true });
+    toast('‘' + kw + '’ 관련 인기글만 보고 있어요');
+  }
+  $('#rank').addEventListener('click', function(e){
+    var b = e.target.closest('[data-kw]');
+    if(!b) return;
+    applyKeyword(b.getAttribute('data-kw'));
+  });
+
+  /* =========================================================
+     7. 데일리 브리프 모달
+     ========================================================= */
+  function briefBody(b){
+    return '<p class="mb-p" style="color:var(--ink-2)">' + esc(b.lead) + '</p>' +
+      b.sections.map(function(s){
+        return '<div class="brief-section">' +
+          '<h4><span class="badge ' + (CAT_META[s.key] ? CAT_META[s.key].cls : '') + '">' + esc(s.label) + '</span>' + esc(s.title) + '</h4>' +
+          '<p>' + esc(s.body) + '</p>' +
+          '<ul class="mb-list">' + s.points.map(function(p){ return '<li>' + esc(p) + '</li>'; }).join('') + '</ul>' +
+        '</div>';
+      }).join('') +
+      '<p style="font-size:11px;color:var(--ink-4);margin-top:10px">※ 이 브리핑은 프로토타입용 <b>예시 데이터</b>입니다. 2단계에서 data.json의 summary로 자동 대체됩니다.</p>';
+  }
+
+  function openBriefToday(){
+    openModal({
+      eyebrow:'DAILY BRIEF · No.01',
+      title:'오늘의 AI 트렌드 리포트 · ' + BRIEFS.today.date,
+      body:briefBody(BRIEFS.today),
+      foot:'<button class="btn btn-amber" type="button" id="briefToPosts">이 브리핑 소재로 인기글 보기</button>' +
+           '<button class="btn" type="button" data-close>닫기</button>' +
+           '<span class="spacer"></span><span style="font-size:11px;color:var(--ink-4)">교차 출처 142 · 핵심 이슈 4</span>'
+    });
+    var btn = $('#briefToPosts');
+    if(btn) btn.addEventListener('click', function(){
+      closeModal();
+      state.cat='all'; state.keyword='';
+      $$('#catTabs .tab').forEach(function(t){ t.setAttribute('aria-selected', String(t.getAttribute('data-cat')==='all')); });
+      setQuery('', { scroll:true });
+    });
+  }
+
+  function openPastIssues(){
+    var rows = BRIEFS.past.map(function(b, i){
+      return '<button class="issue-row" type="button" data-issue="' + i + '">' +
+        '<span class="issue-no">' + esc(b.no) + '</span>' +
+        '<span class="issue-t"><b>' + esc(b.title) + '</b><span>' + esc(b.date) + '</span></span>' +
+        '<span style="color:var(--ink-4);font-size:14px" aria-hidden="true">›</span>' +
+      '</button>';
+    }).join('');
+    openModal({
+      eyebrow:'ARCHIVE',
+      title:'지난 호 보기',
+      body:'<p class="mb-p">최근 3일 브리핑을 샘플로 담았습니다. 실제 운영에서는 날짜별 JSON을 읽어 무한히 쌓입니다.</p>' + rows,
+      foot:'<button class="btn" type="button" data-close>닫기</button>'
+    });
+    $$('#modalBody .issue-row').forEach(function(row){
+      row.addEventListener('click', function(){
+        var idx = Number(row.getAttribute('data-issue'));
+        var b = BRIEFS.past[idx];
+        openModal({
+          eyebrow:'DAILY BRIEF · ' + b.no,
+          title:b.title,
+          body:briefBody(b),
+          foot:'<button class="btn" type="button" id="backToPast">← 지난 호 목록</button>' +
+               '<button class="btn" type="button" data-close>닫기</button>'
+        });
+        var back = $('#backToPast');
+        if(back) back.addEventListener('click', openPastIssues);
+      });
+    });
+  }
+
+  $('#openBrief').addEventListener('click', openBriefToday);
+  $('#openPast').addEventListener('click', openPastIssues);
+
+  /* =========================================================
+     8. 핫딜
+     ========================================================= */
+  function renderDeals(){
+    $('#dealTrack').innerHTML = DEALS.map(function(d){
+      var on = isScrapped(d.id);
+      return '<article class="deal" data-id="' + d.id + '">' +
+        '<div class="deal-top"><span class="deal-off">' + d.off + '%</span>' +
+          '<span class="deal-store">' + esc(d.store) + '</span></div>' +
+        '<p class="deal-name">' + esc(d.name) + '</p>' +
+        '<div class="deal-price"><b>' + won(d.price) + '</b><s>' + won(d.original) + '</s></div>' +
+        '<p class="deal-note">' + esc(d.note) + '</p>' +
+        '<button class="btn btn-sm js-deal-scrap' + (on ? ' on' : '') + '" type="button" data-id="' + d.id + '" ' +
+          'aria-pressed="' + on + '" data-testid="deal-scrap-' + d.id + '">' +
+          '<span aria-hidden="true">🎬</span> ' + (on ? '스크랩됨' : '쿠팡 숏츠 소재로 스크랩') + '</button>' +
+      '</article>';
+    }).join('');
+  }
+  $('#dealTrack').addEventListener('click', function(e){
+    var b = e.target.closest('.js-deal-scrap');
+    if(!b) return;
+    var now = toggleScrap(b.getAttribute('data-id'));
+    b.classList.toggle('on', now);
+    b.setAttribute('aria-pressed', String(now));
+    b.innerHTML = '<span aria-hidden="true">🎬</span> ' + (now ? '스크랩됨' : '쿠팡 숏츠 소재로 스크랩');
+  });
+  function dealStep(dir){
+    var track = $('#dealTrack');
+    var card = track.querySelector('.deal');
+    var w = card ? card.getBoundingClientRect().width + 12 : 236;
+    track.scrollBy({ left: dir * w * 2, behavior:'smooth' });
+  }
+  $('#dealPrev').addEventListener('click', function(){ dealStep(-1); });
+  $('#dealNext').addEventListener('click', function(){ dealStep(1); });
+
+  /* =========================================================
+     9. 인디 프로젝트
+     ========================================================= */
+  function renderIndie(){
+    var list = INDIE.filter(function(p){ return state.indieTab === 'all' || p.tab === state.indieTab; });
+    $('#indieGrid').innerHTML = list.map(function(p){
+      return '<button class="indie" type="button" data-indie-id="' + p.id + '">' +
+        '<span class="indie-top"><span class="indie-emoji" aria-hidden="true">' + p.emoji + '</span>' +
+          '<span class="indie-cat">' + esc(p.cat) + '</span></span>' +
+        '<span class="indie-name">' + esc(p.name) + '</span>' +
+        '<span class="indie-desc">' + esc(p.desc) + '</span>' +
+        '<span class="indie-foot"><span>' + esc(p.maker) + '</span><span>♥ ' + nfmt(p.likes) + '</span></span>' +
+      '</button>';
+    }).join('');
+  }
+  $('#indieTabs').addEventListener('click', function(e){
+    var b = e.target.closest('[data-indie]');
+    if(!b) return;
+    state.indieTab = b.getAttribute('data-indie');
+    $$('#indieTabs .tab').forEach(function(t){ t.setAttribute('aria-selected', String(t === b)); });
+    renderIndie();
+  });
+  $('#indieGrid').addEventListener('click', function(e){
+    var b = e.target.closest('[data-indie-id]');
+    if(!b) return;
+    var p = INDIE.filter(function(x){ return x.id === b.getAttribute('data-indie-id'); })[0];
+    if(!p) return;
+    openModal({
+      eyebrow:'INDIE PROJECT · ' + p.cat,
+      title:p.emoji + ' ' + p.name,
+      body:'<p class="mb-p">' + esc(p.desc) + '</p>' +
+        '<h3 class="mb-h">무엇이 불편했나</h3><p class="mb-p">' + esc(p.detail.문제) + '</p>' +
+        '<h3 class="mb-h">만든 기능</h3><p class="mb-p">' + esc(p.detail.기능) + '</p>' +
+        '<h3 class="mb-h">만든 방식</h3><p class="mb-p">' + esc(p.detail.스택) + '</p>' +
+        '<h3 class="mb-h">걸린 시간</h3><p class="mb-p">' + esc(p.detail.시간) + '</p>' +
+        '<p style="font-size:11px;color:var(--ink-4);margin-top:12px">※ 샘플 사례입니다. 실제 프로젝트 링크는 2단계에서 연결합니다.</p>',
+      foot:'<span style="font-size:11.5px;color:var(--ink-3)">' + esc(p.maker) + ' · ♥ ' + nfmt(p.likes) + '</span>' +
+           '<span class="spacer"></span><button class="btn" type="button" data-close>닫기</button>'
+    });
+  });
+
+  /* =========================================================
+     10. 방문 추이 차트
+     ========================================================= */
+  function renderChart(){
+    var max = Math.max.apply(null, VISITS.map(function(d){ return d.v; }));
+    var min = Math.min.apply(null, VISITS.map(function(d){ return d.v; }));
+    var floor = min - (max - min) * 0.35;
+    var maxIdx = VISITS.findIndex(function(d){ return d.v === max; });
+    $('#chartBars').innerHTML = VISITS.map(function(d, i){
+      var h = Math.round(20 + (d.v - floor) / (max - floor) * 76); // 최소 41% ~ 최대 96%
+      var prev = i > 0 ? VISITS[i-1].v : null;
+      var diff = prev ? Math.round((d.v - prev) / prev * 1000) / 10 : null;
+      var diffTxt = diff === null ? '첫날' : (diff >= 0 ? '▲ ' + diff + '%' : '▼ ' + Math.abs(diff) + '%');
+      return '<div class="barwrap">' +
+        '<button class="bar' + (i === maxIdx ? ' is-today' : '') + '" type="button" style="height:' + h + '%" ' +
+          'data-idx="' + i + '" data-testid="chart-bar-' + i + '" ' +
+          'aria-label="' + d.d + '(' + d.wd + ') 방문 ' + nfmt(d.v) + '명, ' + diffTxt + '">' +
+          '<span class="bar-tip"><b>' + nfmt(d.v) + '명</b>' + d.d + '(' + d.wd + ') · ' + diffTxt + '</span>' +
+        '</button>' +
+      '</div>';
+    }).join('');
+
+    $('#chartAxis').innerHTML = VISITS.map(function(d, i){
+      return '<div' + (i === VISITS.length-1 ? ' class="today"' : '') + '><b>' + d.d + '</b>' + d.wd + '</div>';
+    }).join('');
+
+    var total = VISITS.reduce(function(a,b){ return a + b.v; }, 0);
+    $('#chartTotal').textContent = nfmt(total);
+  }
+
+  $('#chartBars').addEventListener('click', function(e){
+    var b = e.target.closest('.bar');
+    if(!b) return;
+    var wasOn = b.classList.contains('is-on');
+    $$('#chartBars .bar').forEach(function(x){ x.classList.remove('is-on'); });
+    if(!wasOn) b.classList.add('is-on');
+  });
+  // 마우스 이동 시 툴팁이 자연스럽게 뜨도록 (CSS hover가 기본)
+
+  /* =========================================================
+     11. 스크랩함 · 메모 · JSON
+     ========================================================= */
+  function scrapTypeLabel(t){ return t === 'deal' ? '핫딜' : '인기글'; }
+
+  function refreshScrapUI(){
+    var n = scraps.length;
+    $('#scrapCount').textContent = n;
+    $('#scrapCount2').textContent = n;
+
+    var prev = $('#scrapPreview');
+    if(n === 0){
+      prev.innerHTML = '<div class="side-empty">아직 스크랩한 소재가 없습니다.<br>인기글의 <b>⭐ 스크랩</b> 또는 핫딜의 <b>🎬 숏츠 소재로 스크랩</b>을 눌러 보세요.</div>';
+    }else{
+      prev.innerHTML = scraps.slice(0,3).map(function(s){
+        return '<div class="scrap-item">' +
+          '<span class="si-emoji" aria-hidden="true">' + (s.type === 'deal' ? '🎬' : '⭐') + '</span>' +
+          '<span class="si-body"><span class="si-title">' + esc(s.title) + '</span>' +
+            '<span class="si-meta">' + esc(s.source) + ' · ' + scrapTypeLabel(s.type) + (s.memo ? ' · 메모 있음' : '') + '</span></span>' +
+        '</div>';
+      }).join('') + (n > 3 ? '<div style="font-size:10.5px;color:var(--ink-4);text-align:center;padding-top:2px">외 ' + (n-3) + '건 더</div>' : '');
+    }
+  }
+
+  function renderScrapBox(){
+    var body;
+    if(scraps.length === 0){
+      body = '<div class="empty-box">아직 스크랩한 소재가 없습니다.<br>인기글 카드의 ⭐ 스크랩, 핫딜의 🎬 버튼으로 모아 보세요.</div>';
+    }else{
+      body = scraps.map(function(s){
+        return '<div class="scrap-row" data-sid="' + esc(s.id) + '">' +
+          '<div class="sr-body">' +
+            '<div class="sr-title">' + (s.type === 'deal' ? '🎬 ' : '⭐ ') + esc(s.title) + '</div>' +
+            '<div class="sr-meta"><span class="badge ' + (s.type === 'deal' ? 'b-apptech' : 'b-ai') + '">' + scrapTypeLabel(s.type) + '</span>' +
+              '<span>' + esc(s.source) + '</span><span>' + esc(s.meta || '') + '</span></div>' +
+            (s.memo ? '<div class="sr-memo">' + esc(s.memo) + '</div>' : '') +
+          '</div>' +
+          '<div class="sr-actions">' +
+            '<button class="icon-mini js-edit-memo" type="button" data-id="' + esc(s.id) + '" aria-label="글감 메모 수정" title="글감 메모">✍️</button>' +
+            '<button class="icon-mini js-del" type="button" data-id="' + esc(s.id) + '" aria-label="스크랩 삭제" title="삭제">🗑</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+    openModal({
+      eyebrow:'MY SCRAPBOX',
+      title:'내 스크랩함 · ' + scraps.length + '건',
+      body:body + '<p style="font-size:11px;color:var(--ink-4);margin-top:8px">이 브라우저(localStorage)에만 저장됩니다. 아래 JSON으로 백업·복원할 수 있어요.</p>',
+      foot:'<button class="btn btn-amber" type="button" id="exportBtn">⬇ JSON 내보내기</button>' +
+           '<button class="btn" type="button" id="importBtn">⬆ JSON 불러오기</button>' +
+           '<span class="spacer"></span>' +
+           '<button class="btn" type="button" id="clearBtn" style="color:#B91C1C">전체 삭제</button>' +
+           '<button class="btn" type="button" data-close>닫기</button>'
+    });
+    bindScrapBoxActions();
+  }
+
+  function bindScrapBoxActions(){
+    var body = $('#modalBody');
+    body.addEventListener('click', function(e){
+      var ed = e.target.closest('.js-edit-memo');
+      if(ed){ openMemo(ed.getAttribute('data-id'), renderScrapBox); return; }
+      var del = e.target.closest('.js-del');
+      if(del){
+        var id = del.getAttribute('data-id');
+        var i = -1;
+        for(var k=0;k<scraps.length;k++){ if(scraps[k].id === id){ i=k; break; } }
+        if(i>=0){ scraps.splice(i,1); saveScraps(); refreshAll(); renderScrapBox(); toast('스크랩을 삭제했습니다'); }
+      }
+    }, { once:true });
+
+    var ex = $('#exportBtn'); if(ex) ex.addEventListener('click', exportJSON);
+    var im = $('#importBtn'); if(im) im.addEventListener('click', function(){ $('#importFile').click(); });
+    var cl = $('#clearBtn'); if(cl) cl.addEventListener('click', function(){
+      if(scraps.length && window.confirm('스크랩 ' + scraps.length + '건을 모두 삭제할까요? 되돌릴 수 없습니다.')){
+        scraps = []; saveScraps(); refreshAll(); renderScrapBox(); toast('모든 스크랩을 삭제했습니다');
+      }
+    });
+  }
+
+  function openMemo(id, returnTo){
+    var info = sourceOf(id);
+    var existing = findScrap(id);
+    if(!existing && !info) return;
+    var title = existing ? existing.title : info.title;
+    openModal({
+      eyebrow:'IDEA NOTE',
+      title:'✍️ 글감 메모',
+      body:'<p class="mb-p" style="font-size:12.5px;color:var(--ink-3);margin-bottom:10px">' + esc(title) + '</p>' +
+        '<label class="sr-only" for="memoText">글감 메모</label>' +
+        '<textarea id="memoText" class="memo-field" placeholder="예) 12월 숲놀이 모집글에 ‘겨울 방학 4주 단기반’ 각도로. 우천 대체안 문단 먼저." data-testid="memo-text">' +
+        esc(existing ? existing.memo : '') + '</textarea>' +
+        '<p class="memo-hint">저장하면 스크랩함에 함께 보관됩니다. X·블로그 글감으로 바로 쓸 한 줄이면 충분해요.</p>',
+      foot:'<button class="btn btn-amber" type="button" id="memoSave" data-testid="memo-save">메모 저장</button>' +
+           (existing && existing.memo ? '<button class="btn" type="button" id="memoClear">메모 지우기</button>' : '') +
+           '<span class="spacer"></span><button class="btn" type="button" data-close>취소</button>'
+    });
+    var ta = $('#memoText');
+    if(ta) ta.focus();
+
+    $('#memoSave').addEventListener('click', function(){
+      var v = ($('#memoText').value || '').trim();
+      var s = findScrap(id);
+      if(!s){
+        var inf = sourceOf(id);
+        s = { id:id, type:inf.type, title:inf.title, source:inf.source, meta:inf.meta, memo:'', savedAt:new Date().toISOString() };
+        scraps.unshift(s);
+      }
+      s.memo = v;
+      saveScraps(); refreshAll();
+      closeModal();
+      toast(v ? '글감 메모를 저장했습니다' : '메모를 비웠습니다');
+      if(returnTo) setTimeout(returnTo, 60);
+    });
+    var mc = $('#memoClear');
+    if(mc) mc.addEventListener('click', function(){
+      var s = findScrap(id);
+      if(s){ s.memo = ''; saveScraps(); refreshAll(); }
+      closeModal();
+      toast('메모를 비웠습니다');
+      if(returnTo) setTimeout(returnTo, 60);
+    });
+  }
+
+  function exportJSON(){
+    try{
+      var payload = { app:'nori-traffic-scent', version:1, exportedAt:new Date().toISOString(), items:scraps };
+      var blob = new Blob([JSON.stringify(payload, null, 2)], { type:'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = '노리짱_스크랩함_' + todayStamp() + '.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 1500);
+      toast('JSON 파일로 내보냈습니다 (' + scraps.length + '건)');
+    }catch(e){
+      toast('내보내기에 실패했습니다');
+    }
+  }
+
+  $('#importFile').addEventListener('change', function(e){
+    var file = e.target.files && e.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      try{
+        var data = JSON.parse(String(reader.result));
+        var items = Array.isArray(data) ? data : (data && Array.isArray(data.items) ? data.items : null);
+        if(!items) throw new Error('format');
+        var added = 0, updated = 0;
+        items.forEach(function(it){
+          if(!it || !it.id || !it.title) return;
+          var cur = findScrap(it.id);
+          if(cur){
+            cur.memo = it.memo || cur.memo;
+            cur.title = it.title || cur.title;
+            updated++;
+          }else{
+            scraps.push({ id:it.id, type:it.type || 'post', title:it.title, source:it.source || '', meta:it.meta || '', memo:it.memo || '', savedAt:it.savedAt || new Date().toISOString() });
+            added++;
+          }
+        });
+        saveScraps(); refreshAll();
+        toast('불러왔습니다 · 새로 ' + added + '건, 갱신 ' + updated + '건');
+        if(!modalRoot.hidden) renderScrapBox();
+      }catch(err){
+        toast('JSON 형식이 맞지 않습니다');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  });
+
+  $('#openScrapBox').addEventListener('click', renderScrapBox);
+  $('#openScrapBox2').addEventListener('click', renderScrapBox);
+  $('#exportTop').addEventListener('click', exportJSON);
+  $('#importTop').addEventListener('click', function(){ $('#importFile').click(); });
+
+  /* =========================================================
+     12. 수집·요약 구조 모달
+     ========================================================= */
+  function openArch(){
+    openModal({
+      eyebrow:'PIPELINE',
+      title:'⚙️ 수집 · 요약 구조 (0원 구성)',
+      body:'<p class="mb-p">하루 1~2번만 데이터를 모아 정적 JSON으로 굽고, 화면은 그 JSON을 읽기만 합니다. 서버도, 상시 실행 프로세스도 필요 없습니다.</p>' +
+        '<div class="arch-flow">' +
+          '<div class="arch-step"><span class="arch-n">1</span><div><b>수집 (정시 크론)</b> — GitHub Actions가 하루 2회(07:00 / 19:00 KST) 실행되어 공개 RSS·검색 API·공공데이터를 읽습니다. 로컬 PC에서 돌려도 동일합니다.</div></div>' +
+          '<div class="arch-connector"></div>' +
+          '<div class="arch-step"><span class="arch-n">2</span><div><b>정규화 · 중복 제거</b> — 제목 유사도 0.85 이상이면 하나로 합치고, 출처 수를 세어 <b>교차 출처</b> 지표를 만듭니다.</div></div>' +
+          '<div class="arch-connector"></div>' +
+          '<div class="arch-step"><span class="arch-n">3</span><div><b>AI 요약 · 랭킹</b> — Gemini Flash 무료 티어로 4개 분야 브리핑과 급상승 키워드를 생성. 하루 1~2회 배치라 토큰이 거의 들지 않습니다.</div></div>' +
+          '<div class="arch-connector"></div>' +
+          '<div class="arch-step"><span class="arch-n">4</span><div><b>data.json 발행</b> — 결과를 <code>data.json</code> 한 파일로 커밋. GitHub Pages / Cloudflare Pages가 자동 배포(서버비 0원).</div></div>' +
+          '<div class="arch-connector"></div>' +
+          '<div class="arch-step"><span class="arch-n">5</span><div><b>화면 반영</b> — 이 HTML이 <code>fetch(\'./data.json\')</code>로 읽어 카드·랭킹·차트를 다시 그립니다. 스크랩·메모는 계속 브라우저에 저장.</div></div>' +
+        '</div>' +
+        '<pre class="arch-code">' +
+        '<span class="c"># .github/workflows/collect.yml (요약)</span>\n' +
+        '<span class="k">on</span>:\n  schedule:\n    - cron: \'0 22,10 * * *\'  <span class="c"># 07:00 / 19:00 KST</span>\n' +
+        '  workflow_dispatch:\n' +
+        'jobs:\n  collect:\n    runs-on: ubuntu-latest\n    steps:\n' +
+        '      - uses: actions/checkout@v4\n' +
+        '      - run: pip install -r requirements.txt\n' +
+        '      - run: python collector.py\n        env:\n          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}\n' +
+        '      - run: git commit -am "data: auto $(date -u +%FT%TZ)" && git push\n' +
+        '</pre>' +
+        '<h3 class="mb-h">비용 비교</h3>' +
+        '<table class="table-mini"><thead><tr><th>구성</th><th>월 비용</th><th>비고</th></tr></thead><tbody>' +
+        '<tr><td>GitHub Actions + GitHub Pages</td><td>0원</td><td>공개 저장소 무료 한도 내(월 2,000분)</td></tr>' +
+        '<tr><td>Gemini Flash 무료 티어</td><td>0원</td><td>하루 1~2회 요약이면 한도 여유</td></tr>' +
+        '<tr><td>네이버 검색 API</td><td>0원</td><td>일 25,000콜 무료</td></tr>' +
+        '<tr><td>국토부 실거래가 API</td><td>0원</td><td>공공데이터포털 무료 키</td></tr>' +
+        '<tr><td>(선택) 유료 API 소액 플랜</td><td>월 1,000~5,000원</td><td>요약 품질·속도 상향</td></tr>' +
+        '</tbody></table>' +
+        '<h3 class="mb-h">지금 단계</h3>' +
+        '<p class="mb-p">이 화면은 <b>1단계(프로토타입)</b>입니다. 2단계에서 <code>collector.py</code>가 만든 <code>data.json</code>을 연결하고, 3단계에서 GitHub Pages에 올리면 주소 하나로 어디서나 열 수 있습니다.</p>' +
+        '<p style="font-size:11px;color:var(--ink-4)">자세한 소스별 수집 방식·법적 주의점은 설계서 <code>downloads/노리짱_트래픽센트_자동수집_요약_설계서.md</code>에 정리했습니다.</p>',
+      foot:'<button class="btn btn-dark" type="button" data-close>확인</button>' +
+           '<span class="spacer"></span><span style="font-size:11px;color:var(--ink-4)">서버비 0원 · 정적 호스팅</span>'
+    });
+  }
+  $('#openArch').addEventListener('click', openArch);
+  $('#openArch2').addEventListener('click', openArch);
+  $$('[data-open-arch]').forEach(function(b){ b.addEventListener('click', openArch); });
+
+  /* =========================================================
+     13. 섹션 이동 · 초기화
+     ========================================================= */
+  $$('[data-goto]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var id = btn.getAttribute('data-goto');
+      var el = document.getElementById(id);
+      if(el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+    });
+  });
+
+  function refreshAll(){
+    renderPosts();
+    renderDeals();
+    refreshScrapUI();
+  }
+
+  function init(){
+    renderPosts();
+    renderRank();
+    renderDeals();
+    renderIndie();
+    renderChart();
+    refreshScrapUI();
+    syncSearchUI();
+    if(scraps.length){
+      var n = scraps.length;
+      document.title = '노리짱 트래픽센트 · 스크랩 ' + n + '건 (프로토타입)';
+    }
+  }
+  init();
+})();
+</script>
+</body>
+</html>
