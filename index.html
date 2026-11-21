@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>노리짱 웹앱 테스트</title>
+<style>
+  :root{
+    --bg:#f7f9fc;
+    --card:#ffffff;
+    --ink:#16202e;
+    --sub:#5b6b80;
+    --line:#e4eaf2;
+    --accent:#2f6bff;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1100px 460px at 12% -10%, #e6efff 0%, rgba(230,239,255,0) 62%),
+      radial-gradient(900px 420px at 92% 0%, #eafaf3 0%, rgba(234,250,243,0) 60%),
+      var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Segoe UI",Roboto,sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1020px;margin:0 auto;padding:56px 22px 72px;}
+  header{margin-bottom:34px;}
+  .badge{
+    display:inline-block;
+    font-size:12.5px;letter-spacing:.02em;
+    color:var(--accent);background:#eaf1ff;border:1px solid #d6e3ff;
+    padding:5px 11px;border-radius:999px;margin-bottom:14px;
+  }
+  h1{font-size:30px;line-height:1.28;margin:0 0 8px;letter-spacing:-.01em;}
+  header p{margin:0;color:var(--sub);font-size:15px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;}
+  a.card{
+    display:flex;flex-direction:column;gap:10px;
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:22px 22px 18px;text-decoration:none;color:inherit;
+    box-shadow:0 1px 2px rgba(22,32,46,.04);
+    transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+  }
+  a.card:hover{
+    transform:translateY(-2px);
+    border-color:#cfdcf1;
+    box-shadow:0 10px 24px rgba(22,32,46,.08);
+  }
+  .num{
+    font-size:12px;font-weight:700;letter-spacing:.08em;
+    color:#8b9ab0;
+  }
+  .card h2{font-size:18.5px;margin:0;letter-spacing:-.01em;}
+  .card p{margin:0;color:var(--sub);font-size:14px;}
+  .go{margin-top:auto;padding-top:6px;font-size:13.5px;font-weight:600;color:var(--accent);}
+  .go::after{content:" →";}
+  footer{
+    margin-top:40px;padding-top:18px;border-top:1px solid var(--line);
+    color:#8b9ab0;font-size:12.5px;
+    display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:space-between;
+  }
+  @media (max-width:520px){
+    .wrap{padding:40px 18px 56px;}
+    h1{font-size:25px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="badge">노리짱 · 테스트 배포</span>
+    <h1>노리짱 웹앱 3종</h1>
+    <p>만들어 둔 웹앱을 폰에서 바로 확인해 보세요. 카드를 누르면 열립니다.</p>
+  </header>
+
+  <div class="grid">
+    <a class="card" href="./vibe-coding/">
+      <span class="num">1호</span>
+      <h2>바이브코딩 지시서 도우미</h2>
+      <p>만들고 싶은 걸 지시서로 정리해 주는 도구</p>
+      <span class="go">열기</span>
+    </a>
+
+    <a class="card" href="./traffic/">
+      <span class="num">2호</span>
+      <h2>노리짱 트래픽센트</h2>
+      <p>실시간 트렌드 레이더 · 1단계 프로토타입</p>
+      <span class="go">열기</span>
+    </a>
+
+    <a class="card" href="./apptech/">
+      <span class="num">3호</span>
+      <h2>앱테크 · 체험단 · 기프티콘 수첩</h2>
+      <p>앱테크·체험단·기프티콘을 한 곳에 모아 관리</p>
+      <span class="go">열기</span>
+    </a>
+  </div>
+
+  <footer>
+    <span>노리짱 웹앱 테스트 모음</span>
+    <span>최종 수정 2026-11-21 · 테스트용</span>
+  </footer>
+</div>
+</body>
+</html>
