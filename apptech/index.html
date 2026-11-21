@@ -1,0 +1,2043 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E5E4E">
+<meta name="description" content="앱테크 출석·응모/체험단·기프티콘을 한 화면에 모아 두는 수첩. 서버 없이 내 브라우저에서만 동작합니다.">
+<title>올인원 앱테크·체험단·기프티콘 수첩</title>
+<style>
+  :root{
+    --ivory:#FAF7F1;
+    --paper:#FFFFFF;
+    --ink:#16272E;
+    --ink2:#465B63;
+    --ink3:#5F6E74;
+    --em:#0E5E4E;
+    --em2:#0A4438;
+    --em-t:#E7F2ED;
+    --em-t2:#F0F7F4;
+    --gold:#A9822F;
+    --gold-ink:#8A6520;
+    --gold-t:#F8F1DF;
+    --coral:#C25B45;
+    --coral-t:#FBEDEA;
+    --line:#E8E2D6;
+    --line2:#F1ECE2;
+    --navy:#1B2942;
+    --danger:#B3402F;
+    --shadow:0 12px 32px -16px rgba(22,39,46,.22), 0 2px 6px rgba(22,39,46,.04);
+    --shadow-s:0 4px 14px -8px rgba(22,39,46,.18);
+    --r:20px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--ivory);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Malgun Gothic","맑은 고딕","Noto Sans KR",system-ui,sans-serif;
+    font-size:16px;line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    word-break:keep-all;overflow-wrap:anywhere;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:
+      radial-gradient(680px 420px at 12% -6%, rgba(14,94,78,.09), transparent 62%),
+      radial-gradient(720px 460px at 92% 4%, rgba(169,130,47,.10), transparent 60%),
+      radial-gradient(900px 600px at 50% 108%, rgba(27,41,66,.05), transparent 60%);
+  }
+  .wrap{width:100%;max-width:960px;margin:0 auto;padding:0 18px}
+  h1,h2,h3,p{margin:0}
+  button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer;border:0;background:none}
+  input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
+  :focus-visible{outline:3px solid rgba(14,94,78,.35);outline-offset:2px;border-radius:12px}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+  /* ── 헤더 ───────────────────────────────── */
+  .hero{position:relative;z-index:1;padding:36px 0 18px}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12.5px;font-weight:700;letter-spacing:.02em;color:var(--em);
+    background:#fff;border:1px solid #D9E7E0;padding:7px 13px;border-radius:999px;
+    box-shadow:var(--shadow-s);
+  }
+  .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--em);box-shadow:0 0 0 3px rgba(14,94,78,.14)}
+  h1{margin:16px 0 0;font-size:clamp(27px,5.2vw,42px);line-height:1.22;letter-spacing:-.025em;font-weight:800}
+  h1 span{color:var(--em)}
+  .lead{margin-top:12px;max-width:660px;color:var(--ink2);font-size:15px;line-height:1.7}
+  .lead b{color:var(--ink);font-weight:700;white-space:nowrap}
+  .hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+  .hero-tag{font-size:12.5px;font-weight:600;color:var(--ink2);background:rgba(255,255,255,.75);border:1px solid var(--line);padding:6px 11px;border-radius:9px}
+  .hero-tag b{color:var(--em);font-weight:700}
+
+  /* ── 대시보드 ───────────────────────────── */
+  .dash-wrap{position:relative;z-index:1;padding:4px 0 14px}
+  .dash{
+    background:var(--paper);border:1px solid var(--line);border-radius:var(--r);
+    box-shadow:var(--shadow);padding:16px 18px 15px;
+    display:grid;gap:14px;grid-template-columns:minmax(0,1fr);
+  }
+  @media (min-width:820px){
+    .dash{grid-template-columns:minmax(0,.95fr) minmax(0,1.35fr) minmax(0,1.15fr);gap:16px;align-items:stretch}
+    .dash-cell + .dash-cell{border-left:1px solid var(--line2);padding-left:16px}
+  }
+  .dash-cell{min-width:0}
+  .dash-label{font-size:11px;font-weight:800;color:var(--ink3);letter-spacing:.04em;display:flex;align-items:center;gap:6px;text-transform:none}
+  .attend-num{display:flex;align-items:baseline;gap:2px;margin-top:3px;font-variant-numeric:tabular-nums}
+  .attend-num b{font-size:31px;font-weight:800;color:var(--em);letter-spacing:-.035em;line-height:1}
+  .attend-num span{font-size:14px;font-weight:700;color:#8A9A97}
+  .attend-bar{height:8px;border-radius:99px;background:#EAE5D9;overflow:hidden;margin-top:8px}
+  .attend-bar i{display:block;height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,#0E5E4E,#2E8B73 62%,#B99547);transition:width .4s cubic-bezier(.2,.7,.3,1)}
+  .attend-meta{margin-top:7px;font-size:12px;color:var(--ink3);font-weight:600;line-height:1.45}
+  .attend-meta b{color:var(--em)}
+  .money-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:6px}
+  .money{background:#FBFAF5;border:1px solid #EFEADD;border-radius:12px;padding:9px 10px;min-width:0}
+  .money .k{font-size:10px;font-weight:800;color:var(--ink3);white-space:nowrap;letter-spacing:-.01em}
+  .money .v{font-size:clamp(14px,3.5vw,17.5px);font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin-top:2px;white-space:nowrap}
+  .money .u{font-size:10px;font-weight:700;color:var(--ink3);margin-left:1px}
+  .money.em .v{color:var(--em)}
+  .money.gold .v{color:var(--gold-ink)}
+  .money.navy .v{color:var(--navy)}
+  .alerts{display:flex;flex-direction:column;gap:5px;margin-top:6px}
+  .alert{
+    display:flex;align-items:center;gap:8px;width:100%;text-align:left;
+    font-size:12px;font-weight:700;color:var(--ink2);
+    background:#FCFBF6;border:1px solid var(--line2);border-radius:10px;padding:6px 9px;
+    transition:.15s;
+  }
+  .alert:hover{border-color:#DCD3BE;background:#FFFEFA}
+  .alert .dot{flex:none;width:6px;height:6px;border-radius:50%;background:var(--gold)}
+  .alert.warn .dot{background:var(--coral)}
+  .alert .tx{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .alert .dd{flex:none;font-size:10.5px;font-weight:800;color:var(--gold-ink);background:var(--gold-t);border-radius:6px;padding:2px 6px}
+  .alert.warn .dd{color:var(--danger);background:var(--coral-t)}
+  .alert-none{font-size:12px;color:var(--ink3);padding:8px 2px;line-height:1.5}
+
+  /* ── 탭 ─────────────────────────────────── */
+  .tabs-wrap{
+    position:sticky;top:0;z-index:20;padding:9px 0;
+    background:rgba(250,247,241,.9);
+    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+    border-bottom:1px solid rgba(232,226,214,.7);
+  }
+  .tabs{display:flex;gap:4px;padding:5px;background:#EFEAE0;border:1px solid #E4DDCE;border-radius:16px;overflow:hidden}
+  .tab{
+    flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:6px;
+    padding:10px 6px;border-radius:12px;font-size:13.5px;font-weight:700;color:var(--ink2);
+    white-space:nowrap;transition:background .18s,color .18s,box-shadow .18s;
+  }
+  .tab[aria-selected="true"]{background:#fff;color:var(--em);box-shadow:0 2px 10px -4px rgba(22,39,46,.25)}
+  .tab .count{
+    font-size:10.5px;font-weight:800;color:#fff;background:var(--em);
+    min-width:17px;height:17px;padding:0 4px;border-radius:9px;
+    display:inline-flex;align-items:center;justify-content:center;
+  }
+  .tab .count.zero{background:#E2DDD1;color:#5F6E74}
+
+  /* ── 기본 ───────────────────────────────── */
+  main{position:relative;z-index:1;padding:18px 0 36px}
+  .panel[hidden]{display:none}
+  .card{
+    background:var(--paper);border:1px solid var(--line);border-radius:var(--r);
+    box-shadow:var(--shadow);padding:18px;
+  }
+  .card + .card{margin-top:16px}
+  .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+  .card-head h2{font-size:16.5px;font-weight:800;letter-spacing:-.01em;display:flex;align-items:center;gap:7px}
+  .card-head p{margin-top:4px;font-size:12.5px;color:var(--ink3);line-height:1.5}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    min-height:42px;padding:0 17px;border-radius:12px;
+    font-size:14px;font-weight:800;letter-spacing:-.01em;
+    transition:transform .12s,background .16s,box-shadow .16s,border-color .16s;
+  }
+  .btn:active{transform:scale(.985)}
+  .btn-primary{background:var(--em);color:#fff;box-shadow:0 10px 20px -14px rgba(14,94,78,.95)}
+  .btn-primary:hover{background:var(--em2)}
+  .btn-ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
+  .btn-ghost:hover{border-color:#CFC6B2;background:#FDFCF8}
+  .btn-sm{min-height:36px;padding:0 12px;font-size:12.5px;border-radius:10px;flex:none}
+  .btn-danger{background:var(--coral-t);color:var(--danger);border:1px solid #EBC4BC}
+  .btn-danger:hover{background:#F7DFDA}
+  .mini-btn{
+    flex:none;font-size:12px;font-weight:700;color:var(--ink3);
+    border:1px solid var(--line);border-radius:9px;padding:6px 10px;background:#fff;
+  }
+  .mini-btn:hover{color:var(--ink);border-color:#CFC6B2}
+  .icon-btn{
+    flex:none;width:30px;height:30px;border-radius:9px;
+    display:inline-flex;align-items:center;justify-content:center;
+    font-size:13.5px;color:var(--ink3);border:1px solid transparent;background:transparent;
+    transition:.15s;
+  }
+  .icon-btn:hover{color:var(--em);background:var(--em-t2);border-color:#DCE7E1}
+
+  .notice{
+    display:flex;gap:8px;align-items:flex-start;
+    font-size:12px;color:var(--ink2);line-height:1.55;
+    background:#FBF8F0;border:1px solid #EDE5D3;border-radius:12px;
+    padding:10px 12px;margin-bottom:14px;
+  }
+  .notice b{color:var(--ink);font-weight:800}
+  .notice.store{background:#FDF1EE;border-color:#EFCFC7;color:#8A4535}
+  .notice[hidden]{display:none}
+
+  /* ── 출석판 ─────────────────────────────── */
+  .mini-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
+  .mini-stat{background:#FBFAF5;border:1px solid #EFEADD;border-radius:12px;padding:9px 11px}
+  .mini-stat span{display:block;font-size:10.5px;font-weight:800;color:var(--ink3);white-space:nowrap}
+  .mini-stat b{display:block;margin-top:2px;font-size:15px;font-weight:800;color:var(--ink);letter-spacing:-.02em;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .mini-stat b em{font-style:normal;font-size:11px;color:var(--ink3);font-weight:700;margin-left:1px}
+
+  .item-list{display:flex;flex-direction:column;gap:8px}
+  .item{
+    display:flex;align-items:center;gap:8px;
+    background:#fff;border:1px solid var(--line);border-radius:14px;padding:4px 6px 4px 4px;
+    transition:border-color .16s,background .16s,box-shadow .16s;
+  }
+  .item:hover{border-color:#D8D0BE;box-shadow:var(--shadow-s)}
+  .item-tap{
+    flex:1;min-width:0;display:flex;align-items:center;gap:10px;
+    padding:8px 4px 8px 8px;border-radius:11px;text-align:left;
+  }
+  .item-emoji{
+    flex:none;width:34px;height:34px;border-radius:11px;
+    background:var(--em-t2);border:1px solid #E1EDE7;
+    display:flex;align-items:center;justify-content:center;font-size:17px;line-height:1;
+  }
+  .item-main{flex:1;min-width:0}
+  .item-main b{display:block;font-size:14px;font-weight:800;letter-spacing:-.01em;line-height:1.35}
+  .item-main span{display:block;font-size:11.5px;color:var(--ink3);font-weight:600;margin-top:1px}
+  .ex{
+    display:inline-block;vertical-align:1px;margin-left:5px;
+    font-style:normal;font-size:9.5px;font-weight:800;letter-spacing:.02em;
+    color:var(--gold-ink);background:var(--gold-t);border-radius:5px;padding:1px 5px;
+  }
+  .check{
+    flex:none;width:26px;height:26px;border-radius:50%;
+    border:1.8px solid #CBD5D1;background:#fff;position:relative;transition:.16s;
+  }
+  .item.on{background:var(--em-t2);border-color:#CFE3DA}
+  .item.on .check{background:var(--em);border-color:var(--em)}
+  .item.on .check::after{
+    content:"";position:absolute;left:9px;top:4.5px;width:6px;height:12px;
+    border:solid #fff;border-width:0 2px 2px 0;transform:rotate(42deg);
+  }
+  .item.on .item-main b{color:var(--em2)}
+  .item.on .item-emoji{background:#fff;border-color:#D3E7DE}
+  .item-actions{display:flex;flex:none;gap:0}
+  .empty-box{
+    border:1px dashed #DCD4C2;border-radius:16px;padding:28px 18px;text-align:center;background:#FDFBF5;
+  }
+  .empty-box .mark{
+    width:42px;height:42px;border-radius:14px;margin:0 auto 10px;
+    background:var(--em-t);color:var(--em);display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;
+  }
+  .empty-box b{display:block;font-size:14px;font-weight:800;margin-bottom:4px}
+  .empty-box p{font-size:12.5px;color:var(--ink3);line-height:1.6}
+
+  /* ── 달력 ───────────────────────────────── */
+  .cal-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+  .cal-title{font-size:14.5px;font-weight:800;letter-spacing:-.01em}
+  .cal-nav{display:flex;gap:4px;align-items:center}
+  .cal-nav button{
+    width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:#fff;
+    font-weight:800;font-size:13px;color:var(--ink2);display:inline-flex;align-items:center;justify-content:center;
+  }
+  .cal-nav button:hover{border-color:#CFC6B2;color:var(--ink)}
+  .cal-nav .todaybtn{width:auto;padding:0 9px;font-size:11.5px}
+  .cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+  .cal .wd{text-align:center;font-size:10.5px;font-weight:800;color:var(--ink3);padding:2px 0 4px}
+  .cal .wd.sun{color:var(--coral)}
+  .cal-day{
+    position:relative;aspect-ratio:1/1;border-radius:10px;border:1px solid transparent;
+    background:#FCFBF6;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+    font-size:12px;font-weight:700;color:var(--ink2);font-variant-numeric:tabular-nums;
+    padding:0;line-height:1;
+  }
+  .cal-day.out{background:transparent;color:#CFC8BA}
+  .cal-day.out.calm{color:#DED8CB}
+  .cal-day.today{box-shadow:0 0 0 1.5px var(--em) inset}
+  .cal-day.full{background:var(--em);border-color:var(--em);color:#fff;font-weight:800}
+  .cal-day.part{background:var(--em-t);border-color:#D5E8DF;color:var(--em2)}
+  .cal-day .dot{width:4px;height:4px;border-radius:50%;background:var(--em);opacity:0}
+  .cal-day.part .dot{opacity:1}
+  .cal-day.full .dot{opacity:0}
+  .cal-day .tick{font-size:11px;line-height:1;margin-top:1px;opacity:0}
+  .cal-day.full .tick{opacity:1}
+  .cal-day.sel{box-shadow:0 0 0 2px var(--gold) inset}
+  .cal-day.has-ev{background:#FDFBF4;border-color:#EFE5D2}
+  .cal-day.has-ev .dot{opacity:0}
+  @media (min-width:640px){ .cal-day{aspect-ratio:1/.82} }
+  .cal-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:11px;font-size:11px;color:var(--ink3);font-weight:600}
+  .cal-legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+  .cal-legend .l-full{background:var(--em)}
+  .cal-legend .l-part{background:var(--em-t);border:1px solid #D5E8DF}
+  .cal-legend .l-dl{background:var(--gold);border-radius:50%}
+  .cal-legend .l-an{background:var(--em);border-radius:50%}
+
+  /* ── 응모 ───────────────────────────────── */
+  .filter-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;align-items:center}
+  .fchip{
+    font-size:12px;font-weight:700;color:var(--ink2);background:#fff;
+    border:1px solid var(--line);border-radius:999px;padding:6px 12px;transition:.15s;
+  }
+  .fchip:hover{border-color:#CFC6B2;color:var(--ink)}
+  .fchip.on{background:var(--em);border-color:var(--em);color:#fff;box-shadow:0 6px 14px -9px rgba(14,94,78,.8)}
+  .fchip .n{font-size:10.5px;font-weight:800;opacity:.72;margin-left:3px}
+  .view-toggle{margin-left:auto;display:flex;gap:3px;padding:3px;background:#EFEAE0;border:1px solid #E4DDCE;border-radius:10px}
+  .view-toggle button{padding:5px 10px;border-radius:7px;font-size:11.5px;font-weight:800;color:var(--ink2)}
+  .view-toggle button.on{background:#fff;color:var(--em);box-shadow:0 1px 4px -1px rgba(22,39,46,.25)}
+
+  .draw-list{display:flex;flex-direction:column;gap:9px}
+  .draw{
+    border:1px solid var(--line);border-radius:15px;background:#fff;padding:13px 14px;
+    transition:border-color .16s,box-shadow .16s;
+  }
+  .draw:hover{border-color:#D8D0BE;box-shadow:var(--shadow-s)}
+  .draw-top{display:flex;align-items:flex-start;gap:10px}
+  .draw-main{flex:1;min-width:0}
+  .draw-title{font-size:14px;font-weight:800;letter-spacing:-.01em;line-height:1.4;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .draw-meta{margin-top:4px;font-size:11.5px;color:var(--ink3);font-weight:600;display:flex;flex-wrap:wrap;gap:8px}
+  .draw-memo{margin-top:6px;font-size:12px;color:var(--ink2);line-height:1.55;white-space:pre-wrap}
+  .draw-side{flex:none;text-align:right}
+  .dday{
+    display:inline-flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:800;border-radius:8px;padding:3px 8px;
+    background:var(--em-t);color:var(--em);font-variant-numeric:tabular-nums;white-space:nowrap;
+  }
+  .dday.warn{background:#FCEFDD;color:#9A5B14}
+  .dday.danger{background:var(--coral-t);color:var(--danger)}
+  .dday.past{background:#EFEDE7;color:#7C8B8A}
+  .dday-sub{display:block;font-size:10px;font-weight:700;color:var(--ink3);margin-top:3px}
+  .draw-foot{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:10px;padding-top:9px;border-top:1px solid var(--line2)}
+  .badge{font-size:10.5px;font-weight:800;border-radius:999px;padding:2.5px 8px;background:var(--em-t);color:var(--em);white-space:nowrap}
+  .badge.wait{background:var(--gold-t);color:var(--gold-ink)}
+  .badge.win{background:var(--em);color:#fff}
+  .badge.lose{background:#F0EEE8;color:#6C7A7F}
+  .badge.cat{background:#F2EEE4;color:var(--ink2)}
+  .prize{font-size:11.5px;font-weight:800;color:var(--gold-ink);font-variant-numeric:tabular-nums}
+  .draw-foot .sp{margin-left:auto}
+  .draw-foot .mini-btn{padding:5px 9px;font-size:11.5px}
+  .month-sum{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    margin-top:12px;padding:11px 13px;border-radius:12px;
+    background:linear-gradient(90deg,#FBF8F0,#FDFCF8);border:1px solid #EDE5D3;
+    font-size:12.5px;font-weight:700;color:var(--ink2);
+  }
+  .month-sum b{font-size:16px;font-weight:800;color:var(--gold-ink);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .day-events{margin-top:12px}
+  .day-events h3{font-size:12px;font-weight:800;color:var(--ink3);margin-bottom:7px}
+  .de-row{display:flex;align-items:center;gap:7px;font-size:12px;padding:6px 0;border-top:1px solid var(--line2)}
+  .de-row:first-child{border-top:0}
+  .de-row .dot{flex:none;width:7px;height:7px;border-radius:50%;background:var(--gold)}
+  .de-row .dot.an{background:var(--em)}
+  .de-row b{font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .de-row span{flex:none;font-size:10.5px;color:var(--ink3);font-weight:700}
+
+  /* ── 기프티콘 ───────────────────────────── */
+  .wallet-sum{
+    display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;
+    margin-bottom:13px;padding:12px 14px;border-radius:13px;
+    background:linear-gradient(120deg,#0E5E4E,#14614F 55%,#1D6B54);
+    color:#fff;box-shadow:0 14px 26px -20px rgba(14,94,78,.95);
+  }
+  .wallet-sum .k{font-size:11.5px;font-weight:700;color:#CBE6DC}
+  .wallet-sum b{font-size:23px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+  .wallet-sum .k2{margin-left:auto;font-size:11.5px;font-weight:700;color:#CBE6DC}
+  .gift-list{display:flex;flex-direction:column;gap:9px}
+  .gift{
+    display:flex;align-items:center;gap:11px;width:100%;text-align:left;
+    background:#fff;border:1px solid var(--line);border-radius:15px;padding:12px 13px;
+    transition:border-color .16s,box-shadow .16s,background .16s;
+  }
+  .gift:hover{border-color:#D8D0BE;box-shadow:var(--shadow-s)}
+  .gift:active{transform:scale(.995)}
+  .gift.warn{border-color:#EBC9A8;background:#FFFCF6}
+  .gift.danger{border-color:#EBB4AB;background:#FFF8F7}
+  .gift.past{background:#FBFAF6}
+  .gift.used{background:#FAF8F3;border-color:#E6E1D6}
+  .gift.used .g-brand,.gift.used .g-prod{color:#8A9A97}
+  .g-ico{
+    flex:none;width:38px;height:38px;border-radius:12px;
+    background:var(--gold-t);border:1px solid #EFE2C6;
+    display:flex;align-items:center;justify-content:center;font-size:18px;
+  }
+  .gift.used .g-ico{background:#F0EEE8;border-color:#E6E1D6;filter:grayscale(1);opacity:.8}
+  .g-main{flex:1;min-width:0}
+  .g-brand{font-size:13.5px;font-weight:800;letter-spacing:-.01em;display:flex;align-items:center;gap:5px;flex-wrap:wrap;line-height:1.35}
+  .g-prod{display:block;font-size:11.5px;color:var(--ink3);font-weight:600;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .g-bars-wrap{flex:none;display:none;flex-direction:column;align-items:center;gap:4px;padding:0 10px}
+  .g-bars{
+    width:72px;height:30px;border-radius:2px;opacity:.62;
+    background:repeating-linear-gradient(90deg,#16272E 0 2px,transparent 2px 4px,#16272E 4px 5px,transparent 5px 8px,#16272E 8px 11px,transparent 11px 12px,#16272E 12px 13px,transparent 13px 16px);
+  }
+  .g-tail{font-size:9.5px;font-weight:800;color:var(--ink3);letter-spacing:.08em;font-variant-numeric:tabular-nums}
+  .gift.used .g-bars{opacity:.28}
+  @media (min-width:760px){ .g-bars-wrap{display:flex} }
+  .g-side{flex:none;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+  .g-amt{font-size:13px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .gift.used .g-amt{color:#8A9A97;text-decoration:line-through}
+  .g-exp{font-size:10.5px;font-weight:700;color:var(--ink3);font-variant-numeric:tabular-nums}
+  .gift.used .g-exp{color:#A7B2AF}
+
+  /* ── 폼/모달 ────────────────────────────── */
+  .modal{position:fixed;inset:0;z-index:80;display:none;align-items:flex-end;justify-content:center}
+  .modal.open{display:flex}
+  .modal-bg{position:absolute;inset:0;background:rgba(16,32,37,.48);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+  .sheet{
+    position:relative;width:100%;max-width:520px;background:#fff;
+    border-radius:22px 22px 0 0;padding:18px 18px calc(16px + env(safe-area-inset-bottom));
+    max-height:92vh;overflow:auto;box-shadow:0 -20px 60px -22px rgba(0,0,0,.5);
+    animation:sheetUp .22s cubic-bezier(.2,.7,.3,1);
+  }
+  @keyframes sheetUp{from{transform:translateY(24px);opacity:.6}to{transform:translateY(0);opacity:1}}
+  @media (min-width:640px){
+    .modal{align-items:center;padding:20px}
+    .sheet{border-radius:22px;max-height:86vh}
+  }
+  .sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:4px}
+  .sheet-head h2{font-size:17px;font-weight:800;letter-spacing:-.015em}
+  .sheet-head p{font-size:12px;color:var(--ink3);margin-top:3px}
+  .sheet-close{
+    flex:none;width:32px;height:32px;border-radius:10px;background:#F6F3EC;
+    color:var(--ink2);font-size:15px;display:inline-flex;align-items:center;justify-content:center;
+  }
+  .sheet-close:hover{background:#EFEBE1}
+  .form-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin-top:14px}
+  .form-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9px}
+  .fld{display:block;min-width:0}
+  .fld > span{display:block;font-size:12px;font-weight:800;color:var(--ink);margin-bottom:5px}
+  .fld > span em{font-style:normal;font-size:10.5px;font-weight:700;color:var(--ink3);margin-left:4px}
+  .fld input, .fld textarea, .fld select{
+    width:100%;border:1px solid var(--line);background:#FDFCF8;border-radius:11px;
+    padding:11px 12px;font-size:15px;line-height:1.5;color:var(--ink);
+    transition:border-color .16s,background .16s,box-shadow .16s;
+  }
+  .fld textarea{min-height:70px;resize:vertical}
+  .fld input::placeholder,.fld textarea::placeholder{color:#8A979C}
+  .fld input:focus,.fld textarea:focus,.fld select:focus{
+    outline:0;border-color:var(--em);background:#fff;box-shadow:0 0 0 4px rgba(14,94,78,.10);
+  }
+  .fld input.err,.fld textarea.err{border-color:#D98D7D;background:#FFF9F7;box-shadow:0 0 0 3px rgba(179,64,47,.08)}
+  .fld .hint{display:block;margin-top:5px;font-size:11px;color:var(--ink3);line-height:1.45}
+  .fld .errmsg{display:none;margin-top:5px;font-size:11.5px;font-weight:700;color:var(--danger)}
+  .fld .errmsg.show{display:block}
+  .seg-btns{display:flex;gap:5px}
+  .seg-btns button{
+    flex:1;min-width:0;padding:9px 4px;border-radius:10px;border:1px solid var(--line);
+    background:#FDFCF8;font-size:12.5px;font-weight:700;color:var(--ink2);transition:.15s;
+  }
+  .seg-btns button.on{background:var(--em);border-color:var(--em);color:#fff;box-shadow:0 6px 14px -10px rgba(14,94,78,.9)}
+  .sheet-foot{display:flex;gap:8px;margin-top:16px}
+  .sheet-foot .btn{flex:1}
+  .sheet-foot .btn-del{flex:0 0 auto;padding:0 14px}
+
+  /* ── 매장 제시 바코드 ───────────────────── */
+  .bc-sheet{max-width:430px;text-align:center}
+  .bc-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .bc-brandline{display:flex;align-items:center;gap:8px;min-width:0}
+  .bc-logo{
+    flex:none;width:34px;height:34px;border-radius:11px;background:var(--gold-t);
+    border:1px solid #EFE2C6;display:flex;align-items:center;justify-content:center;font-size:17px;
+  }
+  .bc-brand{font-size:15px;font-weight:800;letter-spacing:-.02em;text-align:left;line-height:1.25;min-width:0}
+  .bc-brand b{display:block;font-size:15px;font-weight:800;line-height:1.25}
+  .bc-brand span{display:block;font-size:11.5px;color:var(--ink3);font-weight:600;margin-top:1px}
+  .bc-amt-row{display:flex;align-items:center;justify-content:center;gap:8px;margin:16px 0 4px}
+  .bc-amt{font-size:26px;font-weight:800;letter-spacing:-.03em;color:var(--em2);font-variant-numeric:tabular-nums}
+  .bc-exp{font-size:11.5px;font-weight:700;color:var(--ink3)}
+  .bc-box{
+    margin:14px 0 10px;padding:16px 12px 13px;background:#fff;
+    border:1px solid #E4DFD2;border-radius:14px;
+  }
+  .bc-bars{
+    display:flex;align-items:stretch;gap:0;height:110px;width:100%;
+    background:#fff;border-radius:4px;overflow:hidden;
+  }
+  .bc-bars i{display:block;height:100%;background:#101820}
+  .bc-bars i.w{background:transparent}
+  .bc-digits{
+    margin-top:11px;font-size:clamp(20px,6.4vw,27px);font-weight:800;letter-spacing:.10em;
+    color:#101820;font-variant-numeric:tabular-nums;white-space:nowrap;
+    font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  }
+  .bc-hint{font-size:11.5px;color:var(--ink3);line-height:1.5;margin-top:2px}
+  .bc-meta{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px}
+  .bc-tag{
+    font-size:11px;font-weight:800;border-radius:999px;padding:4px 10px;
+    background:var(--em-t);color:var(--em);
+  }
+  .bc-tag.warn{background:#FCEFDD;color:#9A5B14}
+  .bc-tag.danger{background:var(--coral-t);color:var(--danger)}
+  .bc-tag.past{background:#EFEDE7;color:#7C8B8A}
+  .bc-memo{
+    margin-top:12px;padding:10px 12px;border-radius:11px;background:#FCFBF6;
+    border:1px solid #EFEADD;font-size:12px;color:var(--ink2);text-align:left;line-height:1.6;white-space:pre-wrap;
+  }
+  .bc-actions{display:flex;gap:8px;margin-top:14px}
+  .bc-actions .btn{flex:1}
+
+  /* ── 안내/푸터/토스트 ───────────────────── */
+  .howto{margin-top:18px}
+  .howto summary{
+    cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;
+    font-size:13px;font-weight:800;color:var(--ink);padding:2px 0;
+  }
+  .howto summary::-webkit-details-marker{display:none}
+  .howto summary::after{content:"＋";font-weight:700;color:var(--ink3);font-size:15px}
+  .howto[open] summary::after{content:"－"}
+  .howto-body{margin-top:11px;font-size:12.5px;color:var(--ink2);line-height:1.75}
+  .howto-body ol{margin:0;padding-left:18px}
+  .howto-body li{margin:5px 0}
+  .howto-body b{color:var(--ink)}
+  footer{position:relative;z-index:1;padding:22px 0 42px;text-align:center;font-size:11.5px;color:#66757B;line-height:1.7}
+  footer b{color:var(--ink3)}
+  .toast{
+    position:fixed;left:50%;bottom:26px;z-index:90;transform:translate(-50%,18px);
+    background:#123F35;color:#fff;font-size:13px;font-weight:700;
+    padding:12px 19px;border-radius:999px;
+    box-shadow:0 18px 40px -18px rgba(0,0,0,.55);
+    opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;
+    max-width:calc(100% - 32px);text-align:center;
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .toast.warn{background:#7A3B22}
+
+  @media (max-width:520px){
+    .wrap{padding:0 14px}
+    .hero{padding:26px 0 14px}
+    .card{padding:15px;border-radius:17px}
+    .dash{padding:14px 15px}
+    .tab{font-size:12.5px;padding:9px 4px;gap:4px}
+    .tab .tab-ico{font-size:13px}
+    .item-main b{font-size:13.5px}
+    .g-brand{font-size:13px}
+    .bc-bars{height:92px}
+    .month-sum b{font-size:15px}
+    footer{padding:16px 0 34px}
+  }
+  @media (max-width:380px){
+    .mini-stats{gap:6px}
+    .mini-stat{padding:8px 9px}
+    .mini-stat b{font-size:13.5px}
+    .money{padding:8px}
+    .tab .tab-lbl{font-size:11.5px}
+    .g-ico{width:34px;height:34px;font-size:16px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">3호 웹앱 · 서버 0원 · 설치 없이</div>
+    <h1>앱테크·체험단 <span>기프티콘 수첩</span></h1>
+    <p class="lead">매일 챙겨야 하는 <b>앱테크 출석</b>, 마감을 놓치기 쉬운 <b>응모·체험단</b>, 유효기간이 지나 버리는 <b>기프티콘</b>까지 — 오늘 할 일만 한눈에 보이게 모아 둡니다.</p>
+    <div class="hero-tags">
+      <span class="hero-tag"><b>출석</b> 스트릭 · 월간 달력</span>
+      <span class="hero-tag"><b>D-day</b> 임박순 자동 정렬</span>
+      <span class="hero-tag"><b>바코드</b> 매장 제시 큰 화면</span>
+    </div>
+  </div>
+</header>
+
+<section class="dash-wrap" aria-label="한눈에 보기">
+  <div class="wrap">
+    <div class="dash">
+      <div class="dash-cell">
+        <div class="dash-label">오늘 출석</div>
+        <div class="attend-num"><b id="dashAttendN">0</b><span>/ <span id="dashAttendM">0</span></span></div>
+        <div class="attend-bar"><i id="dashBar"></i></div>
+        <div class="attend-meta" id="dashAttendMeta">아직 기록이 없어요</div>
+      </div>
+      <div class="dash-cell">
+        <div class="dash-label">이번 달</div>
+        <div class="money-grid">
+          <div class="money em">
+            <div class="k">앱테크 적립</div>
+            <div class="v" id="dashEarn">0<span class="u">원</span></div>
+          </div>
+          <div class="money gold">
+            <div class="k">응모 당첨</div>
+            <div class="v" id="dashWin">0<span class="u">원</span></div>
+          </div>
+          <div class="money navy">
+            <div class="k">기프티콘</div>
+            <div class="v" id="dashGift">0<span class="u">원</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="dash-cell">
+        <div class="dash-label">임박 알림</div>
+        <div class="alerts" id="dashAlerts"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="tabs-wrap">
+  <div class="wrap">
+    <div class="tabs" role="tablist" aria-label="수첩 탭">
+      <button class="tab" role="tab" id="tab-attend" aria-selected="true" aria-controls="panel-attend" data-tab="attend">
+        <span class="tab-ico">✅</span><span class="tab-lbl">출석판</span>
+      </button>
+      <button class="tab" role="tab" id="tab-draw" aria-selected="false" aria-controls="panel-draw" data-tab="draw" tabindex="-1">
+        <span class="tab-ico">🎁</span><span class="tab-lbl">응모·체험단</span><span class="count zero" id="drawCount">0</span>
+      </button>
+      <button class="tab" role="tab" id="tab-gift" aria-selected="false" aria-controls="panel-gift" data-tab="gift" tabindex="-1">
+        <span class="tab-ico">🎟️</span><span class="tab-lbl">기프티콘</span><span class="count zero" id="giftCount">0</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <!-- ══════════ 탭 1 · 앱테크 출석판 ══════════ -->
+  <section class="panel" id="panel-attend" role="tabpanel" aria-labelledby="tab-attend">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h2>오늘의 출석</h2>
+          <p id="attendDateLine">오늘 날짜를 불러오는 중…</p>
+        </div>
+        <button class="btn btn-primary btn-sm" id="btnAddItem" type="button">＋ 항목</button>
+      </div>
+
+      <div class="notice store" id="storeNotice" hidden>저장 공간이 막혀 있어요(시크릿 모드 등). 화면을 닫으면 기록이 사라집니다.</div>
+
+      <div class="mini-stats">
+        <div class="mini-stat"><span>연속 출석</span><b id="statStreak">0<em>일</em></b></div>
+        <div class="mini-stat"><span>이번 달 적립</span><b id="statMonth">0<em>원</em></b></div>
+        <div class="mini-stat"><span>오늘 적립</span><b id="statToday">0<em>원</em></b></div>
+      </div>
+
+      <div class="item-list" id="itemList"></div>
+      <div class="ex-note" id="itemExNote" hidden style="margin-top:11px;font-size:11.5px;color:var(--ink3);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span>금색 <b style="color:var(--gold-ink)">예시</b>는 연습용이에요. 지우고 내 항목을 넣으세요.</span>
+        <button class="mini-btn" id="btnClearAllExample" type="button">예시 모두 지우기</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cal-head">
+        <div class="cal-title" id="appCalTitle">2026년 11월</div>
+        <div class="cal-nav">
+          <button type="button" id="appCalPrev" aria-label="이전 달">‹</button>
+          <button type="button" class="todaybtn" id="appCalToday">이번 달</button>
+          <button type="button" id="appCalNext" aria-label="다음 달">›</button>
+        </div>
+      </div>
+      <div class="cal" id="appCal"></div>
+      <div class="cal-legend">
+        <span><i class="l-full"></i>모두 완료</span>
+        <span><i class="l-part"></i>일부 완료</span>
+        <span><i style="background:#fff;border:1.5px solid var(--em)"></i>오늘</span>
+      </div>
+      <div class="month-sum" style="margin-top:14px">
+        <span id="appCalMonthLabel">이번 달 적립 합계</span>
+        <b id="appCalMonthSum">0원</b>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 탭 2 · 응모·체험단 수첩 ══════════ -->
+  <section class="panel" id="panel-draw" role="tabpanel" aria-labelledby="tab-draw" hidden>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h2>응모·체험단 수첩</h2>
+          <p>마감·발표일이 가까운 순서로 자동 정렬돼요.</p>
+        </div>
+        <button class="btn btn-primary btn-sm" id="btnAddDraw" type="button">＋ 응모</button>
+      </div>
+
+      <div class="filter-row">
+        <button class="fchip on" type="button" data-filter="all">전체 <span class="n" id="fAll">0</span></button>
+        <button class="fchip" type="button" data-filter="대기">대기 <span class="n" id="fWait">0</span></button>
+        <button class="fchip" type="button" data-filter="당첨">당첨 <span class="n" id="fWin">0</span></button>
+        <button class="fchip" type="button" data-filter="미당첨">미당첨 <span class="n" id="fLose">0</span></button>
+        <div class="view-toggle" role="group" aria-label="보기 방식">
+          <button type="button" class="on" data-view="list">리스트</button>
+          <button type="button" data-view="cal">달력</button>
+        </div>
+      </div>
+
+      <div id="drawListWrap">
+        <div class="draw-list" id="drawList"></div>
+      </div>
+
+      <div id="drawCalWrap" hidden>
+        <div class="cal-head">
+          <div class="cal-title" id="drawCalTitle">2026년 11월</div>
+          <div class="cal-nav">
+            <button type="button" id="drawCalPrev" aria-label="이전 달">‹</button>
+            <button type="button" class="todaybtn" id="drawCalToday">이번 달</button>
+            <button type="button" id="drawCalNext" aria-label="다음 달">›</button>
+          </div>
+        </div>
+        <div class="cal" id="drawCal"></div>
+        <div class="cal-legend">
+          <span><i class="l-dl"></i>응모 마감</span>
+          <span><i class="l-an"></i>발표일</span>
+        </div>
+        <div class="day-events" id="drawDayEvents"></div>
+      </div>
+
+      <div class="month-sum">
+        <span>이번 달 당첨 금액</span>
+        <b id="drawMonthWin">0원</b>
+      </div>
+
+      <div class="ex-note" id="drawExNote" hidden style="margin-top:11px;font-size:11.5px;color:var(--ink3);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span>금색 <b style="color:var(--gold-ink)">예시</b>는 연습용이에요.</span>
+        <button class="mini-btn" id="btnClearDrawExample" type="button">예시 모두 지우기</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ 탭 3 · 기프티콘 지갑 ══════════ -->
+  <section class="panel" id="panel-gift" role="tabpanel" aria-labelledby="tab-gift" hidden>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h2>기프티콘 지갑</h2>
+          <p>유효기간 임박순 · 카드를 누르면 매장 제시 화면이 열려요.</p>
+        </div>
+        <button class="btn btn-primary btn-sm" id="btnAddGift" type="button">＋ 기프티콘</button>
+      </div>
+
+      <div class="wallet-sum">
+        <span class="k">지금 쓸 수 있는 금액</span>
+        <b id="giftAvail">0원</b>
+        <span class="k2"><span id="giftAvailCount">0</span>장</span>
+      </div>
+
+      <div class="gift-list" id="giftList"></div>
+
+      <div class="ex-note" id="giftExNote" hidden style="margin-top:11px;font-size:11.5px;color:var(--ink3);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span>금색 <b style="color:var(--gold-ink)">예시</b>는 연습용이에요.</span>
+        <button class="mini-btn" id="btnClearGiftExample" type="button">예시 모두 지우기</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <details class="howto">
+        <summary>기프티콘, 이렇게 쓰면 편해요</summary>
+        <div class="howto-body">
+          <ol>
+            <li><b>바코드 번호는 숫자 12~16자리</b>로 넣어 주세요. 문자·쿠폰번호가 섞여 있으면 숫자만 남겨 넣습니다.</li>
+            <li>카드를 누르면 <b>매장 제시용 큰 화면</b>이 열려요. 계산대에서 그대로 보여 주세요.</li>
+            <li>사용한 기프티콘은 <b>사용 완료</b>로 바꾸면 합계에서 빠지고, 잘못 눌렀으면 <b>복구</b>할 수 있어요.</li>
+            <li>D-7 이하는 <b>주황</b>, D-3 이하는 <b>빨강</b>으로 표시돼서 놓치기 어려워요.</li>
+          </ol>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <details class="howto">
+    <summary>이 수첩은 어떻게 동작하나요?</summary>
+    <div class="howto-body">
+      <ol>
+        <li>모든 기록은 <b>이 브라우저 안에만</b> 저장됩니다. 서버·로그인·회원가입이 없고, 다른 사람에게 보이지 않아요.</li>
+        <li>같은 폰의 같은 브라우저로 열면 기록이 그대로 남아 있습니다. <b>브라우저 기록·사이트 데이터를 지우면</b> 함께 지워져요.</li>
+        <li>오늘 날짜는 <b>기기 시계</b>를 기준으로 계산합니다. 날짜가 밀리지 않게 시계의 자동 설정을 켜 두세요.</li>
+        <li>날짜가 바뀌면 출석판이 자동으로 새 날짜로 넘어갑니다. 어제 기록은 달력에 그대로 남아요.</li>
+      </ol>
+    </div>
+  </details>
+
+  <footer>
+    <b>올인원 앱테크·체험단·기프티콘 수첩</b> · 3호 웹앱<br>
+    기록은 이 브라우저에만 저장됩니다 · <span id="uidLine">익명 ID</span>
+  </footer>
+</main>
+
+<!-- ══════════ 폼 모달 ══════════ -->
+<div class="modal" id="formModal" aria-hidden="true">
+  <div class="modal-bg" data-close="1"></div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="formTitle">
+    <div class="sheet-head">
+      <div>
+        <h2 id="formTitle">항목 추가</h2>
+        <p id="formSub">필요한 것만 채우면 돼요.</p>
+      </div>
+      <button class="sheet-close" type="button" data-close="1" aria-label="닫기">✕</button>
+    </div>
+    <form id="formEl" novalidate>
+      <div class="form-grid" id="formBody"></div>
+      <div class="sheet-foot">
+        <button class="btn btn-danger btn-del" type="button" id="formDelete" hidden>삭제</button>
+        <button class="btn btn-ghost" type="button" data-close="1">취소</button>
+        <button class="btn btn-primary" type="submit" id="formSave">저장</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════ 매장 제시 바코드 ══════════ -->
+<div class="modal" id="bcModal" aria-hidden="true">
+  <div class="modal-bg" data-close="1"></div>
+  <div class="sheet bc-sheet" role="dialog" aria-modal="true" aria-labelledby="bcBrand">
+    <div class="bc-top">
+      <div class="bc-brandline">
+        <div class="bc-logo" id="bcLogo">🎟️</div>
+        <div class="bc-brand"><b id="bcBrand">브랜드</b><span id="bcProd">상품명</span></div>
+      </div>
+      <button class="sheet-close" type="button" data-close="1" aria-label="닫기">✕</button>
+    </div>
+
+    <div class="bc-amt-row">
+      <span class="bc-amt" id="bcAmt">0원</span>
+      <span class="bc-exp" id="bcExp">~ 2026.12.31</span>
+    </div>
+
+    <div class="bc-box">
+      <div class="bc-bars" id="bcBars" aria-hidden="true"></div>
+      <div class="bc-digits" id="bcDigits">0000 0000 0000</div>
+    </div>
+    <p class="bc-hint">계산대에서 이 화면을 그대로 보여 주세요.</p>
+    <div class="bc-meta" id="bcTags"></div>
+    <div class="bc-memo" id="bcMemo" hidden></div>
+
+    <div class="bc-actions">
+      <button class="btn btn-ghost" type="button" id="bcCopy">번호 복사</button>
+      <button class="btn btn-primary" type="button" id="bcUse">사용 완료</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  var $ = function (id) { return document.getElementById(id); };
+  var WDAY = ["일", "월", "화", "수", "목", "금", "토"];
+  var UID_KEY = "atc.uid";
+  var DATA_PREFIX = "atc.db.";
+
+  /* ══════════ 날짜·숫자 유틸 (기기 현지 날짜 기준) ══════════ */
+  function pad(n) { return n < 10 ? "0" + n : "" + n; }
+  function ymd(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+  function todayStr() { return ymd(new Date()); }
+  function parseYMD(s) {
+    if (!s) return null;
+    var p = String(s).split("-");
+    if (p.length < 3) return null;
+    var y = +p[0], m = +p[1], d = +p[2];
+    if (!y || !m || !d) return null;
+    return new Date(y, m - 1, d);
+  }
+  function midnight(d) { var x = new Date(d.getTime()); x.setHours(0, 0, 0, 0); return x; }
+  function daysUntil(s) {
+    var t = parseYMD(s);
+    if (!t) return null;
+    return Math.round((midnight(t) - midnight(new Date())) / 86400000);
+  }
+  function fmtDot(s) { var t = parseYMD(s); return t ? t.getFullYear() + "." + pad(t.getMonth() + 1) + "." + pad(t.getDate()) : ""; }
+  function fmtShort(s) { var t = parseYMD(s); return t ? (t.getMonth() + 1) + "." + pad(t.getDate()) : ""; }
+  function money(n) {
+    var v = Math.round(+n || 0);
+    return v.toLocaleString("ko-KR");
+  }
+  function won(n) { return money(n) + "원"; }
+  function ddayText(n) { return n === 0 ? "D-DAY" : (n > 0 ? "D-" + n : "D+" + (-n)); }
+  function ddayClass(n) {
+    if (n === null) return "";
+    if (n < 0) return "past";
+    if (n <= 3) return "danger";
+    if (n <= 7) return "warn";
+    return "";
+  }
+  function uid(p) { return p + "_" + Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-4); }
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function digitsOnly(s) { return String(s || "").replace(/[^0-9]/g, ""); }
+  function groupDigits(s) {
+    var d = digitsOnly(s);
+    return d.replace(/(.{4})/g, "$1 ").trim();
+  }
+
+  /* ══════════ 저장소 (localStorage → 메모리 폴백) ══════════ */
+  var memStore = null;
+  var storeBlocked = false;
+  var memUid = null;
+
+  function anonId() {
+    if (memUid) return memUid;
+    try {
+      var u = localStorage.getItem(UID_KEY);
+      if (!u) {
+        u = "atc-" + Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-4);
+        localStorage.setItem(UID_KEY, u);
+      }
+      memUid = u;
+    } catch (e) {
+      storeBlocked = true;
+      memUid = "atc-temp-" + Math.random().toString(36).slice(2, 8);
+    }
+    return memUid;
+  }
+  function dataKey() { return DATA_PREFIX + anonId(); }
+
+  function readStore() {
+    try {
+      var raw = localStorage.getItem(dataKey());
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      storeBlocked = true;
+      return memStore ? JSON.parse(JSON.stringify(memStore)) : null;
+    }
+  }
+  function writeStore() {
+    var payload = JSON.stringify(db);
+    try {
+      localStorage.setItem(dataKey(), payload);
+      return true;
+    } catch (e) {
+      storeBlocked = true;
+      memStore = JSON.parse(payload);
+      return false;
+    }
+  }
+
+  /* ══════════ 초기 데이터(예시 1회만) ══════════ */
+  function relDate(addDays) {
+    var d = new Date();
+    d.setDate(d.getDate() + addDays);
+    return ymd(d);
+  }
+  function seedData() {
+    return {
+      v: 1,
+      seeded: true,
+      items: [
+        { id: uid("itm"), name: "토스 만보기", amount: 30, emoji: "🚶", example: true },
+        { id: uid("itm"), name: "캐시워크", amount: 100, emoji: "💰", example: true },
+        { id: uid("itm"), name: "모니모", amount: 50, emoji: "🟢", example: true },
+        { id: uid("itm"), name: "네이버페이 출석", amount: 10, emoji: "🅽", example: true },
+        { id: uid("itm"), name: "그로우플레이 퀴즈", amount: 30, emoji: "🌱", example: true }
+      ],
+      checks: {},
+      draws: [
+        {
+          id: uid("drw"), title: "카카오 선물하기 디저트 체험단", cat: "체험단",
+          deadline: relDate(4), announce: relDate(9), status: "대기",
+          prize: 25000, memo: "리뷰 3줄 + 사진 2장", example: true
+        },
+        {
+          id: uid("drw"), title: "맘카페 리뷰 이벤트", cat: "경품",
+          deadline: relDate(1), announce: relDate(6), status: "대기",
+          prize: 10000, memo: "", example: true
+        }
+      ],
+      gifts: [
+        {
+          id: uid("gft"), brand: "스타벅스", product: "아메리카노 Tall",
+          amount: 4500, expiry: relDate(12), barcode: "123456789012",
+          memo: "", used: false, usedAt: "", example: true
+        }
+      ]
+    };
+  }
+
+  var db;
+  (function boot() {
+    var loaded = readStore();
+    if (loaded && loaded.v && Array.isArray(loaded.items)) {
+      db = loaded;
+    } else {
+      db = seedData();
+      writeStore();
+    }
+    if (!db.checks) db.checks = {};
+    if (!Array.isArray(db.draws)) db.draws = [];
+    if (!Array.isArray(db.gifts)) db.gifts = [];
+  })();
+
+  var ui = {
+    tab: "attend",
+    drawView: "list",
+    drawFilter: "all",
+    appCal: null,
+    drawCal: null,
+    drawCalDay: null,
+    form: null,
+    bcGift: null
+  };
+  (function initCal() {
+    var n = new Date();
+    ui.appCal = { y: n.getFullYear(), m: n.getMonth() };
+    ui.drawCal = { y: n.getFullYear(), m: n.getMonth() };
+  })();
+
+  /* ══════════ 토스트 ══════════ */
+  var toastTimer = null;
+  function toast(msg, warn) {
+    var t = $("toast");
+    t.textContent = msg;
+    t.className = "toast show" + (warn ? " warn" : "");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.className = "toast"; }, 2600);
+  }
+
+  /* ══════════ 계산 ══════════ */
+  function itemsTotal() { return db.items.length; }
+  function dayChecks(dateStr) {
+    var rec = db.checks[dateStr];
+    return rec && typeof rec === "object" ? rec : null;
+  }
+  function dayCount(dateStr) {
+    var rec = dayChecks(dateStr);
+    return rec ? Object.keys(rec).length : 0;
+  }
+  function isChecked(itemId, dateStr) {
+    var rec = dayChecks(dateStr || todayStr());
+    return !!(rec && rec[itemId] !== undefined);
+  }
+  function toggleItem(itemId) {
+    var dateStr = todayStr();
+    var rec = db.checks[dateStr];
+    if (!rec) rec = db.checks[dateStr] = {};
+    var item = db.items.filter(function (x) { return x.id === itemId; })[0];
+    if (!item) return;
+    if (rec[itemId] !== undefined) {
+      delete rec[itemId];
+      if (!Object.keys(rec).length) deleteChecker(dateStr);
+    } else {
+      rec[itemId] = Math.round(+item.amount || 0);
+    }
+    writeStore();
+    renderAll();
+  }
+  /* 체크가 모두 빠진 날은 저장에서 지워 기록을 깔끔하게 유지 */
+  function deleteChecker(dateStr) {
+    if (db.checks[dateStr] && Object.keys(db.checks[dateStr]).length === 0) delete db.checks[dateStr];
+  }
+  function monthEarn(y, m) {
+    var prefix = y + "-" + pad(m + 1) + "-";
+    var sum = 0;
+    Object.keys(db.checks).forEach(function (k) {
+      if (k.indexOf(prefix) !== 0) return;
+      var rec = db.checks[k];
+      Object.keys(rec).forEach(function (id) { sum += +rec[id] || 0; });
+    });
+    return sum;
+  }
+  function todayEarn() {
+    var rec = dayChecks(todayStr()), sum = 0;
+    if (!rec) return 0;
+    Object.keys(rec).forEach(function (id) { sum += +rec[id] || 0; });
+    return sum;
+  }
+  function todayDoneCount() {
+    var rec = dayChecks(todayStr());
+    if (!rec) return 0;
+    var n = 0;
+    db.items.forEach(function (it) { if (rec[it.id] !== undefined) n++; });
+    return n;
+  }
+  function todayEarnPlan() {
+    var rec = dayChecks(todayStr()) || {};
+    var sum = 0;
+    db.items.forEach(function (it) { if (rec[it.id] !== undefined) sum += +it.amount || 0; });
+    return sum;
+  }
+  function streakInfo() {
+    var d = midnight(new Date());
+    var todayDone = dayCount(ymd(d)) > 0;
+    if (!todayDone) d.setDate(d.getDate() - 1);
+    var n = 0;
+    while (dayCount(ymd(d)) > 0) {
+      n++;
+      d.setDate(d.getDate() - 1);
+      if (n > 1500) break;
+    }
+    return { days: n, todayDone: todayDone };
+  }
+  /* 응모: 이번 달 당첨 금액 */
+  function monthWinAmount(y, m) {
+    var sum = 0;
+    db.draws.forEach(function (d) {
+      if (d.status !== "당첨") return;
+      var ref = d.announce || d.deadline;
+      var t = parseYMD(ref);
+      if (!t) return;
+      if (t.getFullYear() === y && t.getMonth() === m) sum += +d.prize || 0;
+    });
+    return sum;
+  }
+  function giftDday(g) { return daysUntil(g.expiry); }
+  function giftAvailable() {
+    var sum = 0, n = 0;
+    db.gifts.forEach(function (g) {
+      if (g.used) return;
+      var dd = giftDday(g);
+      if (dd !== null && dd < 0) return;
+      sum += +g.amount || 0;
+      n++;
+    });
+    return { sum: sum, n: n };
+  }
+  /* 응모 정렬 키: 대기 중 임박 → 마감 지난 대기 → 끝난 응모(최근순) */
+  function drawKey(d) {
+    var today = todayStr();
+    if (d.status === "대기") {
+      if (d.deadline && d.deadline >= today) return 1000 + daysUntil(d.deadline);
+      if (d.announce && d.announce >= today) return 2000 + daysUntil(d.announce);
+      return 3000;
+    }
+    var ref = d.announce || d.deadline;
+    var dd = daysUntil(ref);
+    return 4000 + (dd === null ? 999 : 400 - dd);
+  }
+  function drawDday(d) {
+    var today = todayStr();
+    if (d.status === "대기") {
+      if (d.deadline) {
+        var dl = daysUntil(d.deadline);
+        if (dl !== null && dl >= 0) return { label: ddayText(dl), sub: "마감", cls: ddayClass(dl) };
+      }
+      if (d.announce) {
+        var an = daysUntil(d.announce);
+        if (an !== null && an >= 0) return { label: ddayText(an), sub: "발표", cls: ddayClass(an) };
+      }
+      return { label: "마감 지남", sub: "결과 입력", cls: "past" };
+    }
+    if (d.announce) {
+      var a2 = daysUntil(d.announce);
+      return { label: ddayText(a2), sub: "발표", cls: "past" };
+    }
+    return { label: "완료", sub: "", cls: "past" };
+  }
+
+  /* ══════════ 대시보드 ══════════ */
+  function renderDash() {
+    var total = itemsTotal();
+    var done = todayDoneCount();
+    var st = streakInfo();
+    var now = new Date();
+
+    $("dashAttendN").textContent = done;
+    $("dashAttendM").textContent = total;
+    var pct = total ? Math.round((done / total) * 100) : 0;
+    $("dashBar").style.width = pct + "%";
+    $("dashBar").parentNode.setAttribute("aria-label", "오늘 출석 " + done + "/" + total);
+
+    var meta;
+    if (!total) {
+      meta = "출석 항목을 먼저 추가해 주세요";
+    } else if (done === total) {
+      meta = "<b>오늘 출석 완료!</b> " + (st.days > 0 ? st.days + "일 연속" : "");
+    } else if (st.days > 0) {
+      meta = "<b>" + st.days + "일 연속</b> · " + (total - done) + "개만 더 하면 이어져요";
+    } else if (done > 0) {
+      meta = (total - done) + "개 남았어요";
+    } else {
+      meta = "오늘 아직 0개 · 하나씩 눌러 주세요";
+    }
+    $("dashAttendMeta").innerHTML = meta;
+
+    $("dashEarn").innerHTML = money(monthEarn(now.getFullYear(), now.getMonth())) + '<span class="u">원</span>';
+    $("dashWin").innerHTML = money(monthWinAmount(now.getFullYear(), now.getMonth())) + '<span class="u">원</span>';
+    $("dashGift").innerHTML = money(giftAvailable().sum) + '<span class="u">원</span>';
+
+    /* 임박 알림 */
+    var alerts = [];
+    db.draws.forEach(function (d) {
+      if (d.status !== "대기") return;
+      var dl = d.deadline ? daysUntil(d.deadline) : null;
+      var an = d.announce ? daysUntil(d.announce) : null;
+      if (dl !== null && dl >= 0 && dl <= 3) {
+        alerts.push({ tab: "draw", kind: "draw", label: d.title + " 마감", dd: ddayText(dl), n: dl, warn: dl <= 1 });
+      } else if ((dl === null || dl < 0) && an !== null && an >= 0 && an <= 3) {
+        alerts.push({ tab: "draw", kind: "draw", label: d.title + " 발표", dd: ddayText(an), n: an, warn: an <= 1 });
+      }
+    });
+    db.gifts.forEach(function (g) {
+      if (g.used) return;
+      var dd = giftDday(g);
+      if (dd === null || dd < 0 || dd > 7) return;
+      alerts.push({ tab: "gift", kind: "gift", label: g.brand + " " + (g.product || ""), dd: ddayText(dd), n: dd, warn: dd <= 3 });
+    });
+    alerts.sort(function (a, b) { return a.n - b.n; });
+
+    var box = $("dashAlerts");
+    box.innerHTML = "";
+    if (!alerts.length) {
+      box.innerHTML = '<div class="alert-none">지금 임박한 마감이 없어요. 여유롭습니다.</div>';
+    } else {
+      alerts.slice(0, 3).forEach(function (a) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "alert" + (a.warn ? " warn" : "");
+        b.innerHTML = '<span class="dot"></span><span class="tx">' + (a.kind === "gift" ? "🎟️ " : "🎁 ") + esc(a.label) +
+          '</span><span class="dd">' + a.dd + "</span>";
+        b.addEventListener("click", function () { setTab(a.tab); });
+        box.appendChild(b);
+      });
+      if (alerts.length > 3) {
+        var more = document.createElement("div");
+        more.className = "alert-none";
+        more.textContent = "외 " + (alerts.length - 3) + "건 더 있어요";
+        box.appendChild(more);
+      }
+    }
+  }
+
+  /* ══════════ 탭 1 렌더 ══════════ */
+  function renderAttend() {
+    var now = new Date();
+    var dateStr = todayStr();
+    $("attendDateLine").textContent =
+      now.getFullYear() + "년 " + (now.getMonth() + 1) + "월 " + now.getDate() + "일 " + WDAY[now.getDay()] + "요일";
+
+    var st = streakInfo();
+    $("statStreak").innerHTML = st.days + "<em>일</em>";
+    $("statMonth").innerHTML = money(monthEarn(now.getFullYear(), now.getMonth())) + "<em>원</em>";
+    $("statToday").innerHTML = money(todayEarnPlan()) + "<em>원</em>";
+
+    var list = $("itemList");
+    list.innerHTML = "";
+    if (!db.items.length) {
+      list.innerHTML =
+        '<div class="empty-box"><div class="mark">✅</div><b>출석 항목이 없어요</b>' +
+        '<p>매일 하는 앱테크를 하나씩 넣어 보세요.<br>토스 만보기, 캐시워크, 출석 체크처럼요.</p></div>';
+    } else {
+      db.items.forEach(function (it) {
+        var on = isChecked(it.id, dateStr);
+        var row = document.createElement("div");
+        row.className = "item" + (on ? " on" : "");
+
+        var tap = document.createElement("button");
+        tap.type = "button";
+        tap.className = "item-tap";
+        tap.setAttribute("role", "checkbox");
+        tap.setAttribute("aria-checked", on ? "true" : "false");
+        tap.setAttribute("aria-label", it.name + " 오늘 출석 체크");
+        tap.innerHTML =
+          '<span class="item-emoji">' + esc(it.emoji || "✅") + "</span>" +
+          '<span class="item-main"><b>' + esc(it.name) + (it.example ? '<em class="ex">예시</em>' : "") + "</b>" +
+          "<span>하루 " + won(it.amount) + "</span></span>" +
+          '<span class="check"></span>';
+        tap.addEventListener("click", function () {
+          toggleItem(it.id);
+          toast(on ? "‘" + it.name + "’ 체크를 풀었어요." : "‘" + it.name + "’ 출석 완료 · " + won(it.amount) + " 적립 예정", false);
+        });
+
+        var act = document.createElement("div");
+        act.className = "item-actions";
+        var edit = document.createElement("button");
+        edit.type = "button";
+        edit.className = "icon-btn";
+        edit.setAttribute("aria-label", it.name + " 수정");
+        edit.innerHTML = "✎";
+        edit.addEventListener("click", function () { openItemForm(it.id); });
+        act.appendChild(edit);
+
+        row.appendChild(tap);
+        row.appendChild(act);
+        list.appendChild(row);
+      });
+    }
+
+    var hasEx = db.items.some(function (x) { return x.example; });
+    $("itemExNote").hidden = !hasEx;
+
+    renderAppCal();
+  }
+
+  function renderAppCal() {
+    var y = ui.appCal.y, m = ui.appCal.m;
+    $("appCalTitle").textContent = y + "년 " + (m + 1) + "월";
+    var first = new Date(y, m, 1);
+    var startW = first.getDay();
+    var daysInMonth = new Date(y, m + 1, 0).getDate();
+    var prevDays = new Date(y, m, 0).getDate();
+    var total = itemsTotal();
+    var today = todayStr();
+
+    var html = "";
+    ["일", "월", "화", "수", "목", "금", "토"].forEach(function (w, i) {
+      html += '<div class="wd' + (i === 0 ? " sun" : "") + '">' + w + "</div>";
+    });
+    for (var i = startW - 1; i >= 0; i--) {
+      html += '<div class="cal-day out">' + (prevDays - i) + "</div>";
+    }
+    for (var d = 1; d <= daysInMonth; d++) {
+      var ds = y + "-" + pad(m + 1) + "-" + pad(d);
+      var cnt = dayCount(ds);
+      var isFuture = ds > today;
+      var full = cnt > 0 && total > 0 && cnt >= total;
+      var cls = "cal-day";
+      if (ds === today) cls += " today";
+      if (full) cls += " full";
+      else if (cnt > 0) cls += " part";
+      if (isFuture && !cnt) cls += " calm";
+      var label = fmtDot(ds) + (cnt ? " · " + cnt + "개 완료" : " · 기록 없음");
+      html += '<div class="' + cls + '" title="' + label + '">' + d +
+        '<span class="dot"></span>' + (full ? '<span class="tick">✓</span>' : "") + "</div>";
+    }
+    var cells = startW + daysInMonth;
+    var tail = (7 - (cells % 7)) % 7;
+    for (var k = 1; k <= tail; k++) {
+      html += '<div class="cal-day out">' + k + "</div>";
+    }
+    $("appCal").innerHTML = html;
+
+    $("appCalMonthLabel").textContent = (m + 1) + "월 적립 합계";
+    $("appCalMonthSum").textContent = won(monthEarn(y, m));
+  }
+
+  /* ══════════ 탭 2 렌더 ══════════ */
+  function renderDraws() {
+    var counts = { all: db.draws.length, "대기": 0, "당첨": 0, "미당첨": 0 };
+    db.draws.forEach(function (d) { if (counts[d.status] !== undefined) counts[d.status]++; });
+    $("fAll").textContent = counts.all;
+    $("fWait").textContent = counts["대기"];
+    $("fWin").textContent = counts["당첨"];
+    $("fLose").textContent = counts["미당첨"];
+
+    var list = $("drawList");
+    list.innerHTML = "";
+
+    var rows = db.draws.slice().sort(function (a, b) { return drawKey(a) - drawKey(b); });
+    if (ui.drawFilter !== "all") rows = rows.filter(function (d) { return d.status === ui.drawFilter; });
+
+    if (!rows.length) {
+      list.innerHTML = ui.drawFilter === "all"
+        ? '<div class="empty-box"><div class="mark">🎁</div><b>아직 기록이 없어요</b><p>응모한 체험단·경품 이벤트를 적어 두면<br>마감일과 발표일을 잊지 않게 챙겨 드려요.</p></div>'
+        : '<div class="empty-box"><div class="mark">🗂️</div><b>해당하는 응모가 없어요</b><p>다른 상태를 눌러 보세요.</p></div>';
+    } else {
+      rows.forEach(function (d) {
+        var dd = drawDday(d);
+        var el = document.createElement("div");
+        el.className = "draw";
+        var memo = d.memo ? '<div class="draw-memo">' + esc(d.memo) + "</div>" : "";
+        var prize = (d.status === "당첨" && +d.prize > 0) ? '<span class="prize">당첨 ' + won(d.prize) + "</span>" : "";
+        var metaParts = [];
+        if (d.deadline) metaParts.push("마감 " + fmtShort(d.deadline));
+        if (d.announce) metaParts.push("발표 " + fmtShort(d.announce));
+        el.innerHTML =
+          '<div class="draw-top">' +
+            '<div class="draw-main">' +
+              '<div class="draw-title">' + esc(d.title) + (d.example ? '<em class="ex">예시</em>' : "") + "</div>" +
+              (metaParts.length ? '<div class="draw-meta">' + metaParts.map(function (x) { return "<span>" + x + "</span>"; }).join("") + "</div>" : "") +
+              memo +
+            "</div>" +
+            '<div class="draw-side"><span class="dday ' + dd.cls + '">' + dd.label + "</span>" +
+              (dd.sub ? '<span class="dday-sub">' + dd.sub + "</span>" : "") + "</div>" +
+          "</div>" +
+          '<div class="draw-foot">' +
+            '<span class="badge cat">' + esc(d.cat || "기타") + "</span>" +
+            '<span class="badge ' + (d.status === "당첨" ? "win" : d.status === "미당첨" ? "lose" : "wait") + '">' + esc(d.status) + "</span>" +
+            prize +
+            '<span class="sp"></span>' +
+            '<button class="mini-btn" type="button" data-edit="' + d.id + '">수정</button>' +
+          "</div>";
+        list.appendChild(el);
+      });
+      list.querySelectorAll("[data-edit]").forEach(function (b) {
+        b.addEventListener("click", function () { openDrawForm(b.getAttribute("data-edit")); });
+      });
+    }
+
+    var now = new Date();
+    $("drawMonthWin").textContent = won(monthWinAmount(now.getFullYear(), now.getMonth()));
+    var hasEx = db.draws.some(function (x) { return x.example; });
+    $("drawExNote").hidden = !hasEx;
+
+    renderDrawCal();
+  }
+
+  function renderDrawCal() {
+    var y = ui.drawCal.y, m = ui.drawCal.m;
+    $("drawCalTitle").textContent = y + "년 " + (m + 1) + "월";
+    var startW = new Date(y, m, 1).getDay();
+    var daysInMonth = new Date(y, m + 1, 0).getDate();
+    var prevDays = new Date(y, m, 0).getDate();
+    var today = todayStr();
+
+    var byDay = {};
+    db.draws.forEach(function (d) {
+      [["deadline", "dl"], ["announce", "an"]].forEach(function (pair) {
+        var ds = d[pair[0]];
+        if (!ds) return;
+        var t = parseYMD(ds);
+        if (!t || t.getFullYear() !== y || t.getMonth() !== m) return;
+        if (!byDay[ds]) byDay[ds] = [];
+        byDay[ds].push({ d: d, kind: pair[1] });
+      });
+    });
+
+    var html = "";
+    ["일", "월", "화", "수", "목", "금", "토"].forEach(function (w, i) {
+      html += '<div class="wd' + (i === 0 ? " sun" : "") + '">' + w + "</div>";
+    });
+    for (var i = startW - 1; i >= 0; i--) html += '<div class="cal-day out">' + (prevDays - i) + "</div>";
+
+    for (var d = 1; d <= daysInMonth; d++) {
+      var ds = y + "-" + pad(m + 1) + "-" + pad(d);
+      var evs = byDay[ds] || [];
+      var cls = "cal-day";
+      if (ds === today) cls += " today";
+      if (ui.drawCalDay === ds) cls += " sel";
+      if (evs.length) cls += " has-ev";
+      html += '<button type="button" class="' + cls + '" data-day="' + ds + '" title="' + fmtDot(ds) + (evs.length ? " · " + evs.length + "건" : "") + '">' + d;
+      if (evs.length) {
+        html += '<span style="display:flex;gap:2px;margin-top:2px">';
+        evs.slice(0, 3).forEach(function (e) {
+          html += '<span style="width:6px;height:6px;border-radius:50%;background:' + (e.kind === "dl" ? "var(--gold)" : "var(--em)") + '"></span>';
+        });
+        html += "</span>";
+      }
+      html += "</button>";
+    }
+    var cells = startW + daysInMonth;
+    var tail = (7 - (cells % 7)) % 7;
+    for (var k = 1; k <= tail; k++) html += '<div class="cal-day out">' + k + "</div>";
+    $("drawCal").innerHTML = html;
+
+    $("drawCal").querySelectorAll("[data-day]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        ui.drawCalDay = b.getAttribute("data-day");
+        renderDrawCal();
+      });
+    });
+
+    var box = $("drawDayEvents");
+    if (!ui.drawCalDay) {
+      box.innerHTML = '<h3>날짜를 누르면 그날 마감·발표 일정이 보여요</h3>';
+    } else {
+      var sel = byDay[ui.drawCalDay] || [];
+      var rows = sel.map(function (e) {
+        return '<div class="de-row"><span class="dot' + (e.kind === "an" ? " an" : "") + '"></span><b>' + esc(e.d.title) + "</b><span>" +
+          (e.kind === "dl" ? "마감" : "발표") + "</span></div>";
+      }).join("");
+      box.innerHTML = "<h3>" + fmtDot(ui.drawCalDay) + " · " + sel.length + "건</h3>" + (rows || '<div class="de-row"><span style="color:var(--ink3);font-size:11.5px">이날은 일정이 없어요</span></div>');
+    }
+  }
+
+  /* ══════════ 탭 3 렌더 ══════════ */
+  function giftOrder(a, b) {
+    var ea = a.used ? 2 : (giftDday(a) !== null && giftDday(a) < 0 ? 1 : 0);
+    var eb = b.used ? 2 : (giftDday(b) !== null && giftDday(b) < 0 ? 1 : 0);
+    if (ea !== eb) return ea - eb;
+    var da = a.expiry || "9999-12-31";
+    var db_ = b.expiry || "9999-12-31";
+    if (da < db_) return -1;
+    if (da > db_) return 1;
+    return 0;
+  }
+
+  function renderGifts() {
+    var av = giftAvailable();
+    $("giftAvail").textContent = won(av.sum);
+    $("giftAvailCount").textContent = av.n;
+
+    var list = $("giftList");
+    list.innerHTML = "";
+    if (!db.gifts.length) {
+      list.innerHTML =
+        '<div class="empty-box"><div class="mark">🎟️</div><b>지갑이 비어 있어요</b>' +
+        '<p>받은 기프티콘을 넣어 두면 유효기간을 챙겨 드려요.<br>카드를 누르면 바코드 화면이 열립니다.</p></div>';
+    } else {
+      db.gifts.slice().sort(giftOrder).forEach(function (g) {
+        var dd = giftDday(g);
+        var cls = "gift";
+        var tagCls = "";
+        var tagText = "";
+        if (g.used) {
+          cls += " used";
+          tagText = "사용 완료";
+          tagCls = "past";
+        } else if (dd !== null && dd < 0) {
+          cls += " past";
+          tagText = "기간 만료";
+          tagCls = "past";
+        } else if (dd !== null && dd <= 3) {
+          cls += " danger";
+          tagText = ddayText(dd);
+          tagCls = "danger";
+        } else if (dd !== null && dd <= 7) {
+          cls += " warn";
+          tagText = ddayText(dd);
+          tagCls = "warn";
+        } else if (dd !== null) {
+          tagText = ddayText(dd);
+          tagCls = "";
+        }
+
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = cls;
+        b.innerHTML =
+          '<span class="g-ico">🎟️</span>' +
+          '<span class="g-main">' +
+            '<span class="g-brand">' + esc(g.brand) + (g.example ? '<em class="ex">예시</em>' : "") + "</span>" +
+            '<span class="g-prod">' + esc(g.product || "상품명 없음") + "</span>" +
+          "</span>" +
+          '<span class="g-bars-wrap" aria-hidden="true"><span class="g-bars"></span><span class="g-tail">····' +
+            esc(digitsOnly(g.barcode).slice(-4)) + "</span></span>" +
+          '<span class="g-side">' +
+            (tagText ? '<span class="dday ' + tagCls + '">' + tagText + "</span>" : "") +
+            '<span class="g-amt">' + won(g.amount) + "</span>" +
+            '<span class="g-exp">' + (g.expiry ? "~ " + fmtDot(g.expiry) : "기간 없음") + "</span>" +
+          "</span>";
+        b.addEventListener("click", function () { openBarcode(g.id); });
+        list.appendChild(b);
+      });
+    }
+
+    var hasEx = db.gifts.some(function (x) { return x.example; });
+    $("giftExNote").hidden = !hasEx;
+
+    $("giftCount").textContent = av.n;
+    $("giftCount").className = "count" + (av.n ? "" : " zero");
+    var waitN = db.draws.filter(function (d) { return d.status === "대기"; }).length;
+    $("drawCount").textContent = waitN;
+    $("drawCount").className = "count" + (waitN ? "" : " zero");
+  }
+
+  /* ══════════ 전체 렌더 ══════════ */
+  function renderAll() {
+    renderDash();
+    renderAttend();
+    renderDraws();
+    renderGifts();
+    $("storeNotice").hidden = !storeBlocked;
+  }
+
+  /* ══════════ 탭 전환 ══════════ */
+  function setTab(name) {
+    ui.tab = name;
+    ["attend", "draw", "gift"].forEach(function (t) {
+      var tab = $("tab-" + t);
+      var panel = $("panel-" + t);
+      var on = t === name;
+      tab.setAttribute("aria-selected", on ? "true" : "false");
+      tab.tabIndex = on ? 0 : -1;
+      panel.hidden = !on;
+    });
+    if (window.scrollY > 0) {
+      var top = document.querySelector(".tabs-wrap").getBoundingClientRect().top + window.scrollY;
+      if (window.scrollY > top) window.scrollTo({ top: top, behavior: "smooth" });
+    }
+  }
+
+  /* ══════════ 폼 모달 ══════════ */
+  function openModal(el) {
+    el.classList.add("open");
+    el.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    var f = el.querySelector("input, textarea, button");
+    if (f) setTimeout(function () { try { f.focus(); } catch (e) {} }, 60);
+  }
+  function closeModal(el) {
+    el.classList.remove("open");
+    el.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+  document.querySelectorAll(".modal").forEach(function (m) {
+    m.addEventListener("click", function (e) {
+      if (e.target.getAttribute && e.target.getAttribute("data-close")) closeModal(m);
+    });
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    document.querySelectorAll(".modal.open").forEach(closeModal);
+  });
+
+  function fieldErr(fldId, msg) {
+    var inp = $(fldId);
+    var box = inp.closest(".fld").querySelector(".errmsg");
+    if (msg) {
+      inp.classList.add("err");
+      box.textContent = msg;
+      box.classList.add("show");
+      return false;
+    }
+    inp.classList.remove("err");
+    box.classList.remove("show");
+    return true;
+  }
+
+  /* ── 항목 폼 ── */
+  function openItemForm(id) {
+    var it = id ? db.items.filter(function (x) { return x.id === id; })[0] : null;
+    ui.form = { type: "item", id: id || null };
+    $("formTitle").textContent = it ? "출석 항목 수정" : "출석 항목 추가";
+    $("formSub").textContent = "매일 체크할 앱테크를 적어 주세요.";
+    $("formBody").innerHTML =
+      '<label class="fld"><span>이름 <em>필수</em></span>' +
+        '<input type="text" id="fName" maxlength="30" placeholder="예) 토스 만보기" value="' + esc(it ? it.name : "") + '">' +
+        '<span class="errmsg"></span></label>' +
+      '<div class="form-row">' +
+        '<label class="fld"><span>하루 적립 예상</span>' +
+          '<input type="number" id="fAmount" inputmode="numeric" min="0" step="1" placeholder="30" value="' + (it ? (it.amount || "") : "") + '">' +
+          '<span class="hint">원 단위</span></label>' +
+        '<label class="fld"><span>아이콘 <em>선택</em></span>' +
+          '<input type="text" id="fEmoji" maxlength="4" placeholder="🚶" value="' + esc(it ? (it.emoji || "") : "") + '">' +
+          '<span class="hint">이모지 1개</span></label>' +
+      "</div>";
+    $("formDelete").hidden = !it;
+    $("formDelete").textContent = "삭제";
+    $("formSave").textContent = it ? "수정 저장" : "추가";
+    $("formDelete").onclick = function () {
+      if ($("formDelete").dataset.armed !== "1") {
+        $("formDelete").dataset.armed = "1";
+        $("formDelete").textContent = "정말 삭제";
+        toast("한 번 더 누르면 삭제됩니다.", true);
+        return;
+      }
+      db.items = db.items.filter(function (x) { return x.id !== id; });
+      writeStore();
+      closeModal($("formModal"));
+      renderAll();
+      toast("항목을 삭제했어요. 지난 달력 기록은 그대로 남습니다.", false);
+    };
+    openModal($("formModal"));
+  }
+
+  /* ── 응모 폼 ── */
+  var pendingDrawCat = "체험단";
+  var pendingDrawStatus = "대기";
+  function openDrawForm(id) {
+    var d = id ? db.draws.filter(function (x) { return x.id === id; })[0] : null;
+    ui.form = { type: "draw", id: id || null };
+    $("formTitle").textContent = d ? "응모 수정" : "응모 추가";
+    $("formSub").textContent = "마감일·발표일을 넣으면 D-day를 계산해 드려요.";
+    pendingDrawCat = d ? (d.cat || "체험단") : "체험단";
+    pendingDrawStatus = d ? (d.status || "대기") : "대기";
+    var cats = ["체험단", "경품", "기타"];
+    var stats = ["대기", "당첨", "미당첨"];
+    $("formBody").innerHTML =
+      '<label class="fld"><span>이벤트명 <em>필수</em></span>' +
+        '<input type="text" id="fTitle" maxlength="60" placeholder="예) 카카오 선물하기 디저트 체험단" value="' + esc(d ? d.title : "") + '">' +
+        '<span class="errmsg"></span></label>' +
+      '<div class="fld"><span>분류</span><div class="seg-btns" id="fCat">' +
+        cats.map(function (c) { return '<button type="button" data-cat="' + c + '" class="' + (c === pendingDrawCat ? "on" : "") + '">' + c + "</button>"; }).join("") +
+      "</div></div>" +
+      '<div class="form-row">' +
+        '<label class="fld"><span>마감일 <em>필수</em></span><input type="date" id="fDeadline" value="' + (d && d.deadline ? d.deadline : "") + '">' +
+          '<span class="errmsg"></span></label>' +
+        '<label class="fld"><span>발표일 <em>선택</em></span><input type="date" id="fAnnounce" value="' + (d && d.announce ? d.announce : "") + '"></label>' +
+      "</div>" +
+      '<div class="fld"><span>상태</span><div class="seg-btns" id="fStatus">' +
+        stats.map(function (s) { return '<button type="button" data-status="' + s + '" class="' + (s === pendingDrawStatus ? "on" : "") + '">' + s + "</button>"; }).join("") +
+      "</div></div>" +
+      '<label class="fld"><span>당첨 금액 <em>당첨일 때</em></span>' +
+        '<input type="number" id="fPrize" inputmode="numeric" min="0" step="1000" placeholder="25000" value="' + (d && d.prize ? d.prize : "") + '">' +
+        '<span class="hint">이번 달 당첨 합계에 들어갑니다</span></label>' +
+      '<label class="fld"><span>메모 <em>선택</em></span>' +
+        '<textarea id="fMemo" maxlength="300" placeholder="응모처, 리뷰 조건, 제출물 등">' + esc(d ? d.memo : "") + "</textarea></label>";
+
+    $("fCat").querySelectorAll("[data-cat]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        pendingDrawCat = b.getAttribute("data-cat");
+        $("fCat").querySelectorAll("[data-cat]").forEach(function (x) { x.classList.toggle("on", x === b); });
+      });
+    });
+    $("fStatus").querySelectorAll("[data-status]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        pendingDrawStatus = b.getAttribute("data-status");
+        $("fStatus").querySelectorAll("[data-status]").forEach(function (x) { x.classList.toggle("on", x === b); });
+      });
+    });
+
+    $("formDelete").hidden = !d;
+    $("formDelete").textContent = "삭제";
+    $("formDelete").onclick = function () {
+      if ($("formDelete").dataset.armed !== "1") {
+        $("formDelete").dataset.armed = "1";
+        $("formDelete").textContent = "정말 삭제";
+        toast("한 번 더 누르면 삭제됩니다.", true);
+        return;
+      }
+      db.draws = db.draws.filter(function (x) { return x.id !== id; });
+      writeStore();
+      closeModal($("formModal"));
+      renderAll();
+      toast("응모 기록을 삭제했어요.", false);
+    };
+    $("formSave").textContent = d ? "수정 저장" : "추가";
+    openModal($("formModal"));
+  }
+
+  /* ── 기프티콘 폼 ── */
+  function openGiftForm(id) {
+    var g = id ? db.gifts.filter(function (x) { return x.id === id; })[0] : null;
+    ui.form = { type: "gift", id: id || null };
+    $("formTitle").textContent = g ? "기프티콘 수정" : "기프티콘 등록";
+    $("formSub").textContent = "바코드 번호는 숫자 12~16자리예요.";
+    $("formBody").innerHTML =
+      '<div class="form-row">' +
+        '<label class="fld"><span>브랜드 <em>필수</em></span>' +
+          '<input type="text" id="gBrand" maxlength="20" placeholder="예) 스타벅스" value="' + esc(g ? g.brand : "") + '">' +
+          '<span class="errmsg"></span></label>' +
+        '<label class="fld"><span>금액</span>' +
+          '<input type="number" id="gAmount" inputmode="numeric" min="0" step="100" placeholder="4500" value="' + (g && g.amount ? g.amount : "") + '"></label>' +
+      "</div>" +
+      '<label class="fld"><span>상품명 <em>선택</em></span>' +
+        '<input type="text" id="gProduct" maxlength="40" placeholder="예) 아메리카노 Tall" value="' + esc(g ? g.product : "") + '"></label>' +
+      '<div class="form-row">' +
+        '<label class="fld"><span>유효기간 <em>필수</em></span>' +
+          '<input type="date" id="gExpiry" value="' + (g && g.expiry ? g.expiry : "") + '">' +
+          '<span class="errmsg"></span></label>' +
+        '<label class="fld"><span>바코드 번호 <em>필수</em></span>' +
+          '<input type="text" id="gBarcode" inputmode="numeric" maxlength="24" placeholder="1234 5678 9012" value="' + esc(g ? groupDigits(g.barcode) : "") + '">' +
+          '<span class="errmsg"></span></label>' +
+      "</div>" +
+      '<label class="fld"><span>메모 <em>선택</em></span>' +
+        '<textarea id="gMemo" maxlength="200" placeholder="받은 곳, 사용처 등">' + esc(g ? g.memo : "") + "</textarea></label>";
+
+    $("formDelete").hidden = !g;
+    $("formDelete").textContent = "삭제";
+    $("formDelete").onclick = function () {
+      if ($("formDelete").dataset.armed !== "1") {
+        $("formDelete").dataset.armed = "1";
+        $("formDelete").textContent = "정말 삭제";
+        toast("한 번 더 누르면 삭제됩니다.", true);
+        return;
+      }
+      db.gifts = db.gifts.filter(function (x) { return x.id !== id; });
+      writeStore();
+      closeModal($("formModal"));
+      renderAll();
+      toast("기프티콘을 삭제했어요.", false);
+    };
+    $("formSave").textContent = g ? "수정 저장" : "등록";
+    openModal($("formModal"));
+  }
+
+  /* ── 폼 저장 ── */
+  $("formEl").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var f = ui.form;
+    if (!f) return;
+
+    if (f.type === "item") {
+      var name = $("fName").value.trim();
+      var amt = $("fAmount").value.trim();
+      var emoji = $("fEmoji").value.trim();
+      var okName = fieldErr("fName", name ? "" : "이름을 적어 주세요.");
+      if (!okName) { $("fName").focus(); return; }
+      if (amt !== "" && (+amt < 0 || isNaN(+amt))) { toast("금액은 0 이상 숫자로 넣어 주세요.", true); return; }
+      if (f.id) {
+        db.items.forEach(function (x) {
+          if (x.id === f.id) { x.name = name; x.amount = Math.round(+amt || 0); x.emoji = emoji || "✅"; x.example = false; }
+        });
+      } else {
+        db.items.push({ id: uid("itm"), name: name, amount: Math.round(+amt || 0), emoji: emoji || "✅", example: false });
+      }
+      writeStore();
+      closeModal($("formModal"));
+      renderAll();
+      toast(f.id ? "항목을 수정했어요." : "‘" + name + "’ 항목을 추가했어요.", false);
+      return;
+    }
+
+    if (f.type === "draw") {
+      var title = $("fTitle").value.trim();
+      var deadline = $("fDeadline").value;
+      var announce = $("fAnnounce").value;
+      var prize = $("fPrize").value.trim();
+      var memo = $("fMemo").value.trim();
+      var okT = fieldErr("fTitle", title ? "" : "이벤트명을 적어 주세요.");
+      var okD = fieldErr("fDeadline", deadline ? "" : "마감일을 넣어 주세요.");
+      if (!okT) { $("fTitle").focus(); return; }
+      if (!okD) { $("fDeadline").focus(); return; }
+      if (announce && deadline && announce < deadline) {
+        toast("발표일이 마감일보다 빠를 수 없어요.", true);
+        return;
+      }
+      var rec = {
+        title: title, cat: pendingDrawCat, deadline: deadline, announce: announce,
+        status: pendingDrawStatus, prize: Math.round(+prize || 0), memo: memo, example: false
+      };
+      if (f.id) {
+        db.draws.forEach(function (x) { if (x.id === f.id) { for (var k in rec) x[k] = rec[k]; } });
+      } else {
+        rec.id = uid("drw");
+        db.draws.push(rec);
+      }
+      writeStore();
+      closeModal($("formModal"));
+      renderAll();
+      toast(f.id ? "응모 내용을 수정했어요." : "응모를 기록했어요. 마감 · " + fmtDot(deadline), false);
+      return;
+    }
+
+    if (f.type === "gift") {
+      var brand = $("gBrand").value.trim();
+      var amount = $("gAmount").value.trim();
+      var product = $("gProduct").value.trim();
+      var expiry = $("gExpiry").value;
+      var barcodeRaw = $("gBarcode").value;
+      var code = digitsOnly(barcodeRaw);
+      var memo2 = $("gMemo").value.trim();
+
+      var okB = fieldErr("gBrand", brand ? "" : "브랜드를 적어 주세요.");
+      if (!okB) { $("gBrand").focus(); return; }
+      var okE = fieldErr("gExpiry", expiry ? "" : "유효기간을 넣어 주세요.");
+      if (!okE) { $("gExpiry").focus(); return; }
+      var codeMsg = "";
+      if (!code) codeMsg = "바코드 번호를 넣어 주세요.";
+      else if (code.length < 12 || code.length > 16) codeMsg = "숫자 12~16자리로 넣어 주세요. (지금 " + code.length + "자리)";
+      var okC = fieldErr("gBarcode", codeMsg);
+      if (!okC) { $("gBarcode").focus(); return; }
+
+      if (f.id) {
+        db.gifts.forEach(function (x) {
+          if (x.id === f.id) {
+            x.brand = brand; x.product = product; x.amount = Math.round(+amount || 0);
+            x.expiry = expiry; x.barcode = code; x.memo = memo2; x.example = false;
+          }
+        });
+      } else {
+        db.gifts.push({
+          id: uid("gft"), brand: brand, product: product, amount: Math.round(+amount || 0),
+          expiry: expiry, barcode: code, memo: memo2, used: false, usedAt: "", example: false
+        });
+      }
+      writeStore();
+      closeModal($("formModal"));
+      renderAll();
+      toast(f.id ? "기프티콘을 수정했어요." : "‘" + brand + "’ 기프티콘을 등록했어요.", false);
+      return;
+    }
+  });
+
+  /* ══════════ 바코드 화면 ══════════ */
+  function drawBars(code) {
+    var d = digitsOnly(code);
+    var box = $("bcBars");
+    box.innerHTML = "";
+    function bar(w, black) {
+      var i = document.createElement("i");
+      i.style.flexGrow = String(w);
+      i.style.flexBasis = "0";
+      if (!black) i.className = "w";
+      box.appendChild(i);
+    }
+    /* 시작 가드 */
+    bar(1, true); bar(1, false); bar(1, true);
+    for (var k = 0; k < d.length; k++) {
+      var n = +d.charAt(k);
+      var wb = 1 + ((n * 7 + k * 3) % 4);
+      var wg = 1 + ((n * 5 + k * 2) % 3);
+      bar(wb, true);
+      bar(wg, false);
+    }
+    /* 끝 가드 */
+    bar(1, true); bar(1, false); bar(1, true);
+  }
+
+  function giftTagInfo(g) {
+    var dd = giftDday(g);
+    if (g.used) return { text: "사용 완료", cls: "past", exp: "사용일 " + fmtDot(g.usedAt) };
+    if (dd === null) return { text: "기간 없음", cls: "past", exp: "" };
+    if (dd < 0) return { text: "기간 만료 " + ddayText(dd), cls: "past", exp: "" };
+    return { text: "사용 가능 · " + ddayText(dd), cls: dd <= 3 ? "danger" : (dd <= 7 ? "warn" : ""), exp: "" };
+  }
+
+  function openBarcode(id) {
+    var g = db.gifts.filter(function (x) { return x.id === id; })[0];
+    if (!g) return;
+    ui.bcGift = id;
+    $("bcBrand").textContent = g.brand;
+    $("bcProd").textContent = g.product || "상품명 없음";
+    $("bcLogo").textContent = "🎟️";
+    $("bcAmt").textContent = won(g.amount);
+    $("bcExp").textContent = g.expiry ? "~ " + fmtDot(g.expiry) : "기간 없음";
+    $("bcDigits").textContent = groupDigits(g.barcode);
+    drawBars(g.barcode);
+
+    var tg = giftTagInfo(g);
+    var tags = '<span class="bc-tag ' + tg.cls + '">' + tg.text + "</span>";
+    if (g.expiry) tags += '<span class="bc-tag past">유효기간 ' + fmtDot(g.expiry) + "</span>";
+    $("bcTags").innerHTML = tags;
+
+    if (g.memo) { $("bcMemo").hidden = false; $("bcMemo").textContent = g.memo; }
+    else { $("bcMemo").hidden = true; $("bcMemo").textContent = ""; }
+
+    var btn = $("bcUse");
+    if (g.used) { btn.textContent = "복구"; btn.className = "btn btn-ghost"; }
+    else { btn.textContent = "사용 완료"; btn.className = "btn btn-primary"; }
+
+    openModal($("bcModal"));
+  }
+
+  $("bcUse").addEventListener("click", function () {
+    var g = db.gifts.filter(function (x) { return x.id === ui.bcGift; })[0];
+    if (!g) return;
+    if (g.used) {
+      g.used = false;
+      g.usedAt = "";
+      writeStore();
+      closeModal($("bcModal"));
+      renderAll();
+      toast("‘" + g.brand + "’ 기프티콘을 되살렸어요.", false);
+    } else {
+      g.used = true;
+      g.usedAt = todayStr();
+      writeStore();
+      closeModal($("bcModal"));
+      renderAll();
+      toast("사용 완료로 바꿨어요. 필요하면 복구할 수 있어요.", false);
+    }
+  });
+
+  $("bcCopy").addEventListener("click", function () {
+    var g = db.gifts.filter(function (x) { return x.id === ui.bcGift; })[0];
+    if (!g) return;
+    var text = digitsOnly(g.barcode);
+    function done() { toast("바코드 번호 " + groupDigits(text) + " 복사했어요.", false); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text, done); });
+    } else {
+      fallbackCopy(text, done);
+    }
+  });
+  function fallbackCopy(text, done) {
+    try {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      done();
+    } catch (e) {
+      toast("복사가 막혀 있어요. 번호를 직접 눌러 선택해 주세요.", true);
+    }
+  }
+
+  /* ══════════ 예시 지우기 ══════════ */
+  $("btnClearAllExample").addEventListener("click", function () {
+    db.items = db.items.filter(function (x) { return !x.example; });
+    writeStore();
+    renderAll();
+    toast("예시 항목을 지웠어요. 내 항목을 추가해 보세요.", false);
+  });
+  $("btnClearDrawExample").addEventListener("click", function () {
+    db.draws = db.draws.filter(function (x) { return !x.example; });
+    writeStore();
+    renderAll();
+    toast("예시 응모를 지웠어요.", false);
+  });
+  $("btnClearGiftExample").addEventListener("click", function () {
+    db.gifts = db.gifts.filter(function (x) { return !x.example; });
+    writeStore();
+    renderAll();
+    toast("예시 기프티콘을 지웠어요.", false);
+  });
+
+  /* ══════════ 이벤트 연결 ══════════ */
+  document.querySelectorAll("[data-tab]").forEach(function (b) {
+    b.addEventListener("click", function () { setTab(b.getAttribute("data-tab")); });
+  });
+  document.querySelector(".tabs").addEventListener("keydown", function (e) {
+    var keys = ["ArrowRight", "ArrowLeft", "Home", "End"];
+    if (keys.indexOf(e.key) < 0) return;
+    e.preventDefault();
+    var order = ["attend", "draw", "gift"];
+    var cur = order.indexOf(ui.tab);
+    var next = cur;
+    if (e.key === "ArrowRight") next = (cur + 1) % 3;
+    if (e.key === "ArrowLeft") next = (cur + 2) % 3;
+    if (e.key === "Home") next = 0;
+    if (e.key === "End") next = 2;
+    setTab(order[next]);
+    $("tab-" + order[next]).focus();
+  });
+
+  $("btnAddItem").addEventListener("click", function () { openItemForm(null); });
+  $("btnAddDraw").addEventListener("click", function () { openDrawForm(null); });
+  $("btnAddGift").addEventListener("click", function () { openGiftForm(null); });
+
+  document.querySelectorAll(".fchip").forEach(function (b) {
+    b.addEventListener("click", function () {
+      ui.drawFilter = b.getAttribute("data-filter");
+      document.querySelectorAll(".fchip").forEach(function (x) { x.classList.toggle("on", x === b); });
+      renderDraws();
+    });
+  });
+  document.querySelectorAll("[data-view]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      ui.drawView = b.getAttribute("data-view");
+      document.querySelectorAll("[data-view]").forEach(function (x) { x.classList.toggle("on", x === b); });
+      $("drawListWrap").hidden = ui.drawView !== "list";
+      $("drawCalWrap").hidden = ui.drawView !== "cal";
+    });
+  });
+
+  function monthShift(obj, delta) {
+    var d = new Date(obj.y, obj.m + delta, 1);
+    obj.y = d.getFullYear();
+    obj.m = d.getMonth();
+  }
+  $("appCalPrev").addEventListener("click", function () { monthShift(ui.appCal, -1); renderAppCal(); });
+  $("appCalNext").addEventListener("click", function () { monthShift(ui.appCal, 1); renderAppCal(); });
+  $("appCalToday").addEventListener("click", function () {
+    var n = new Date(); ui.appCal.y = n.getFullYear(); ui.appCal.m = n.getMonth(); renderAppCal();
+  });
+  $("drawCalPrev").addEventListener("click", function () { monthShift(ui.drawCal, -1); ui.drawCalDay = null; renderDrawCal(); });
+  $("drawCalNext").addEventListener("click", function () { monthShift(ui.drawCal, 1); ui.drawCalDay = null; renderDrawCal(); });
+  $("drawCalToday").addEventListener("click", function () {
+    var n = new Date(); ui.drawCal.y = n.getFullYear(); ui.drawCal.m = n.getMonth(); ui.drawCalDay = null; renderDrawCal();
+  });
+
+  /* 날짜가 바뀌면 자동 갱신 */
+  var lastDay = todayStr();
+  setInterval(function () {
+    var t = todayStr();
+    if (t !== lastDay) {
+      lastDay = t;
+      var n = new Date();
+      ui.appCal.y = n.getFullYear(); ui.appCal.m = n.getMonth();
+      renderAll();
+    }
+  }, 30000);
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "visible" && todayStr() !== lastDay) {
+      lastDay = todayStr();
+      renderAll();
+    }
+  });
+
+  /* ══════════ 시작 ══════════ */
+  $("uidLine").textContent = "익명 ID · " + anonId();
+  renderAll();
+  $("storeNotice").hidden = !storeBlocked;
+
+  /* 계산 검증용 내부 훅(화면에는 영향 없음) */
+  window.__atc = {
+    ymd: ymd,
+    parseYMD: parseYMD,
+    daysUntil: daysUntil,
+    ddayText: ddayText,
+    money: money,
+    streakInfo: streakInfo,
+    monthEarn: monthEarn,
+    todayStr: todayStr,
+    dayCount: dayCount,
+    drawKey: drawKey,
+    getDb: function () { return db; }
+  };
+})();
+</script>
+</body>
+</html>
