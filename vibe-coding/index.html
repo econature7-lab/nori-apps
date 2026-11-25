@@ -2142,7 +2142,7 @@ window.NORI_ADS = {
             armed = false;
             delBtn.classList.remove("confirm");
             delBtn.textContent = "삭제";
-          }, 4000);
+          }, 6000);
           return;
         }
         var list = loadLib().filter(function (x) { return x.id !== it.id; });
@@ -2285,7 +2285,7 @@ window.NORI_ADS = {
         resetArmed = false;
         btn.textContent = "모두 지우기";
         btn.style.color = "";
-      }, 4000);
+      }, 6000);
       return;
     }
     clearTimeout(resetTimer);
