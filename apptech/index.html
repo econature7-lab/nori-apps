@@ -181,6 +181,7 @@
   }
   .ad-slot .ad-note{line-height:1.5}
   .ad-slot[data-state="live"]{background:transparent;border-color:transparent;padding:0;min-height:0;overflow:hidden}
+  .ad-slot[data-state="off"],.ad-wrap[hidden]{display:none!important}
   .ad-slot.bottom{min-height:58px}
 
   /* ── 탭 ─────────────────────────────────── */
@@ -1064,7 +1065,7 @@
    2) mode 를 "live" 로 변경
    ※ 지금은 mode:"preview" 라서 깨진 박스 없이 안내 문구만 보입니다. */
 window.NORI_ADS = {
-  mode: "preview",            // "preview" | "live"
+  mode: "preview",            // "preview"(안내 문구) | "live"(배너) | "off"(자리 숨김)
   slots: {
     top: "",                  // 예: "DAN-xxxxxxxx"
     bottom: ""
@@ -1079,6 +1080,12 @@ window.NORI_ADS = {
     var injected = 0;
     Array.prototype.forEach.call(slots, function (el) {
       var unit = (cfg.slots && cfg.slots[el.getAttribute("data-ad-slot")]) || "";
+      if (cfg.mode === "off") {
+        el.setAttribute("data-state", "off");
+        var wrap = el.closest(".ad-wrap");
+        if (wrap) wrap.hidden = true;
+        return;
+      }
       if (!live || !unit) { el.setAttribute("data-state", "preview"); return; }
       el.setAttribute("data-state", "live");
       el.innerHTML = '<ins class="kakao_ad_area" style="display:none" data-ad-unit="' + unit + '" data-ad-width="320" data-ad-height="100"></ins>';
