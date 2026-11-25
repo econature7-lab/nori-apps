@@ -190,11 +190,12 @@
   .step-head h2{font-size:16.5px;font-weight:800;letter-spacing:-.03em;line-height:1.35}
   .step-head p{margin-top:3px;font-size:12.5px;color:var(--ink-3);line-height:1.5}
   .step-state{
-    margin-left:auto;flex:none;font-size:10.5px;font-weight:800;
+    flex:none;margin-left:8px;font-size:10.5px;font-weight:800;
     color:var(--em);background:var(--em-soft);border:1px solid #CFE6DD;
     border-radius:999px;padding:3px 9px;
   }
   .step-state[hidden]{display:none}
+  .step-head .mini-btn{margin-left:auto}
   .mini-btn{
     flex:none;font-size:11.5px;font-weight:800;color:var(--ink-3);
     border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:#fff;
@@ -560,6 +561,8 @@
     .screen-name{flex:1 1 42%}
     .screen-purp{flex:1 1 100%;margin-left:30px}
     .tab{font-size:12.2px;padding:9px 4px}
+    .step-head{flex-wrap:wrap;row-gap:7px}
+    .step-head > div{flex:1 1 60%;min-width:0}
     .stepper span{font-size:11.5px}
     .ex{font-size:12.2px;padding:8px 9px}
     footer{padding:18px 0 32px}
@@ -637,7 +640,7 @@
               <h2>기본 3칸만 채우면 끝</h2>
               <p>나머지는 기본값으로 알아서 채워 드려요.</p>
             </div>
-            <button class="mini-btn" id="btnResetAll" type="button" style="margin-left:auto">모두 지우기</button>
+            <button class="mini-btn" id="btnResetAll" type="button">모두 지우기</button>
             <span class="step-state" id="step1State" hidden>준비 완료</span>
           </div>
 
@@ -818,7 +821,7 @@
               <h2>수정 요청 만들기</h2>
               <p>“안 돼요” 대신 세 칸으로 나눠 적으면 AI가 바로 고칩니다.</p>
             </div>
-            <button class="mini-btn" id="btnResetBug" type="button" style="margin-left:auto">비우기</button>
+            <button class="mini-btn" id="btnResetBug" type="button">비우기</button>
           </div>
 
           <div class="quick-examples">
