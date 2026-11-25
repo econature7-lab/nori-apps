@@ -650,7 +650,7 @@
             <div class="ex-head">예시로 시작하기 <span>한 번 누르면 세 칸이 한꺼번에 채워져요</span></div>
             <div class="ex-grid" id="exampleChips"></div>
             <textarea id="desc" rows="3" maxlength="600" aria-labelledby="descLabel"
-              placeholder="예) 임장 다닐 때 찍은 건물 사진과 메모를 모아 두고, 지도에서 한눈에 보고 싶어요."></textarea>
+              placeholder="예) 매일 쓴 돈을 적어 두고, 이번 달에 어디에 얼마를 썼는지 한눈에 보고 싶어요."></textarea>
             <div class="field-hint">한두 문장이면 충분해요. <b>왜 필요한지</b>까지 쓰면 결과가 확 달라집니다.</div>
           </div>
 
@@ -659,7 +659,7 @@
             <div class="field-label"><span class="fnum">②</span> 누가 쓰나요?</div>
             <div class="chips" id="targetChips"></div>
             <div class="custom-row" id="targetCustomRow" hidden>
-              <input type="text" id="targetCustom" maxlength="40" placeholder="예) 우리 반 학부모" aria-label="쓰는 사람 직접 입력">
+              <input type="text" id="targetCustom" maxlength="40" placeholder="예) 우리 동호회 회원" aria-label="쓰는 사람 직접 입력">
             </div>
           </div>
 
@@ -669,7 +669,7 @@
             <div class="chips" id="featChips"></div>
             <button class="more-btn" id="featMore" type="button" aria-expanded="false">기능 더 보기 ▾</button>
             <div class="custom-row">
-              <input type="text" id="featCustom" maxlength="24" placeholder="직접 입력 (예: 월별 출석률 그래프)" aria-label="기능 직접 입력">
+              <input type="text" id="featCustom" maxlength="24" placeholder="직접 입력 (예: 월별 지출 그래프)" aria-label="기능 직접 입력">
               <button class="add-btn" id="featAdd" type="button">추가</button>
             </div>
             <div class="picked">
@@ -712,7 +712,7 @@
 
             <div class="field">
               <div class="field-label"><span class="fnum">⑥</span> 꼭 넣을 문구 <em class="opt-tag">선택</em></div>
-              <textarea id="keepWords" rows="2" maxlength="200" placeholder="예) 화면 맨 아래에 ‘그로우스페이스 · 노리샘’ 표시"></textarea>
+              <textarea id="keepWords" rows="2" maxlength="200" placeholder="예) 화면 맨 아래에 ‘우리 집 가계부’ 표시"></textarea>
               <div class="field-hint">로고 대신 넣고 싶은 이름·안내 문구가 있으면 적어 주세요.</div>
             </div>
 
@@ -747,7 +747,7 @@
               <div class="field-label"><span class="fnum">⑧</span> 연결할 공공데이터 <em class="opt-tag">선택</em></div>
               <div class="chips" id="dataChips"></div>
               <div class="custom-row" id="dataCustomRow" hidden>
-                <input type="text" id="dataCustom" maxlength="40" placeholder="예) 국토교통부 실거래가 공개시스템" aria-label="공공데이터 직접 입력">
+                <input type="text" id="dataCustom" maxlength="40" placeholder="예) 한국환경공단 대기질 정보" aria-label="공공데이터 직접 입력">
               </div>
               <div class="field-hint">비워 두면 <b>외부 데이터 없이</b> 직접 입력한 내용만으로 동작합니다.</div>
             </div>
@@ -977,7 +977,8 @@
   var TARGETS = [
     { name: "나 혼자", desc: "혼자 쓰는 개인용 앱입니다. 로그인 없이 열면 바로 쓸 수 있어야 합니다." },
     { name: "우리 가족", desc: "가족이 함께 쓰는 앱입니다. 설명을 읽지 않아도 바로 쓸 수 있어야 합니다." },
-    { name: "고객·학부모", desc: "고객이나 학부모에게 보여 주는 앱입니다. 처음 온 사람도 설명 없이 쓸 수 있고, 화면이 보기 좋게 정리되어 있어야 합니다." },
+    { name: "친구·지인", desc: "친구나 지인에게 보여 주는 앱입니다. 설명을 읽지 않아도 바로 쓸 수 있고, 화면이 보기 좋게 정리되어 있어야 합니다." },
+    { name: "고객·손님", desc: "가게에 온 손님이나 거래처에 보여 주는 앱입니다. 처음 온 사람도 설명 없이 쓸 수 있고, 화면이 보기 좋게 정리되어 있어야 합니다." },
     { name: "팀원·동료", desc: "팀원이 함께 쓰는 업무용 앱입니다. 누가 무엇을 했는지 한눈에 보이고, 입력이 빠르게 되어야 합니다." },
     { name: "누구나", desc: "누구나 쓰는 공개용 앱입니다. 처음 온 사람도 설명 없이 쓸 수 있어야 합니다." },
     { name: "직접입력", desc: "" }
@@ -1025,7 +1026,7 @@
     { name: "없음", desc: "외부 데이터 없이, 직접 입력한 내용만으로 동작하게 해 주세요." },
     { name: "기상청 날씨", desc: "기상청 단기예보 API로 오늘·내일 날씨를 보여 주세요. API 키가 없을 때는 미리 넣어 둔 예시 날씨로 먼저 동작하고, 키를 넣으면 실제 값으로 바뀌게 해 주세요." },
     { name: "카카오·네이버 지도", desc: "지도는 카카오맵 또는 네이버 지도를 쓰고, 키가 없을 때는 지도 자리에 안내 문구가 보이게 해 주세요. 나머지 기능은 지도 없이도 쓸 수 있어야 합니다." },
-    { name: "공공데이터포털", desc: "공공데이터포털(data.go.kr)의 실거래가·상권 데이터를 쓸 수 있게 해 주세요. 키가 없을 때는 미리 넣어 둔 예시 데이터로 화면이 돌아가게 해 주세요." },
+    { name: "공공데이터포털", desc: "공공데이터포털(data.go.kr)의 공개 데이터(예: 날씨·대기질·버스 도착 정보)를 쓸 수 있게 해 주세요. 키가 없을 때는 미리 넣어 둔 예시 데이터로 화면이 돌아가게 해 주세요." },
     { name: "서울 열린데이터광장", desc: "서울 열린데이터광장(data.seoul.go.kr)의 공개 데이터를 쓸 수 있게 해 주세요. 키가 없을 때는 예시 데이터로 동작하게 해 주세요." },
     { name: "직접입력", desc: "" }
   ];
@@ -1063,50 +1064,51 @@
 
   var EXAMPLES = [
     {
-      id: "realty",
-      name: "부동산 상권 지도",
-      desc: "임장 다닐 때 건물 사진과 가격, 주변 상권 메모를 바로 적고 싶어요. 나중에 지도에서 건물별로 모아 보면서 서로 비교할 수 있으면 좋겠습니다.",
+      id: "fortune",
+      name: "사주·운세 앱",
+      desc: "태어난 날짜와 시간을 한 번 넣어 두면 오늘의 운세와 성향을 짧게 보여 주는 앱을 만들고 싶어요. 아침마다 한 번씩 열어 보는 재미로 쓰려고 합니다.",
       target: "나 혼자",
-      features: ["지도 표시", "목록 보기", "사진 첨부", "검색·필터", "메모"],
+      features: ["달력·날짜별 보기", "즐겨찾기", "공유 링크", "메모"],
       screens: [
-        { name: "지도", purp: "다녀온 건물을 지도에 표시하고 눌러서 정보 보기" },
-        { name: "임장 목록", purp: "건물을 최신순으로 모아 보기" },
-        { name: "임장 기록", purp: "사진·가격·상권 메모 남기기" }
+        { name: "오늘의 운세", purp: "오늘의 운세와 성향 요약을 크게 보여 주기" },
+        { name: "내 정보 입력", purp: "생년월일과 태어난 시간 입력하기" },
+        { name: "지난 운세", purp: "날짜별로 지난 운세 다시 보기" }
       ],
-      mood: "믿음직한",
+      mood: "고급스러운",
       storage: "local",
-      datas: ["공공데이터포털", "카카오·네이버 지도"],
-      avoids: ["로그인·회원가입", "개인정보 수집"]
+      datas: ["없음"],
+      avoids: ["로그인·회원가입", "결제·구독", "개인정보 수집"]
     },
     {
-      id: "class",
-      name: "수업·놀이 기록",
-      desc: "수업에서 한 놀이를 반별·아이별로 기록해 두고, 오늘 무엇을 했는지 학부모에게 링크로 보여 주고 싶어요. 사진과 준비물도 함께 남기고 싶습니다.",
-      target: "고객·학부모",
-      features: ["목록 보기", "사진 첨부", "메모", "공유 링크", "달력·날짜별 보기"],
+      id: "memo",
+      name: "간단 메모 앱",
+      desc: "생각날 때마다 짧은 메모를 적어 두고, 태그로 묶어서 찾아보고 싶어요. 중요한 메모는 맨 위에 고정해 두면 좋겠습니다.",
+      target: "나 혼자",
+      features: ["추가·수정·삭제", "목록 보기", "검색·필터", "즐겨찾기", "다크 모드"],
       screens: [
-        { name: "오늘의 수업", purp: "오늘 한 놀이와 준비물을 크게 보여 주기" },
-        { name: "기록 모아보기", purp: "날짜별·반별로 지난 수업 기록 보기" }
+        { name: "메모 목록", purp: "고정한 메모를 위에, 나머지는 최신순으로 보기" },
+        { name: "메모 쓰기", purp: "제목·내용·태그를 적고 저장하기" }
       ],
-      mood: "부드러운",
+      mood: "깔끔한",
       storage: "local",
       datas: ["없음"],
       avoids: ["로그인·회원가입", "광고·팝업", "개인정보 수집"]
     },
     {
-      id: "links",
-      name: "나만의 링크 모음",
-      desc: "업무에 쓰는 사이트와 자주 보는 페이지를 한 화면에 모아 두고 싶어요. 이름과 한 줄 설명을 붙여 두고, 분류별로 골라 볼 수 있으면 좋겠습니다.",
+      id: "ledger",
+      name: "가계부·지출 앱",
+      desc: "하루에 쓴 돈을 그때그때 적어 두고, 이번 달에 어디에 얼마를 썼는지 항목별로 보고 싶어요. 수입도 함께 적을 수 있으면 좋겠습니다.",
       target: "나 혼자",
-      features: ["추가·수정·삭제", "목록 보기", "검색·필터", "즐겨찾기"],
+      features: ["추가·수정·삭제", "목록 보기", "통계·합계", "달력·날짜별 보기", "CSV 내보내기"],
       screens: [
-        { name: "링크 목록", purp: "분류별로 링크를 카드로 보여 주기" },
-        { name: "링크 추가", purp: "이름·주소·설명·분류 입력하기" }
+        { name: "이번 달", purp: "이번 달 수입·지출 합계와 항목별 비중 보여 주기" },
+        { name: "내역 추가", purp: "날짜·금액·분류를 적어 저장하기" },
+        { name: "달력", purp: "날짜별로 쓴 돈 모아 보기" }
       ],
-      mood: "깔끔한",
+      mood: "믿음직한",
       storage: "local",
       datas: ["없음"],
-      avoids: ["로그인·회원가입", "광고·팝업"]
+      avoids: ["로그인·회원가입", "광고·팝업", "개인정보 수집"]
     },
     {
       id: "todo",
@@ -1127,7 +1129,7 @@
       id: "split",
       name: "모임 회비 정산",
       desc: "모임에서 쓴 돈을 사람별로 나눠 내는 계산이 매번 헷갈려요. 총액과 인원, 각자 낸 금액을 넣으면 누가 누구에게 얼마를 보내면 되는지 정리해 주세요.",
-      target: "모임 친구들",
+      target: "친구·지인",
       features: ["추가·수정·삭제", "통계·합계", "공유 링크", "메모"],
       screens: [
         { name: "정산 입력", purp: "총액·인원·각자 낸 금액 입력" },
