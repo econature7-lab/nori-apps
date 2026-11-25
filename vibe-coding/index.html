@@ -1624,6 +1624,7 @@ window.NORI_ADS = {
         $("targetCustomRow").hidden = state.target !== "직접입력";
         if (state.target === "직접입력") $("targetCustom").focus();
         renderTargets();
+        renderStepMeta();
         renderPreview();
       });
       b.setAttribute("aria-label", t.name === "직접입력" ? "쓰는 사람 직접 입력" : t.name);
@@ -1684,6 +1685,7 @@ window.NORI_ADS = {
     state.example = null;
     renderFeatures();
     renderExamples();
+    renderStepMeta();
     renderPreview();
   }
 
@@ -1698,6 +1700,7 @@ window.NORI_ADS = {
     input.value = "";
     renderFeatures();
     renderExamples();
+    renderStepMeta();
     renderPreview();
   }
 
@@ -2325,6 +2328,7 @@ window.NORI_ADS = {
 
   $("targetCustom").addEventListener("input", function () {
     state.targetCustom = this.value;
+    renderStepMeta();
     renderPreview();
   });
 
