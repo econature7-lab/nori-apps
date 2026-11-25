@@ -118,6 +118,39 @@
   .hero-tag::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--amber)}
   .hero-tag b{color:var(--ink);font-weight:800}
 
+  /* ── 초보 사용법 가이드 ─────────────────── */
+  .guide-wrap{position:relative;z-index:1;margin-top:16px}
+  .guide-card{
+    background:#fff;border:1px solid #EFE4CE;border-radius:16px;
+    box-shadow:var(--shadow-s);overflow:hidden;
+  }
+  .guide-card > summary{
+    cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;
+    padding:13px 15px;background:linear-gradient(180deg,#FDF7EA,#FFFDF8);
+  }
+  .guide-card > summary::-webkit-details-marker{display:none}
+  .guide-ico{font-size:17px;line-height:1}
+  .guide-tt{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .guide-tt b{font-size:13.5px;font-weight:800;color:var(--ink);letter-spacing:-.01em}
+  .guide-tt span{font-size:11.5px;color:var(--ink-3);line-height:1.45}
+  .guide-chev{
+    margin-left:auto;flex:none;width:8px;height:8px;
+    border-right:2px solid var(--ink-4);border-bottom:2px solid var(--ink-4);
+    transform:rotate(45deg) translate(-2px,-2px);transition:transform .18s;
+  }
+  .guide-card[open] .guide-chev{transform:rotate(-135deg) translate(-2px,-2px)}
+  .guide-steps{list-style:none;margin:0;padding:6px 15px 16px;display:grid;gap:11px}
+  .guide-steps li{display:flex;gap:10px;align-items:flex-start}
+  .gs-num{
+    flex:none;width:21px;height:21px;border-radius:50%;background:var(--amber);color:#fff;
+    font-size:11.5px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px;
+  }
+  .gs-body{min-width:0}
+  .gs-body > b{display:block;font-size:13px;font-weight:800;color:var(--ink);letter-spacing:-.01em}
+  .gs-body p{margin:3px 0 0;font-size:12.5px;color:var(--ink-2);line-height:1.68}
+  .gs-body p b{color:var(--ink);font-weight:800}
+  .gs-body em{font-style:normal;background:var(--amber-soft);color:var(--amber-deep);border-radius:4px;padding:0 4px;font-weight:800}
+
   /* ── 광고 슬롯 ───────────────────────────── */
   .ad-wrap{position:relative;z-index:1;margin:14px 0 4px}
   .ad-slot{
@@ -603,6 +636,45 @@
     </ul>
   </div>
 </section>
+
+<!-- ══════════ 초보 사용법 · 3단계 ══════════ -->
+<div class="guide-wrap">
+  <div class="wrap">
+    <details class="guide-card" id="guideCard" open>
+      <summary>
+        <span class="guide-ico" aria-hidden="true">📖</span>
+        <span class="guide-tt">
+          <b>처음 오셨나요? 3단계 사용법</b>
+          <span>복사 → AI에 붙여넣기 → 고치기, 이 순서대로만 하면 됩니다</span>
+        </span>
+        <span class="guide-chev" aria-hidden="true"></span>
+      </summary>
+      <ol class="guide-steps">
+        <li>
+          <span class="gs-num" aria-hidden="true">1</span>
+          <div class="gs-body">
+            <b>지시서 복사하기</b>
+            <p>위 예시 버튼(가계부·사주 등)을 누르거나 <b>1단계 세 칸</b>만 채우세요. 그다음 <em>[복사하기]</em> 버튼을 누르면 AI에게 시킬 말이 통째로 복사됩니다. 휴대폰에서는 화면 맨 아래 <em>[복사]</em> 버튼이에요.</p>
+          </div>
+        </li>
+        <li>
+          <span class="gs-num" aria-hidden="true">2</span>
+          <div class="gs-body">
+            <b>AI에게 붙여넣기</b>
+            <p><b>ChatGPT · Claude · Gemini</b> 중 편한 AI 채팅창을 열고, 복사한 내용을 그대로 붙여넣어 보내세요. 무료 버전도 충분합니다. 뒤에 <em>“미리보기 화면으로 보여줘”</em> 한 마디만 덧붙이면 결과를 바로 눈으로 볼 수 있어요.</p>
+          </div>
+        </li>
+        <li>
+          <span class="gs-num" aria-hidden="true">3</span>
+          <div class="gs-body">
+            <b>고치기 &amp; 내 폰에서 쓰기</b>
+            <p>마음에 안 드는 부분은 <em>[수정 요청]</em> 탭에 적어 다시 보내면 됩니다. 완성되면 AI에게 <em>“HTML 파일 하나로 만들어 줘”</em>라고 해서 받은 파일을 열거나, 무료 호스팅(GitHub Pages 등)에 올려 내 폰 홈화면에 추가하면 평생 무료로 쓸 수 있어요.</p>
+          </div>
+        </li>
+      </ol>
+    </details>
+  </div>
+</div>
 
 <div class="ad-wrap">
   <div class="wrap">
