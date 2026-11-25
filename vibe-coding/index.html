@@ -700,7 +700,7 @@
             <div class="field">
               <div class="field-label"><span class="fnum">④</span> 화면 분위기</div>
               <div class="chips" id="moodChips"></div>
-              <div class="field-hint">비워 두면 <b>깔끔한</b>으로 자동 설정됩니다.</div>
+              <div class="field-hint">기본은 <b>깔끔한</b>입니다. 마음에 드는 것을 골라 주세요.</div>
             </div>
 
             <div class="field">
@@ -740,7 +740,7 @@
             <div class="field">
               <div class="field-label"><span class="fnum">⑦</span> 기록 저장 방식</div>
               <div class="opt-list" id="storeList"></div>
-              <div class="field-hint">비워 두면 <b>내 폰에만 저장</b>(서버 없음)으로 설정됩니다.</div>
+              <div class="field-hint">기본은 <b>내 폰에만 저장</b>(서버 없음)입니다. 다르게 하려면 골라 주세요.</div>
             </div>
 
             <div class="field">
@@ -1437,8 +1437,8 @@ window.NORI_ADS = {
       features: [],
       screens: [{ name: "", purp: "" }, { name: "", purp: "" }, { name: "", purp: "" }, { name: "", purp: "" }],
       screenCount: 2,
-      mood: "",
-      storage: "",
+      mood: "깔끔한",
+      storage: "local",
       datas: [],
       dataCustom: "",
       avoids: [],
@@ -1507,8 +1507,8 @@ window.NORI_ADS = {
       if (i < 4) state.screens[i] = { name: s.name || "", purp: s.purp || "" };
     });
     state.screenCount = Math.max(1, Math.min(4, (ex.screens || []).length || 1));
-    state.mood = ex.mood || "";
-    state.storage = ex.storage || "";
+    state.mood = ex.mood || "깔끔한";
+    state.storage = ex.storage || "local";
     state.datas = (ex.datas || []).slice();
     state.avoids = (ex.avoids || []).slice();
     state.dataCustom = "";
@@ -1694,7 +1694,7 @@ window.NORI_ADS = {
     box.innerHTML = "";
     C.MOODS.forEach(function (m) {
       box.appendChild(chip(m.name, state.mood === m.name, function () {
-        state.mood = state.mood === m.name ? "" : m.name;
+        state.mood = m.name;
         renderMoods();
         renderStepMeta();
         renderPreview();
@@ -1724,7 +1724,7 @@ window.NORI_ADS = {
       b.appendChild(r);
       b.appendChild(txt);
       b.addEventListener("click", function () {
-        state.storage = state.storage === s.id ? "" : s.id;
+        state.storage = s.id;
         renderStorage();
         renderStepMeta();
         renderPreview();
@@ -1835,13 +1835,13 @@ window.NORI_ADS = {
 
     var sub2 = "분위기 " + (moodName || "깔끔한") + " · 화면 " + state.screenCount + "개" + (namedScreens ? "" : " (이름 자동)");
     $("step2Sub").textContent = sub2;
-    var cnt2 = (moodName ? 1 : 0) + (namedScreens ? 1 : 0) + (state.keepWords.trim() ? 1 : 0);
+    var cnt2 = (moodName && moodName !== "깔끔한" ? 1 : 0) + (namedScreens ? 1 : 0) + (state.keepWords.trim() ? 1 : 0);
 
     var storeTitle = (C.STORAGE.filter(function (s) { return s.id === state.storage; })[0] || {}).title || "내 폰에만 저장";
     var datas = state.datas.filter(function (d) { return d !== "없음" && d !== "직접입력"; });
     var sub3 = "저장: " + storeTitle + " · " + (datas.length ? datas.join("·") : "공공데이터 없음");
     $("step3Sub").textContent = sub3;
-    var cnt3 = (state.storage ? 1 : 0) + (datas.length ? 1 : 0) + (state.avoids.length ? 1 : 0);
+    var cnt3 = (state.storage && state.storage !== "local" ? 1 : 0) + (datas.length ? 1 : 0) + (state.avoids.length ? 1 : 0);
 
     var b2 = $("step2Badge");
     b2.textContent = cnt2 ? cnt2 + "개" : "";
@@ -2032,8 +2032,8 @@ window.NORI_ADS = {
       if (i < 4) state.screens[i] = { name: (s && s.name) || "", purp: (s && s.purp) || "" };
     });
     state.screenCount = Math.max(1, Math.min(4, d.screenCount || 2));
-    state.mood = d.mood === undefined ? "" : d.mood;
-    state.storage = d.storage || "";
+    state.mood = d.mood || "깔끔한";
+    state.storage = d.storage || "local";
     state.datas = (d.datas || []).slice();
     state.dataCustom = d.dataCustom || "";
     state.avoids = (d.avoids || []).slice();
