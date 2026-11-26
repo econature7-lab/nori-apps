@@ -7,28 +7,53 @@
 (async function(){
   var S = window.SAJU, out = document.getElementById("out");
   var rows = await (await fetch("./_verify.json", {cache:"no-store"})).json();
-  var bad = [], n = 0;
-  function idxFromP(p){ // 60갑자 index from stem/branch
-    for (var i=0;i<60;i++) if (i%10===p.stem && i%12===p.branch) return i;
-    return -1;
+  var bad = [], n = 0, skippedMonth = 0;
+  function idxFromP(p){ for (var i=0;i<60;i++) if (i%10===p.stem && i%12===p.branch) return i; return -1; }
+  // 절기 근처(±1일)인지 — 다른 만세력과 하루 단위 차이가 나는 구간은 비교 제외
+  function nearTerm(y,m,d,h){
+    var t = S.jdn(y,m,d)*1440 + h*60;
+    for (var yy=y-1; yy<=y+1; yy++){
+      for (var i=0;i<12;i++){
+        var td = S.termDate(yy,i);
+        var tt = S.jdn(td.y,td.m,td.d)*1440 + td.hh*60 + td.mm;
+        if (Math.abs(t-tt) < 1440) return true;
+      }
+    }
+    return false;
   }
   rows.forEach(function(r){
-    var [y,m,d,h,yg,mg,dg,hg,ly,lm,ld,leap] = r;
+    var y=r[0],m=r[1],d=r[2],h=r[3],yg=r[4],mg=r[5],dg=r[6],hg=r[7],ly=r[8],lm=r[9],ld=r[10],leap=r[11];
     n++;
     var res = S.compute({calendar:"solar", y:y, m:m, d:d, h:h, minute:0, gender:"F", name:""});
     if (res.error){ bad.push([y,m,d,h,"ERR:"+res.error]); return; }
     var got = [idxFromP(res.pillars.year), idxFromP(res.pillars.month), idxFromP(res.pillars.day), res.pillars.hour ? idxFromP(res.pillars.hour) : null];
-    var exp = [yg,mg,dg,hg];
-    var names=["year","month","day","hour"];
-    for (var k=0;k<4;k++){
-      if (got[k] !== exp[k]) bad.push([y,m,d,h,names[k],"exp "+exp[k]+" got "+got[k],
-        "exp "+S.STEM[exp[k]%10]+S.BRANCH[exp[k]%12]+" got "+(got[k]!==null?S.STEM[got[k]%10]+S.BRANCH[got[k]%12]:"null")]);
-    }
+    var expDay = (h>=23 ? (dg+1)%60 : dg);   // 조자시: 23시부터 다음 날 일주
+    var skipM = nearTerm(y,m,d,h);
+    if (skipM) skippedMonth++;
+    if (got[0] !== yg) bad.push([y,m,d,h,"year","exp "+S.STEM[yg%10]+S.BRANCH[yg%12]+" got "+S.STEM[got[0]%10]+S.BRANCH[got[0]%12]]);
+    if (!skipM && got[1] !== mg) bad.push([y,m,d,h,"month","exp "+S.STEM[mg%10]+S.BRANCH[mg%12]+" got "+S.STEM[got[1]%10]+S.BRANCH[got[1]%12]]);
+    if (got[2] !== expDay) bad.push([y,m,d,h,"day","exp "+S.STEM[expDay%10]+S.BRANCH[expDay%12]+" got "+S.STEM[got[2]%10]+S.BRANCH[got[2]%12]]);
+    if (!skipM && got[3] !== hg) bad.push([y,m,d,h,"hour","exp "+S.STEM[hg%10]+S.BRANCH[hg%12]+" got "+(got[3]!==null?S.STEM[got[3]%10]+S.BRANCH[got[3]%12]:"null")]);
     var L = res.lunar;
     if (!L || L.y!==ly || L.m!==lm || L.d!==ld || (!!L.leap)!==(!!leap))
       bad.push([y,m,d,h,"lunar","exp "+[ly,lm,ld,leap].join("/")+" got "+(L?[L.y,L.m,L.d,L.leap].join("/"):"null")]);
   });
-  out.textContent = "cases "+n+" / mismatches "+bad.length+"\n" + bad.slice(0,40).map(function(b){return b.join(" | ");}).join("\n");
-  window.__RESULT = {cases:n, mismatches:bad.length, sample:bad.slice(0,40)};
+
+  // 토정비결 문서 예시 검증 (양력 1990-05-15 → 2027년 163괘)
+  var t1 = S.compute({calendar:"solar",y:1990,m:5,d:15,h:null,minute:0,gender:"F",name:""});
+  var toj = t1.tojeong;
+  var doc = (toj.sang===1 && toj.jung===6 && toj.ha===3 && toj.no===163) ? "OK" : "FAIL(sang/jung/ha="+toj.sang+"/"+toj.jung+"/"+toj.ha+")";
+
+  // 2027년 음력 4월 21일 = 2027-05-26, 일진 을사 확인
+  var l2s = S.lunarToSolar(2027,4,false,21);
+  var gz = S.gzIndexOfDate(2027,5,26);
+  var dayOk = (l2s && l2s.y===2027 && l2s.m===5 && l2s.d===26) ? "OK" : "FAIL "+JSON.stringify(l2s);
+  var gzOk = (S.STEM[gz%10]==="을" && S.BRANCH[gz%12]==="사") ? "OK" : "FAIL "+S.STEM[gz%10]+S.BRANCH[gz%12];
+
+  out.textContent = "cases "+n+" / mismatches "+bad.length+" / month-compare skipped "+skippedMonth
+    + "\ntojeong-1990-example " + doc + " | 2027 lunar convert " + dayOk + " | 2027-05-26 일진 " + gzOk
+    + "\n" + bad.slice(0,40).map(function(b){return b.join(" | ");}).join("\n");
+  window.__RESULT = {cases:n, mismatches:bad.length, sample:bad.slice(0,40), tojeong:doc};
 })();
 </script>
+</html>
