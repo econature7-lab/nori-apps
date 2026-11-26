@@ -52,6 +52,11 @@ a{color:inherit}
 .tab.on{background:var(--navy);color:#fff;box-shadow:0 4px 12px -6px rgba(18,39,90,.7)}
 main{padding:14px 0 40px}
 
+/* ---------- insight ---------- */
+.insight{background:linear-gradient(135deg,#eef4ff,#f7faff);border:1px solid #d7e3fb;border-radius:13px;padding:11px 12px;font-size:12px;color:#31456b;line-height:1.6;margin:2px 0 10px}
+.insight b{color:#12275a}
+.insight .k{display:inline-block;font-weight:800;color:#1d3b7a;background:#fff;border:1px solid #d7e3fb;border-radius:6px;padding:1px 6px;margin-right:4px;font-size:11px}
+
 /* ---------- summary ---------- */
 .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:2px 0 12px}
 .summary .s{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 6px;text-align:center}
@@ -286,6 +291,7 @@ footer b{color:#667085}
 
 <main class="wrap">
   <section id="tab-bids">
+    <div class="insight" id="insight"></div>
     <div class="summary" id="summary"></div>
     <div class="fbar" id="filters"></div>
     <div class="sizerow">
@@ -516,9 +522,10 @@ function evaluateGroups(bid){
 }
 function regionVerdict(bid){
   if(!bid.regions || !bid.regions.length) return {ok:true, label:'지역제한 없음', far:false};
-  const cap = bid.regions.some(r => CAPITAL.some(c => r.includes(c)));
-  if(cap) return {ok:true, label:bid.regions.length>1 ? '수도권 포함' : bid.regions[0], far:false};
-  return {ok:false, label: bid.regionShort || bid.regions[0], far:true};
+  const seoul = bid.regions.some(r => r.includes('서울'));
+  if(seoul) return {ok:true, label: bid.regions.length>1 ? '서울 포함' : bid.regions[0], far:false};
+  const cap = bid.regions.some(r => ['경기','인천'].some(c => r.includes(c)));
+  return {ok:false, label: bid.regionShort || bid.regions[0], far:!cap, cap};
 }
 function judge(bid){
   const gs = evaluateGroups(bid);
@@ -568,7 +575,9 @@ function judge(bid){
 
   // 지역
   if(!reg.ok){
-    reasons.unshift('지역제한: ' + reg.label + ' — 서울(마포) 사무소로는 참여 불가·출장 부담 과다');
+    reasons.unshift(reg.cap
+      ? '지역제한: ' + reg.label + ' — 주된 영업소가 해당 지역이어야 해 서울(마포) 사무소는 참가할 수 없습니다'
+      : '지역제한: ' + reg.label + ' — 원거리 지역제한으로 참가할 수 없습니다');
     score -= 42;
   } else if(reg.label === '지역제한 없음'){
     const farOrg = /부산|대구|광주|울산|세종|강원|충북|충남|전북|전남|경북|경남|제주/.test(bid.org||'');
@@ -600,7 +609,7 @@ function judge(bid){
   if(badge === 'g') label = '단독 가능';
   else if(badge === 'o') label = '협정 필수 · 1489';
   else if(badge === 'y') label = (kind==='gap' ? '협정 필수 · 업체 발굴' : '협정 필수');
-  else if(!reg.ok) label = '비추천 · 원거리';
+  else if(!reg.ok) label = '비추천 · 지역제한';
   else if(base >= 500000000) label = '비추천 · 규모 초과';
   else if((bid.jv||'').includes('불허') && kind !== 'solo') label = '비추천 · 협정 불가';
   else label = '비추천 · 자격 미달';
@@ -624,7 +633,7 @@ $('#prof').innerHTML = [
 
 const FILTERS = [
   {k:'all', t:'전체'}, {k:'rec', t:'추천만'}, {k:'solo', t:'단독'}, {k:'accord', t:'협정 필요'},
-  {k:'capital', t:'서울·수도권'}, {k:'small', t:'5천만 이하'}, {k:'mid', t:'5천만~2억'}, {k:'big', t:'2억 이상'}
+  {k:'region', t:'참여 가능 지역'}, {k:'small', t:'5천만 이하'}, {k:'mid', t:'5천만~2억'}, {k:'big', t:'2억 이상'}
 ];
 $('#filters').innerHTML = FILTERS.map(f=>`<button class="fchip${f.k==='all'?' on':''}" data-f="${f.k}">${f.t}</button>`).join('');
 
@@ -639,10 +648,10 @@ $('#legend').innerHTML = LEGEND.map(([c,t,d])=>`<div class="bl"><span class="bad
 function inFilter(b, j){
   const base = b.base || b.est || 0;
   switch(state.filter){
-    case 'rec': return ['g','y','o'].includes(j.badge) && j.score >= 55;
+    case 'rec': return ['g','y','o'].includes(j.badge);
     case 'solo': return j.badge === 'g';
     case 'accord': return ['y','o'].includes(j.badge);
-    case 'capital': return !j.reg.far;
+    case 'region': return j.reg.ok;
     case 'small': return base <= 50000000;
     case 'mid': return base > 50000000 && base <= 200000000;
     case 'big': return base > 200000000;
@@ -679,6 +688,9 @@ function renderBids(){
   const all = DATA.bids.map(b=>({b,j:judge(b)}));
   const cnt = {g:0,y:0,o:0,r:0};
   all.forEach(x=>cnt[x.j.badge]++);
+  const blocked = all.filter(x=>!x.j.reg.ok).length;
+  $('#insight').innerHTML = `<span class="k">이번 주 결론</span>서울(마포) 사무소 기준 <b>단독 ${cnt.g}건</b> · <b>협정 ${cnt.y+cnt.o}건</b>.
+    나머지 <b>${cnt.r}건</b> 중 ${blocked}건은 지역제한(경기·인천·지방)에서 먼저 걸립니다. 공고 단위로 눌러 이유를 확인하세요.`;
   $('#summary').innerHTML = [
     ['g','단독 가능'],['y','협정 필요'],['o','1489 협정'],['r','비추천']
   ].map(([k,t])=>`<div class="s ${k}"><div class="n">${cnt[k]}</div><div class="t">${t}</div></div>`).join('');
@@ -700,7 +712,7 @@ function renderBids(){
       <div class="facts">
         <span class="fact">기초 <b>${shortWon(b.base)}</b>${b.baseDerived?'*':''}</span>
         <span class="fact">마감 <b>${fmtDeadline(b.deadline)}</b></span>
-        <span class="fact${j.reg.far?' warn':''}">${esc(regionTag)}</span>
+        <span class="fact${j.reg.ok?'':' warn'}">${esc(regionTag)}</span>
       </div>
       <div class="codes">${cardCodes(b)}</div>
       <div class="verdict"><span class="vico">${vl.ico}</span><span>${esc(vl.txt)}</span></div>
