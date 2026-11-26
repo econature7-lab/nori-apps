@@ -552,7 +552,12 @@ function judge(bid){
         if(!opts.find(x=>x.key===key)) opts.push({key, group:g, partners:o.partners, missing:o.missing});
       }
     }
-    opts.sort((a,b)=> a.partners.length - b.partners.length || a.missing.length - b.missing.length || partnerRank(b.partners[0]) - partnerRank(a.partners[0]));
+    const bestG = best.g;
+    opts.sort((a,b)=>
+      (b.group.g === bestG ? 1 : 0) - (a.group.g === bestG ? 1 : 0) ||
+      a.partners.length - b.partners.length ||
+      a.missing.length - b.missing.length ||
+      partnerRank(b.partners[0]) - partnerRank(a.partners[0]));
     plan = {type:'accord', group:best, options:opts.slice(0,3)};
     const anyOrange = opts.some(o => o.missing.includes('1489'));
     kind = anyOrange ? 'orange' : 'accord';
@@ -633,7 +638,7 @@ $('#prof').innerHTML = [
 
 const FILTERS = [
   {k:'all', t:'전체'}, {k:'rec', t:'추천만'}, {k:'solo', t:'단독'}, {k:'accord', t:'협정 필요'},
-  {k:'region', t:'참여 가능 지역'}, {k:'small', t:'5천만 이하'}, {k:'mid', t:'5천만~2억'}, {k:'big', t:'2억 이상'}
+  {k:'region', t:'참여 가능'}, {k:'small', t:'5천만 이하'}, {k:'mid', t:'5천만~2억'}, {k:'big', t:'2억 이상'}
 ];
 $('#filters').innerHTML = FILTERS.map(f=>`<button class="fchip${f.k==='all'?' on':''}" data-f="${f.k}">${f.t}</button>`).join('');
 
@@ -695,7 +700,7 @@ function renderBids(){
     ['g','단독 가능'],['y','협정 필요'],['o','1489 협정'],['r','비추천']
   ].map(([k,t])=>`<div class="s ${k}"><div class="n">${cnt[k]}</div><div class="t">${t}</div></div>`).join('');
   $('#cntAll').textContent = DATA.bids.length;
-  $('#cntRec').textContent = all.filter(x=>['g','y','o'].includes(x.j.badge) && x.j.score>=55).length;
+  $('#cntRec').textContent = all.filter(x=>['g','y','o'].includes(x.j.badge)).length;
   $('#count').innerHTML = `<b>${rows.length}</b>건 표시 · 전체 ${DATA.bids.length}건`;
   if(!rows.length){ $('#bidList').innerHTML = `<div class="empty">조건에 맞는 공고가 없습니다.<br>필터를 바꿔 보세요.</div>`; return; }
   $('#bidList').innerHTML = rows.map(({b,j})=>{
@@ -811,7 +816,8 @@ function sheetBody(b, j){
       ${g.missing.includes('1489')?`<div class="warnbox" style="margin-bottom:9px">1489는 <b>건창기술단이 보유하지 않습니다.</b> 1489만 있으면 되는 공고는 나비환경설비(기존거래)가 가장 빠르고, 1106·3572까지 함께 필요하면 국제엔지니어링·씨엔아이 또는 건창 조합이 맞습니다.</div>`:''}
       ${j.plan.options.map((o,i)=>`<div style="margin-bottom:4px;font-size:11px;color:#667085">조합 ${o.group.g} 기준 · ${o.partners.length}개사로 충족</div>` + o.partners.map((p,k)=>partnerCard(p, i+1, o.missing)).join('')).join('')}`;
   } else if(j.kind === 'gap'){
-    const miss = j.plan.group.missing.join('·');
+    const missSet = [...new Set(j.gs.filter(g=>g.gap).flatMap(g=>g.missing))];
+    const miss = missSet.join('·');
     accordHtml = `<div class="warnbox"><b>${miss} 보유 협정사가 시트에 없습니다.</b><br>
       나라장터 → 입찰정보 → 업체검색(업종·지역) 또는 조달업체정보에서 해당 업종 등록업체를 찾아 시트에 추가하세요.
       ${miss.includes('3584')||miss.includes('1352')?' 조경(3584·1352)은 조경설계 엔지니어링사·기술사사무소로 문의합니다.':''}
