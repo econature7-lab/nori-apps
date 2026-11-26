@@ -387,7 +387,8 @@
   }
 
   /* ── ① 사주 결과 렌더 ──────────────────────────── */
-  var ELEM_C = ["#22B573", "#FF4D6D", "#EF9700", "#8B98AE", "#3D7BFF"];
+  /* 오행 색 — 🍊 버터크림·오렌지·딥네이비 팔레트에 맞춘 딥 톤 (흰 글자 대비 4.5:1 이상) */
+  var ELEM_C = ["#1B7F51", "#CF3F0B", "#9E6608", "#5E6C82", "#1F4E8C"];
 
   function renderSaju(res, b) {
     var nm = res.input.name ? esc(res.input.name) : "";
