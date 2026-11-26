@@ -640,8 +640,8 @@ function inFilter(b, j){
   const base = b.base || b.est || 0;
   switch(state.filter){
     case 'rec': return ['g','y','o'].includes(j.badge) && j.score >= 55;
-    case 'solo': return j.kind === 'solo';
-    case 'accord': return ['accord','orange','gap'].includes(j.kind);
+    case 'solo': return j.badge === 'g';
+    case 'accord': return ['y','o'].includes(j.badge);
     case 'capital': return !j.reg.far;
     case 'small': return base <= 50000000;
     case 'mid': return base > 50000000 && base <= 200000000;
