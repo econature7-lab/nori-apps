@@ -862,6 +862,7 @@ window.NORI_ADS = {
   $("copyBtn").addEventListener("click", function () {
     var text = state.copyText || "";
     if (!text) return;
+    window.NORI_LAST_COPY = text;
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(function () { toast("복사했어요. X·카톡에 붙여 넣으세요."); },
         function () { fallbackCopy(text); });

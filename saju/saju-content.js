@@ -298,9 +298,9 @@
 
     /* 분야별 */
     var fields = {
-      money: [tg.money, "올해 재물 포인트는 ‘새는 곳을 막는 것’이에요. " + (level === 0 ? "들어오는 길이 열려 있으니 받을 것은 확실히 챙기세요." : level === 1 ? "들어오는 만큼 나가니 큰 지출은 하루 미루는 규칙을 두세요." : "크게 벌기보다 새는 곳을 막는 데 집중하면 남는 게 확실히 늘어요.")],
-      love: [tg.love, (level === 0 ? "먼저 다가가는 쪽이 유리한 해예요. 한 번 더 표현하세요." : level === 1 ? "밀당보다 꾸준함이 통해요. 약속을 지키는 게 가장 큰 매력입니다." : "관계는 급하게 정리하지 마세요. 시간이 편을 들어 줍니다.")],
-      work: [tg.work, (level === 0 ? "상반기에 문이 열립니다. 지원·제안·지원사업을 지금 준비하세요." : level === 1 ? "맡은 일의 완성도가 다음 자리를 만듭니다. 기록을 남기세요." : "새로 벌이기보다 실력을 다지는 해예요. 배움에 투자하세요.")],
+      money: [tg.money, (level === 0 ? "받을 것은 확실히 받는 해예요. 청구·정산·지원금을 그냥 넘기지 마세요." : level === 1 ? "들어오는 만큼 나가기 쉬운 해예요. 큰 지출은 하루 미루는 규칙 하나면 충분합니다." : "크게 벌기보다 지키는 게 이득인 해예요. 고정 지출을 한 번 정리하면 남는 게 눈에 보입니다.")],
+      love: [tg.love, (level === 0 ? "먼저 다가가는 쪽이 유리해요. 한 번 더 표현하면 관계가 한 칸 앞으로 갑니다." : level === 1 ? "밀당보다 꾸준함이 통해요. 약속을 지키는 게 가장 큰 매력입니다." : "관계는 급하게 정리하지 마세요. 시간이 편을 들어 줍니다.")],
+      work: [tg.work, (level === 0 ? "상반기에 문이 열립니다. 지원·제안·공모를 지금 준비하세요." : level === 1 ? "맡은 일의 완성도가 다음 자리를 만듭니다. 한 일은 기록으로 남기세요." : "새로 벌이기보다 실력을 다지는 해예요. 배움에 투자하면 오래 남습니다.")],
       health: [tg.health, (level === 0 ? "에너지가 넘치는 해라 무리하기 쉬워요. 잠만은 지키세요." : level === 1 ? "컨디션 기복이 있는 해예요. 규칙적인 식사와 수면이 약입니다." : "지치기 쉬운 해예요. 일정 사이에 회복 시간을 먼저 넣어 두세요.")]
     };
 
@@ -347,7 +347,12 @@
       color: LUCKY[weak].color,
       hex: LUCKY[weak].hex,
       items: LUCKY[weak].items,
-      number: [((res.pillars.day.stem + g.no) % 9) + 1, ((g.sang + g.jung) % 9) + 1].filter(function (v, i, a) { return a.indexOf(v) === i; }),
+      number: (function () {
+        var a = ((res.pillars.day.stem + g.no) % 9) + 1;
+        var b = ((g.sang + g.jung + g.ha) % 9) + 1;
+        if (b === a) b = (b % 9) + 1;
+        return [a, b];
+      })(),
       cautionMonths: months.filter(function (x) { return x.cat === "주의"; }).map(function (x) { return x.m + "월"; }),
       cautionNote: months.filter(function (x) { return x.cat === "주의"; }).length
         ? "부딪히기 쉬운 달이에요. 계약·말 한마디를 한 번 더 확인하세요."
