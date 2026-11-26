@@ -272,7 +272,7 @@
     mounted = true;
     sajuBirth = buildBirth("birthSaju", {
       prefix: "s", name: true, gender: true, save: true, privacy: true,
-      submit: "2027 운세 보기", defaults: { y: 1990, m: 5, d: 15 },
+      submit: "내 사주 뽑기 ✨", defaults: { y: 1990, m: 5, d: 15 },
       onSubmit: function (input) {
         var res = S.compute(input);
         if (res.error) { sajuBirth.error(res.error); return; }
@@ -290,7 +290,7 @@
 
     todayBirth = buildBirth("birthToday", {
       prefix: "t", name: true, gender: true, save: true, privacy: true,
-      submit: "오늘의 운세 보기", defaults: { y: 1990, m: 5, d: 15 },
+      submit: "오늘 내 운세 확인 🍀", defaults: { y: 1990, m: 5, d: 15 },
       onSubmit: function (input) {
         var res = S.compute(input);
         if (res.error) { todayBirth.error(res.error); return; }
@@ -387,7 +387,7 @@
   }
 
   /* ── ① 사주 결과 렌더 ──────────────────────────── */
-  var ELEM_C = ["#6FA98C", "#C9614F", "#C0A16B", "#9AA7B8", "#5D7DA8"];
+  var ELEM_C = ["#2FBF71", "#FF5F6D", "#F0A422", "#9AA6BE", "#4A7DFF"];
 
   function renderSaju(res, b) {
     var nm = res.input.name ? esc(res.input.name) : "";
@@ -565,9 +565,9 @@
     $("tGradeLine").textContent = f.grade.line;
 
     var rows = [
-      ["금전", f.scores.money, "#C0A16B"],
-      ["연애", f.scores.love, "#C9614F"],
-      ["일·학업", f.scores.work, "#5D7DA8"]
+      ["금전", f.scores.money, "#F0A422"],
+      ["연애", f.scores.love, "#FF5F6D"],
+      ["일·학업", f.scores.work, "#4A7DFF"]
     ];
     $("tBars").innerHTML = rows.map(function (r) {
       return '<div class="eb eb3"><div class="nm">' + r[0] + "</div>"
