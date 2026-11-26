@@ -419,7 +419,7 @@
     </div>
 
     <div class="card">
-      <div class="card-head"><h2>오행 밸런스</h2><span class="side">여덟 글자 기준</span></div>
+      <div class="card-head"><h2>오행 밸런스</h2><span class="side" id="elemSide">여덟 글자 기준</span></div>
       <div class="elem-bars" id="elemBars"></div>
       <div class="legend" id="elemLegend"></div>
       <div class="elem-notes" id="elemNotes"></div>
@@ -577,9 +577,9 @@ window.NORI_ADS = {
   else mountAds();
 })();
 </script>
-<script src="./saju-data.js?v=2"></script>
-<script src="./saju-core.js?v=2"></script>
-<script src="./saju-content.js?v=2"></script>
+<script src="./saju-data.js?v=3"></script>
+<script src="./saju-core.js?v=3"></script>
+<script src="./saju-content.js?v=3"></script>
 <script>
 (function () {
   "use strict";
@@ -718,6 +718,7 @@ window.NORI_ADS = {
         + '<div class="val"><b>' + res.counts[i] + "</b>개 · " + res.pct[i] + "%</div></div>";
     }
     $("elemBars").innerHTML = bars;
+    $("elemSide").textContent = res.hasHour ? "여덟 글자 기준" : "여섯 글자(시간 모름) 기준";
     $("elemLegend").innerHTML = ["목", "화", "토", "금", "수"].map(function (n, i) {
       return '<span><i style="background:' + ELEM_C[i] + '"></i>' + n + "</span>";
     }).join("");

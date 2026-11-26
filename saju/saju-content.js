@@ -289,7 +289,7 @@
     var subtitle = S.STEM[res.pillars.day.stem] + S.BRANCH[res.pillars.day.branch] + "일주 · " + bp.kw;
 
     /* 총운 3문장 */
-    var who = res.input.name ? res.input.name + " 님의 " : "";
+    var who = res.input.name ? res.input.name + " 님의 " : "내 ";
     var summary = [
       "2027년 정미년, " + who + "괘는 " + g.no + "괘 — " + sang.img + " 자리에 ‘" + jung.stage + "’의 결이 겹쳤습니다.",
       tgB.line,
