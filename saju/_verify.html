@@ -1,0 +1,34 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><title>verify</title>
+<body style="font:13px/1.6 monospace;background:#111;color:#eee;padding:16px">
+<pre id="out">running…</pre>
+<script src="./saju-data.js"></script>
+<script src="./saju-core.js"></script>
+<script>
+(async function(){
+  var S = window.SAJU, out = document.getElementById("out");
+  var rows = await (await fetch("./_verify.json", {cache:"no-store"})).json();
+  var bad = [], n = 0;
+  function idxFromP(p){ // 60갑자 index from stem/branch
+    for (var i=0;i<60;i++) if (i%10===p.stem && i%12===p.branch) return i;
+    return -1;
+  }
+  rows.forEach(function(r){
+    var [y,m,d,h,yg,mg,dg,hg,ly,lm,ld,leap] = r;
+    n++;
+    var res = S.compute({calendar:"solar", y:y, m:m, d:d, h:h, minute:0, gender:"F", name:""});
+    if (res.error){ bad.push([y,m,d,h,"ERR:"+res.error]); return; }
+    var got = [idxFromP(res.pillars.year), idxFromP(res.pillars.month), idxFromP(res.pillars.day), res.pillars.hour ? idxFromP(res.pillars.hour) : null];
+    var exp = [yg,mg,dg,hg];
+    var names=["year","month","day","hour"];
+    for (var k=0;k<4;k++){
+      if (got[k] !== exp[k]) bad.push([y,m,d,h,names[k],"exp "+exp[k]+" got "+got[k],
+        "exp "+S.STEM[exp[k]%10]+S.BRANCH[exp[k]%12]+" got "+(got[k]!==null?S.STEM[got[k]%10]+S.BRANCH[got[k]%12]:"null")]);
+    }
+    var L = res.lunar;
+    if (!L || L.y!==ly || L.m!==lm || L.d!==ld || (!!L.leap)!==(!!leap))
+      bad.push([y,m,d,h,"lunar","exp "+[ly,lm,ld,leap].join("/")+" got "+(L?[L.y,L.m,L.d,L.leap].join("/"):"null")]);
+  });
+  out.textContent = "cases "+n+" / mismatches "+bad.length+"\n" + bad.slice(0,40).map(function(b){return b.join(" | ");}).join("\n");
+  window.__RESULT = {cases:n, mismatches:bad.length, sample:bad.slice(0,40)};
+})();
+</script>
