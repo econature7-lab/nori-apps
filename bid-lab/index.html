@@ -772,7 +772,7 @@ function groupRows(gs, bestG){
   ${show.map(g=>`<tr${g.g===bestG?' style="background:#f7faff"':''}>
      <td class="gt">${g.g}${g.g===bestG?'<div style="font-size:9px;color:#1d3b7a;font-weight:800">추천</div>':''}</td>
      <td>${g.codes.map(c=>`<span class="cd ${HC.has(c)?'ok':(H.pending.includes(c)?'no':'')}">${c}</span> ${esc(codeName(c))}`).join('<br>')}</td>
-     <td>${g.solo?'<b style="color:#0b8a4b">충족</b>':g.noHave?'<span style="color:#b42318">없음</span>':(g.pend.length?'<span style="color:#b42318">1169 미등록</span>':'<span style="color:#a15c00">일부</span>')}</td>
+     <td>${g.solo?'<b style="color:#0b8a4b">충족</b>':(g.pend.length?'<span style="color:#b42318">1169 미등록</span>':g.noHave?'<span style="color:#b42318">없음</span>':'<span style="color:#a15c00">일부</span>')}</td>
    </tr>`).join('')}
   </tbody></table>
   ${rest>0?`<div class="note" style="margin-top:6px">그 외 ${rest}개 업종 조합은 하우재 보유·협정 조합과 맞지 않아 표시하지 않았습니다.</div>`:''}`;
