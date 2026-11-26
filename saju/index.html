@@ -146,12 +146,12 @@
 
   /* ── 오행 ────────────────────────────────── */
   .elem-bars{display:flex;flex-direction:column;gap:11px}
-  .eb{display:grid;grid-template-columns:34px 1fr 52px;align-items:center;gap:10px}
+  .eb{display:grid;grid-template-columns:34px 1fr 66px;align-items:center;gap:10px}
   .eb .nm{font-family:var(--serif);font-size:14px;display:flex;align-items:baseline;gap:3px}
   .eb .nm span{font-size:10.5px;color:var(--muted-2);font-family:var(--sans)}
   .eb .track{height:9px;border-radius:99px;background:rgba(250,248,244,.07);overflow:hidden}
   .eb .fill{height:100%;border-radius:99px;transform-origin:left center;transform:scaleX(0);transition:transform .7s cubic-bezier(.2,.7,.2,1)}
-  .eb .val{font-size:12px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+  .eb .val{font-size:12px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
   .eb .val b{color:var(--cream);font-weight:700;font-size:13px}
   .elem-notes{margin-top:16px;padding-top:14px;border-top:1px solid var(--line-soft);display:flex;flex-direction:column;gap:8px}
   .elem-notes p{font-size:12.5px;line-height:1.72;color:var(--muted)}
@@ -263,7 +263,8 @@
     .hz{font-size:26px}
     .lucky{grid-template-columns:1fr}
     .actions{grid-template-columns:1fr}
-    .eb{grid-template-columns:30px 1fr 46px;gap:8px}
+    .eb{grid-template-columns:28px 1fr 62px;gap:8px}
+    .eb .val{font-size:11px}
     .chart{gap:4px}
     .pcol{padding:9px 4px 10px}
     .pcol .god{font-size:9px}
