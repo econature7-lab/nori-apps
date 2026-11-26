@@ -233,22 +233,27 @@
     "기회": [
       ["기회가 먼저 말을 겁니다. 미루던 연락·지원·제안을 이달에 하세요.", "사람을 통해 길이 열려요. 모임에 한 번 더 나가 보세요."],
       ["좋은 소식이 오지만 확인이 필요해요. 조건을 글로 남기세요.", "흐름은 좋아요. 다만 약속은 한 번 더 확인하세요."],
-      ["작은 기회를 크게 키우지 마세요. 하나만 골라 확실히."]
+      ["작은 기회를 크게 키우지 마세요. 하나만 골라 확실히.", "문이 열려도 급하게 들어가지 마세요. 조건부터 보세요."]
     ],
     "확장": [
       ["배우고 넓히기 좋은 달이에요. 새로 시작한 공부가 오래 갑니다.", "사람·정보가 넓어지는 달. 인맥이 곧 자료가 됩니다."],
       ["확장은 되지만 체력이 따라야 해요. 일정 사이에 빈칸을 두세요.", "조금씩 늘려 가는 게 좋아요. 한 번에 다 하지 마세요."],
-      ["넓히기보다 골라야 하는 달이에요. 두 개만 남기세요."]
+      ["넓히기보다 골라야 하는 달이에요. 두 개만 남기세요.", "새로 벌이기보다 지금 가진 걸 다듬는 달입니다."]
     ],
     "무난": [
       ["무난한 달이라 루틴이 이깁니다. 매일 같은 시간에 하나씩.", "특별한 일보다 쌓는 일에 좋아요. 기록을 남기세요."],
       ["잔잔한 달이에요. 큰 결정보다 점검에 쓰면 좋습니다.", "평범함이 복인 달. 몸과 돈의 균형을 확인하세요."],
-      ["조용히 지나가게 두세요. 굳이 판을 흔들 필요 없어요."]
+      ["조용히 지나가게 두세요. 굳이 판을 흔들 필요 없어요.", "서두를 이유가 없는 달. 정비에 쓰면 딱입니다."]
+    ],
+    "동일": [
+      ["2027년 기운과 같은 달이에요. 내 색이 그대로 드러나니 밀어봐도 좋아요.", "세운과 같은 달. 내 방식이 통하는지 시험해 보기 좋습니다."],
+      ["세운과 겹치는 달이라 강하게 나오기 쉬워요. 반 박자만 늦춰 보세요.", "기운이 겹치는 달. 고집과 소신 사이를 살피세요."],
+      ["같은 기운이 두 번 겹치는 달이라 지칠 수 있어요. 무리하지 마세요.", "나와 비슷한 달. 혼자만의 시간을 꼭 남기세요."]
     ],
     "주의": [
       ["부딪히기 쉬운 달이에요. 말과 계약을 한 번 더 확인하세요.", "속도보다 안전이에요. 서두른 결정은 미루세요."],
       ["작은 마찰이 커지기 쉬워요. 한 발 물러서면 해결됩니다.", "감정적인 말은 하루 묵혔다 하세요."],
-      ["지키는 달이에요. 새 일은 다음 달로 미루는 게 좋습니다."]
+      ["지키는 달이에요. 새 일은 다음 달로 미루는 게 좋습니다.", "몸과 돈을 아끼세요. 큰 지출은 이 달에 두지 마세요."]
     ]
   };
   var MONTH_SUFFIX = {
@@ -284,8 +289,9 @@
     var subtitle = S.STEM[res.pillars.day.stem] + S.BRANCH[res.pillars.day.branch] + "일주 · " + bp.kw;
 
     /* 총운 3문장 */
+    var who = res.input.name ? res.input.name + " 님의 " : "";
     var summary = [
-      "2027년 정미년, " + (res.input.name ? res.input.name + " 님의 " : "") + "괘는 " + g.no + "괘 — " + sang.img + " 위로 " + jung.stage + "이 트는 자리입니다.",
+      "2027년 정미년, " + who + "괘는 " + g.no + "괘 — " + sang.img + " 자리에 ‘" + jung.stage + "’의 결이 겹쳤습니다.",
       tgB.line,
       ha.line
     ];
@@ -319,6 +325,7 @@
       if (rel.indexOf("충") >= 0 || rel.indexOf("형") >= 0) cat = "주의";
       else if (rel.indexOf("육합") >= 0) cat = "기회";
       else if (rel.some(function (x) { return x.indexOf("삼합") === 0; })) cat = "확장";
+      else if (b === 7) cat = "동일";
       var natalRel = S.relation(b, res.pillars.day.branch);
       var suf = natalRel.indexOf("충") >= 0 ? MONTH_SUFFIX.chung : (natalRel.indexOf("육합") >= 0 || natalRel.some(function (x) { return x.indexOf("삼합") === 0; }) ? MONTH_SUFFIX.hap : "");
       var variants = MONTH_TEXT[cat][level];
@@ -342,6 +349,9 @@
       items: LUCKY[weak].items,
       number: [((res.pillars.day.stem + g.no) % 9) + 1, ((g.sang + g.jung) % 9) + 1].filter(function (v, i, a) { return a.indexOf(v) === i; }),
       cautionMonths: months.filter(function (x) { return x.cat === "주의"; }).map(function (x) { return x.m + "월"; }),
+      cautionNote: months.filter(function (x) { return x.cat === "주의"; }).length
+        ? "부딪히기 쉬운 달이에요. 계약·말 한마디를 한 번 더 확인하세요."
+        : "세운과 크게 부딪히는 달은 없어요. 대신 무리한 확장만 피하면 됩니다.",
       goodMonths: months.filter(function (x) { return x.cat === "기회" || x.cat === "확장"; }).map(function (x) { return x.m + "월"; })
     };
     if (!lucky.cautionMonths.length) lucky.cautionMonths = ["특별히 부딪히는 달은 없어요"];

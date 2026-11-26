@@ -205,6 +205,7 @@
   .cat-기회{background:rgba(111,169,140,.2);color:#A7D3BC}
   .cat-확장{background:rgba(93,125,168,.24);color:#B5C8E4}
   .cat-무난{background:rgba(250,248,244,.09);color:#C3BCD6}
+  .cat-동일{background:rgba(212,175,99,.18);color:#E7CD96}
   .cat-주의{background:rgba(201,97,79,.2);color:#EFB3A5}
 
   .lucky{display:grid;gap:9px;grid-template-columns:1fr 1fr}
@@ -576,9 +577,9 @@ window.NORI_ADS = {
   else mountAds();
 })();
 </script>
-<script src="./saju-data.js"></script>
-<script src="./saju-core.js"></script>
-<script src="./saju-content.js"></script>
+<script src="./saju-data.js?v=1"></script>
+<script src="./saju-core.js?v=1"></script>
+<script src="./saju-content.js?v=1"></script>
 <script>
 (function () {
   "use strict";
@@ -669,7 +670,7 @@ window.NORI_ADS = {
       calendar: state.cal,
       leap: state.cal === "lunar" ? $("fLeap").checked : false,
       y: +yearSel.value, m: +monthSel.value, d: +daySel.value,
-      h: t === "" ? null : +t, minute: 0
+      h: t === "" ? null : (t === "0" ? 23 : 2 * (+t) - 1), minute: 0
     };
     var res = S.compute(input);
     if (res.error) { err.textContent = res.error; err.classList.add("show"); return; }
@@ -711,7 +712,7 @@ window.NORI_ADS = {
     /* 오행 */
     var bars = "";
     for (var i = 0; i < 5; i++) {
-      var w = res.total ? res.pct[i] / 100 : 0;
+      var w = res.total ? res.counts[i] / res.total : 0;
       bars += '<div class="eb"><div class="nm">' + S.ELEM[i] + '<span>' + ["木", "火", "土", "金", "水"][i] + "</span></div>"
         + '<div class="track"><div class="fill" data-w="' + w.toFixed(3) + '" style="background:' + ELEM_C[i] + '"></div></div>'
         + '<div class="val"><b>' + res.counts[i] + "</b>개 · " + res.pct[i] + "%</div></div>";
@@ -783,7 +784,7 @@ window.NORI_ADS = {
       + '<div class="lcard"><div class="k">행운의 숫자</div><div class="v">' + b.lucky.number.join(" · ") + "</div>"
       + '<div class="d">전화번호·비밀번호를 바꾸라는 뜻은 아니에요. 기억하기 좋은 숫자로.</div></div>'
       + '<div class="lcard"><div class="k">주의할 달</div><div class="v">' + esc(b.lucky.cautionMonths.join(", ")) + "</div>"
-      + '<div class="d">부딪히기 쉬운 달이에요. 계약·말 한마디를 한 번 더 확인하세요.</div></div>';
+      + '<div class="d">' + esc(b.lucky.cautionNote) + "</div></div>";
 
     /* 복사용 텍스트 저장 */
     state.copyText = buildCopyText(res, b);
@@ -811,8 +812,7 @@ window.NORI_ADS = {
 
   function pad(n) { return ("0" + n).slice(-2); }
   function hhmm(h) {
-    var map = ["23:00", "01:00", "03:00", "05:00", "07:00", "09:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00"];
-    return map[h] + "경";
+    return pad(h) + ":00경";
   }
 
   /* ── 탭 ─────────────────────────────────── */
