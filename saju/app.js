@@ -387,7 +387,7 @@
   }
 
   /* ── ① 사주 결과 렌더 ──────────────────────────── */
-  var ELEM_C = ["#2FBF71", "#FF5F6D", "#F0A422", "#9AA6BE", "#4A7DFF"];
+  var ELEM_C = ["#22B573", "#FF4D6D", "#EF9700", "#8B98AE", "#3D7BFF"];
 
   function renderSaju(res, b) {
     var nm = res.input.name ? esc(res.input.name) : "";
@@ -565,9 +565,9 @@
     $("tGradeLine").textContent = f.grade.line;
 
     var rows = [
-      ["금전", f.scores.money, "#F0A422"],
-      ["연애", f.scores.love, "#FF5F6D"],
-      ["일·학업", f.scores.work, "#4A7DFF"]
+      ["금전", f.scores.money, "#EF9700"],
+      ["연애", f.scores.love, "#FF4D6D"],
+      ["일·학업", f.scores.work, "#3D7BFF"]
     ];
     $("tBars").innerHTML = rows.map(function (r) {
       return '<div class="eb eb3"><div class="nm">' + r[0] + "</div>"
