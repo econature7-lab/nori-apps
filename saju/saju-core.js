@@ -53,7 +53,7 @@
   function termDate(y, i) {              // 표시용 (연,월,일,시,분)
     var base = TERM[y][i] - ordOf(y, 1, 1) * 1440;
     var dt = ymdOf(ORD0 + Math.floor(base / 1440));
-    return { y: dt.y, m: dt.m, d: dt.d, hh: Math.floor((base % 1440) / 60), mm: base % 60, name: TERM_NAMES[i] };
+    return { y: y, m: dt.m, d: dt.d, hh: Math.floor((base % 1440) / 60), mm: base % 60, name: TERM_NAMES[i] };
   }
 
   /* ── 음력 월 표 해독 ───────────────────────────────── */
