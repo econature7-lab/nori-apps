@@ -281,6 +281,11 @@
 </head>
 <body>
 <a class="skip" href="#main">본문으로 바로 가기</a>
+<script>/* 계산 중 예기치 못한 오류를 콘솔에 남깁니다(사용 화면에는 영향 없음) */
+window.__ERR = [];
+window.addEventListener("error", function (e) { window.__ERR.push(String(e.message) + " @" + (e.filename || "") + ":" + e.lineno); });
+window.addEventListener("unhandledrejection", function (e) { window.__ERR.push("rejection: " + String(e.reason)); });
+</script>
 
 <header class="topbar">
   <div class="wrap topbar-in">
@@ -577,9 +582,9 @@ window.NORI_ADS = {
   else mountAds();
 })();
 </script>
-<script src="./saju-data.js?v=3"></script>
-<script src="./saju-core.js?v=3"></script>
-<script src="./saju-content.js?v=3"></script>
+<script src="./saju-data.js?v=4"></script>
+<script src="./saju-core.js?v=4"></script>
+<script src="./saju-content.js?v=4"></script>
 <script>
 (function () {
   "use strict";
@@ -842,11 +847,14 @@ window.NORI_ADS = {
     L.push(b.subtitle + " · " + b.tojeong.no + "괘(" + b.tojeong.grade + ")");
     L.push("");
     L.push("▸ 총운");
+    L.push(b.summary[0]);
     L.push(b.summary[1]);
     L.push(b.summary[2]);
     L.push("");
-    L.push("▸ 오행");
-    L.push(["목", "화", "토", "금", "수"].map(function (n, i) { return n + " " + res.counts[i]; }).join(" · "));
+    L.push("▸ 사주 팔자 (" + (res.hasHour ? "년·월·일·시" : "년·월·일") + ")");
+    L.push([res.pillars.year, res.pillars.month, res.pillars.day, res.pillars.hour].filter(function (p) { return p; })
+      .map(function (p) { return S.STEM[p.stem] + S.BRANCH[p.branch]; }).join(" · ")
+      + "  |  " + ["목", "화", "토", "금", "수"].map(function (n, i) { return n + res.counts[i]; }).join(" "));
     L.push("");
     L.push("▸ 2027 분야별");
     L.push("· 재물 — " + b.fields.money[0]);
