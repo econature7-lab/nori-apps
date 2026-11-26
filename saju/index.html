@@ -90,15 +90,16 @@
   /* ── 히어로 ──────────────────────────────── */
   .hero{padding:30px 0 18px}
   .eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:800;letter-spacing:.02em;color:#B93C08;background:linear-gradient(135deg,#FFF1D2,#FFE7D9);border:1px solid #F7DFC0;border-radius:999px;padding:6px 13px}
-  .hero h1{font-size:41px;line-height:1.16;letter-spacing:-.045em;font-weight:900;margin:16px 0 0;color:var(--ink)}
-  .hero h1 em{font-style:normal;background:linear-gradient(96deg,#FF5A1F 0%,#E8450E 46%,#FF7A2F 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero h1{font-size:41px;line-height:1.32;letter-spacing:-.045em;font-weight:900;margin:16px 0 0;color:var(--ink)}
+  /* 그라데이션 글자는 배경이 패딩 박스에서만 칠해져 line-height가 빡빡하면 초성 꼭대기가 깎인다 → padding-block으로 칠하는 영역을 넓힌다(인라인 요소라 줄 높이 영향 없음) */
+  .hero h1 em{font-style:normal;background:linear-gradient(96deg,#FF5A1F 0%,#E8450E 46%,#FF7A2F 100%);-webkit-background-clip:text;background-clip:text;color:transparent;padding-block:.2em}
   .hero .lead{margin-top:13px;font-size:14.5px;color:var(--muted);line-height:1.7;max-width:32em;font-weight:500}
   .hero-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:17px}
   .hero-tags li{font-size:11.5px;font-weight:800;letter-spacing:-.02em;border-radius:999px;padding:6px 12px;border:1px solid transparent}
-  .hero-tags li:nth-child(1){background:var(--orange-soft);color:#B93C08;border-color:var(--orange-soft-2);transform:rotate(-2deg)}
-  .hero-tags li:nth-child(2){background:var(--butter-l);color:#7A5300;border-color:var(--butter);transform:rotate(1.5deg)}
-  .hero-tags li:nth-child(3){background:var(--navy);color:#FFF8EC;border-color:var(--navy);transform:rotate(-1deg)}
-  .hero-tags li:nth-child(4){background:#FFFDF7;color:var(--orange-deep);border-color:var(--orange-soft-2);transform:rotate(2deg)}
+  .hero-tags li:nth-child(1){background:var(--orange-soft);color:#B93C08;border-color:var(--orange-soft-2)}
+  .hero-tags li:nth-child(2){background:var(--butter-l);color:#7A5300;border-color:var(--butter)}
+  .hero-tags li:nth-child(3){background:var(--navy);color:#FFF8EC;border-color:var(--navy)}
+  .hero-tags li:nth-child(4){background:#FFFDF7;color:var(--orange-deep);border-color:var(--orange-soft-2)}
 
   /* ── 카드 ────────────────────────────────── */
   .card{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:22px 20px;box-shadow:var(--shadow)}
@@ -158,8 +159,8 @@
   .view-result{padding-top:24px}
   .res-head{text-align:left;padding:2px 0 16px;margin-bottom:14px}
   .res-who{display:inline-flex;font-size:11.5px;letter-spacing:0;color:#B93C08;font-weight:900;background:var(--orange-soft);border:1px solid var(--orange-soft-2);border-radius:999px;padding:5px 12px}
-  .res-title{font-size:35px;line-height:1.18;font-weight:900;letter-spacing:-.045em;margin-top:12px;color:var(--ink)}
-  .res-title .gold{background:linear-gradient(96deg,#FF5A1F 0%,#E8450E 48%,#FF7A2F 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .res-title{font-size:35px;line-height:1.34;font-weight:900;letter-spacing:-.045em;margin-top:12px;color:var(--ink)}
+  .res-title .gold{background:linear-gradient(96deg,#FF5A1F 0%,#E8450E 48%,#FF7A2F 100%);-webkit-background-clip:text;background-clip:text;color:transparent;padding-block:.2em}
   .res-sub{margin-top:9px;font-size:13px;color:var(--muted);font-weight:600;line-height:1.6}
   .res-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
   .chip{font-size:11.5px;font-weight:800;letter-spacing:-.02em;color:#4B5B73;border:1px solid var(--line);background:#FDF6EA;border-radius:999px;padding:5px 11px}
@@ -200,7 +201,7 @@
 
   /* ── 토정비결 ────────────────────────────── */
   .gua-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-  .gua-no{font-size:52px;line-height:1;letter-spacing:-.055em;font-weight:900;background:linear-gradient(135deg,#E8450E,#FF7A2F);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .gua-no{font-size:52px;line-height:1.2;letter-spacing:-.055em;font-weight:900;background:linear-gradient(135deg,#E8450E,#FF7A2F);-webkit-background-clip:text;background-clip:text;color:transparent;padding:6px 0 4px}
   .gua-no small{font-size:13px;color:var(--muted);letter-spacing:0;margin-left:3px;-webkit-text-fill-color:var(--muted);font-weight:800}
   .gua-meta{display:flex;flex-wrap:wrap;gap:5px}
   .gua-meta .chip{font-size:10.5px;padding:3px 9px}
@@ -268,7 +269,7 @@
   /* ── 점수 ────────────────────────────────── */
   .score-row{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:16px}
   .score-big{display:flex;align-items:flex-end;gap:4px;line-height:1;flex:none;white-space:nowrap}
-  .score-big b{font-size:64px;line-height:.86;font-weight:900;letter-spacing:-.06em;background:linear-gradient(135deg,#E8450E 0%,#FF5A1F 48%,#FF9A3C 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .score-big b{font-size:64px;line-height:1.02;font-weight:900;letter-spacing:-.06em;background:linear-gradient(135deg,#E8450E 0%,#FF5A1F 48%,#FF9A3C 100%);-webkit-background-clip:text;background-clip:text;color:transparent;padding-block:5px}
   .score-big span{font-size:14px;font-weight:900;color:var(--muted);padding-bottom:7px;letter-spacing:-.02em}
   .score-side{flex:1;min-width:0;text-align:right;padding-bottom:4px}
   .score-side .g{font-size:13px;font-weight:900;color:var(--orange-deep)}
