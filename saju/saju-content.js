@@ -385,7 +385,7 @@
     var elemLine = [];
     var strongName = S.ELEM[over], weakName = S.ELEM[weak];
     if (res.missing.length) {
-      elemLine.push("여덟 글자에 " + res.missing.map(function (i) { return S.ELEM[i] + "(" + ELEM_NAME_H[i] + ")"; }).join(", ") + " 기운이 없어요.");
+      elemLine.push((res.total / 2) + "글자에 " + res.missing.map(function (i) { return S.ELEM[i] + "(" + ELEM_NAME_H[i] + ")"; }).join(", ") + " 기운이 없어요.");
     }
     elemLine.push(strongName + "(" + ELEM_NAME_H[over] + ") 기운이 " + res.counts[over] + "개로 가장 강하고, " + weakName + "(" + ELEM_NAME_H[weak] + ") 기운이 " + res.counts[weak] + "개로 가장 약해요.");
     elemLine.push(ELEM_PROFILE[over].over);
