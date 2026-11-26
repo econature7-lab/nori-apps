@@ -566,9 +566,9 @@
     $("tGradeLine").textContent = f.grade.line;
 
     var rows = [
-      ["금전", f.scores.money, "#EF9700"],
-      ["연애", f.scores.love, "#FF4D6D"],
-      ["일·학업", f.scores.work, "#3D7BFF"]
+      ["금전", f.scores.money, "#9E6608"],
+      ["연애", f.scores.love, "#CF3F0B"],
+      ["일·학업", f.scores.work, "#1F4E8C"]
     ];
     $("tBars").innerHTML = rows.map(function (r) {
       return '<div class="eb eb3"><div class="nm">' + r[0] + "</div>"
