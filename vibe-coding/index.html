@@ -74,15 +74,7 @@
     box-shadow:0 1px 0 rgba(255,255,255,.05) inset, 0 12px 30px -26px rgba(15,30,54,.9);
   }
   .topbar-in{display:flex;align-items:center;gap:10px;min-height:54px}
-  .back{
-    display:inline-flex;align-items:center;gap:5px;flex:none;
-    font-size:12.5px;font-weight:700;color:#EAE2CF;text-decoration:none;
-    background:rgba(255,255,255,.06);border:1px solid rgba(200,162,83,.34);border-radius:9px;padding:6px 10px;
-    transition:border-color .15s,color .15s,background .15s;
-  }
-  .back:hover{border-color:rgba(200,162,83,.7);color:#FFF8E7;background:rgba(255,255,255,.1)}
-  .back svg{width:12px;height:12px}
-  .brand{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:800;letter-spacing:-.02em;min-width:0;color:#FBF7EC}
+  .brand{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:800;letter-spacing:-.02em;flex:0 1 auto;min-width:0;color:#FBF7EC}
   .brand-mark{
     flex:none;width:21px;height:21px;border-radius:6px;
     background:linear-gradient(155deg,#EBD29A,var(--gold) 62%,#B08A3E);
@@ -669,10 +661,6 @@
 
 <header class="topbar">
   <div class="wrap topbar-in">
-    <a class="back" href="../">
-      <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M7.5 1.5 3 6l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      웹앱 3종
-    </a>
     <div class="brand"><span class="brand-mark" aria-hidden="true">1</span><span class="nm">말로 만드는 AI 앱 도우미</span></div>
     <span class="topbar-sp"></span>
     <span class="tag-free">무료</span>
@@ -1027,7 +1015,6 @@
 <footer>
   <b>대박이</b>가 만든 웹앱 · 서버·로그인 없이 내 브라우저에서만 동작합니다.<br>
   <div class="flinks">
-    <a href="../">웹앱 3종 목록</a>
     <a href="#main">맨 위로</a>
   </div>
 </footer>

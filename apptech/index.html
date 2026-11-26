@@ -66,15 +66,7 @@
     border-bottom:1px solid rgba(231,227,218,.9);
   }
   .topbar-in{display:flex;align-items:center;gap:10px;min-height:52px}
-  .back{
-    display:inline-flex;align-items:center;gap:5px;flex:none;
-    font-size:12.5px;font-weight:700;color:var(--ink-2);text-decoration:none;
-    background:#fff;border:1px solid var(--line);border-radius:9px;padding:6px 10px;
-    transition:border-color .15s,color .15s;
-  }
-  .back:hover{border-color:#D5CEBE;color:var(--ink)}
-  .back svg{width:12px;height:12px}
-  .brand{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:800;letter-spacing:-.02em;min-width:0}
+  .brand{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:800;letter-spacing:-.02em;flex:0 1 auto;min-width:0}
   .brand-mark{
     flex:none;width:21px;height:21px;border-radius:6px;background:var(--navy);color:#fff;
     display:inline-flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:800;
@@ -670,10 +662,6 @@
 
 <header class="topbar">
   <div class="wrap topbar-in">
-    <a class="back" href="../">
-      <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M7.5 1.5 3 6l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      웹앱 3종
-    </a>
     <div class="brand"><span class="brand-mark" aria-hidden="true">3</span><span class="nm">앱테크 수첩</span></div>
     <span class="topbar-sp"></span>
     <span class="tag-free">무료</span>
@@ -993,7 +981,6 @@
   <footer>
     <b>올인원 앱테크·체험단·기프티콘 수첩</b> — 회원가입 없이 무료로 쓰는 내 폰 전용 수첩<br>
     <div class="flinks">
-      <a href="../">웹앱 3종 목록</a>
       <a href="#privacy">개인정보처리방침</a>
       <a href="#guide">활용 가이드</a>
       <a href="#main">맨 위로</a>

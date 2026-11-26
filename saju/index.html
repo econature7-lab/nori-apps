@@ -73,10 +73,7 @@
   /* ── 상단 바 · 앱 탭 ─────────────────────── */
   .topbar{position:sticky;top:0;z-index:30;background:rgba(255,248,236,.86);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-bottom:1px solid rgba(241,227,206,.95)}
   .topbar-in{display:flex;align-items:center;gap:10px;height:56px}
-  .back{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:700;color:var(--muted);text-decoration:none;padding:7px 10px 7px 8px;border-radius:999px;background:#FDEFE0;border:1px solid #F6E4CB;white-space:nowrap;transition:color .15s,background .15s,border-color .15s}
-  .back svg{width:11px;height:11px}
-  .back:hover{color:var(--orange-deep);background:var(--orange-soft-2);border-color:#FFC7AC}
-  .brand{display:flex;align-items:center;gap:8px;min-width:0;margin-left:2px}
+  .brand{display:flex;align-items:center;gap:8px;flex:0 1 auto;min-width:0}
   .brand-mark{width:23px;height:23px;border-radius:9px;display:grid;place-items:center;font-size:12px;font-weight:900;color:#FFFDF7;background:linear-gradient(135deg,#FF7A2F,#FF5A1F 60%,#E8450E);box-shadow:0 6px 14px -8px rgba(232,69,14,.95);flex:none}
   .brand .nm{font-size:13.5px;font-weight:800;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .topbar-sp{flex:1}
@@ -391,10 +388,6 @@ window.addEventListener("unhandledrejection", function (e) { window.__ERR.push("
 
 <header class="topbar">
   <div class="wrap topbar-in">
-    <a class="back" href="../">
-      <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M7.5 1.5 3 6l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      웹앱 모음
-    </a>
     <div class="brand"><span class="brand-mark" aria-hidden="true">✦</span><span class="nm">MZ 사주 · 운세</span></div>
     <span class="topbar-sp"></span>
     <span class="tag-free">무료</span>
@@ -816,7 +809,6 @@ window.addEventListener("unhandledrejection", function (e) { window.__ERR.push("
   <div class="wrap">
     <b>MZ 사주 · 오늘의 운세 · 궁합</b> — 만세력 사주, 매일의 운세, 둘의 케미까지<br>
     <div class="flinks">
-      <a href="../">웹앱 모음</a>
       <a href="#today" data-goto="today">오늘의 운세</a>
       <a href="#compat" data-goto="compat">둘이 보는 궁합</a>
       <a href="#privacy" id="openPrivacy">개인정보처리방침</a>
