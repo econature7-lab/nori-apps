@@ -1,0 +1,1058 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#12275a">
+<title>하우재 BID LAB — 나라장터 입찰·협정 매칭</title>
+<meta name="description" content="건축사사무소 하우재 맞춤 나라장터 입찰공고 판정과 분담협정 파트너 자동 매칭">
+<style>
+:root{
+  --bg:#f3f4f7; --card:#fff; --ink:#101828; --muted:#667085; --line:#e6e8ee; --line2:#eef0f4;
+  --navy:#12275a; --navy2:#1d3b7a; --blue:#2563eb; --blue-soft:#eff4ff;
+  --green:#0b8a4b; --green-bg:#e7f7ee; --amber:#a15c00; --amber-bg:#fff4d6;
+  --orange:#c2410c; --orange-bg:#ffede3; --red:#b42318; --red-bg:#fee9e7; --gray-bg:#f1f3f6;
+  --radius:16px; --shadow:0 1px 2px rgba(16,24,40,.06), 0 8px 24px -16px rgba(16,24,40,.24);
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+  font-size:15px; line-height:1.5; word-break:keep-all;
+  -webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+
+/* ---------- header ---------- */
+.hero{background:linear-gradient(160deg,#0d1f4d 0%,#17306b 55%,#22458f 100%);color:#fff;padding:22px 0 50px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:-90px;top:-70px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(120,170,255,.30),transparent 65%)}
+.hero .wrap{position:relative;z-index:1}
+.htop{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{width:42px;height:42px;border-radius:13px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);display:grid;place-items:center;font-weight:800;font-size:18px;letter-spacing:-.5px;flex:0 0 auto}
+.brand h1{margin:0;font-size:19px;letter-spacing:-.4px;font-weight:800}
+.brand p{margin:1px 0 0;font-size:12px;color:#c3d3f2;letter-spacing:.2px}
+.iconbtn{width:36px;height:36px;border-radius:11px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff;font-size:15px;display:grid;place-items:center;cursor:pointer}
+.hmeta{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.hmeta span{font-size:11.5px;padding:5px 9px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);color:#dbe6ff}
+.hmeta b{color:#fff}
+.prof{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.prof .pc{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.95);color:#17306b;padding:6px 10px;border-radius:10px;font-size:11.5px;font-weight:700}
+.prof .pc code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#eaf0ff;color:#1d3b7a;padding:1px 5px;border-radius:5px;font-size:11px}
+.prof .pc.muted{background:rgba(255,255,255,.14);color:#cfdcf8;font-weight:600;border:1px dashed rgba(255,255,255,.35)}
+
+/* ---------- tabs ---------- */
+.tabs{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);margin-top:-30px;border-radius:18px 18px 0 0;box-shadow:0 -8px 24px -18px rgba(16,24,40,.4)}
+.tabs .in{display:flex;gap:4px;padding:8px 8px}
+.tab{flex:1;border:0;background:transparent;padding:9px 6px;border-radius:11px;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:.15s}
+.tab .ic{font-size:14px}
+.tab.on{background:var(--navy);color:#fff;box-shadow:0 4px 12px -6px rgba(18,39,90,.7)}
+main{padding:14px 0 40px}
+
+/* ---------- summary ---------- */
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:2px 0 12px}
+.summary .s{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 6px;text-align:center}
+.summary .s .n{font-size:17px;font-weight:800;letter-spacing:-.4px;line-height:1.15}
+.summary .s .t{font-size:10.5px;color:var(--muted);font-weight:700;margin-top:1px}
+.summary .s.g .n{color:var(--green)} .summary .s.y .n{color:var(--amber)} .summary .s.o .n{color:var(--orange)} .summary .s.r .n{color:var(--red)}
+
+/* ---------- filters ---------- */
+.fbar{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}
+.fbar::-webkit-scrollbar{display:none}
+.fchip{flex:0 0 auto;border:1px solid var(--line);background:#fff;color:#344054;padding:7px 12px;border-radius:999px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap}
+.fchip.on{background:#101828;border-color:#101828;color:#fff}
+.sizerow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px}
+.count{font-size:12.5px;color:var(--muted)}
+.count b{color:var(--ink)}
+select.sort{border:1px solid var(--line);background:#fff;border-radius:9px;padding:6px 8px;font-size:12.5px;color:#344054;font-weight:600}
+
+/* ---------- bid cards ---------- */
+.list{display:grid;gap:10px;grid-template-columns:minmax(0,1fr)}
+.bid{min-width:0;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);cursor:pointer;transition:transform .12s,box-shadow .12s}
+.bid:active{transform:scale(.995)}
+.bid .row1{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.badge{font-size:11px;font-weight:800;padding:4px 8px;border-radius:7px;letter-spacing:-.2px;white-space:nowrap}
+.badge.g{background:var(--green-bg);color:var(--green)}
+.badge.y{background:var(--amber-bg);color:var(--amber)}
+.badge.o{background:var(--orange-bg);color:var(--orange)}
+.badge.r{background:var(--red-bg);color:var(--red)}
+.dday{font-size:11px;font-weight:800;padding:4px 7px;border-radius:7px;background:var(--gray-bg);color:#475467;margin-left:auto;white-space:nowrap}
+.dday.amber{background:#fff4d6;color:#a15c00}
+.dday.red{background:var(--red-bg);color:var(--red)}
+.dday.gray{background:var(--gray-bg);color:#98a2b3}
+.bid h3{margin:9px 0 4px;font-size:15px;line-height:1.38;letter-spacing:-.3px;font-weight:800;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.bid .org{font-size:12px;color:var(--muted);display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.bid .org .dot{width:2px;height:2px;border-radius:50%;background:#c3c8d2}
+.bid .facts{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.fact{font-size:11.5px;background:#f7f8fa;border:1px solid var(--line2);color:#344054;border-radius:8px;padding:4px 7px;white-space:nowrap}
+.fact b{color:#101828}
+.fact.warn{background:#fff7ed;border-color:#fed7aa;color:#9a3412}
+.codes{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
+.cd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;font-weight:700;padding:3px 6px;border-radius:6px;background:#eef2f9;color:#31456b;border:1px solid #dfe6f3}
+.cd.no{background:#fdf3f2;color:#a33;border-color:#f6d6d2}
+.cd.ok{background:#e9f6ef;color:#0b6b3a;border-color:#cfead9}
+.verdict{margin-top:10px;padding-top:9px;border-top:1px dashed var(--line);font-size:12px;color:#475467;display:flex;gap:6px;align-items:flex-start}
+.verdict .vico{flex:0 0 auto;font-size:12px;line-height:1.45}
+.empty{background:#fff;border:1px dashed var(--line);border-radius:14px;padding:28px 16px;text-align:center;color:var(--muted);font-size:13px}
+
+/* ---------- sheet ---------- */
+.sheet{position:fixed;inset:0;z-index:100;display:none}
+.sheet.open{display:block}
+.sheet .bd{position:absolute;inset:0;background:rgba(10,18,38,.48);backdrop-filter:blur(3px);animation:fade .18s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.sheet .panel{position:absolute;left:0;right:0;bottom:0;top:8vh;background:#fff;border-radius:20px 20px 0 0;display:flex;flex-direction:column;animation:up .22s cubic-bezier(.2,.8,.3,1);overflow:hidden}
+@keyframes up{from{transform:translateY(28px);opacity:.6}to{transform:none;opacity:1}}
+.sheet .hd{padding:12px 16px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:10px;flex:0 0 auto}
+.sheet .hd h2{margin:6px 0 3px;font-size:16.5px;line-height:1.35;letter-spacing:-.4px}
+.sheet .hd p{margin:0;font-size:12px;color:var(--muted)}
+.sheet .hd .x{margin-left:auto;flex:0 0 auto;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:16px;color:#475467;cursor:pointer}
+.sheet .bd2{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px 34px;flex:1 1 auto}
+.sheet .grab{width:38px;height:4px;border-radius:99px;background:#dfe3ea;margin:6px auto 0}
+@media(min-width:900px){
+  .list{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .bid{padding:16px}
+  .bid h3{font-size:15.5px;min-height:44px}
+  .hero{padding:28px 0 56px}
+  .brand h1{font-size:22px}
+}
+@media(min-width:820px){
+  .sheet .panel{left:50%;right:auto;top:50%;bottom:auto;transform:translate(-50%,-50%);width:min(780px,94vw);max-height:88vh;border-radius:18px;animation:pop .18s ease}
+  @keyframes pop{from{transform:translate(-50%,-48%) scale(.99);opacity:.6}to{transform:translate(-50%,-50%);opacity:1}}
+  .sheet .grab{display:none}
+}
+
+/* ---------- sheet content ---------- */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 14px}
+.kv .v{overflow-wrap:anywhere}
+.kv{background:#f8f9fb;border:1px solid var(--line2);border-radius:11px;padding:9px 10px}
+.kv .k{font-size:11px;color:var(--muted);font-weight:700}
+.kv .v{font-size:13px;font-weight:800;margin-top:2px;letter-spacing:-.2px}
+.kv .s{font-size:10.5px;color:#98a2b3;margin-top:1px}
+.sec{margin:18px 0 0}
+.sec h4{margin:0 0 8px;font-size:13px;letter-spacing:-.2px;display:flex;align-items:center;gap:6px}
+.sec h4 .n{width:18px;height:18px;border-radius:6px;background:var(--navy);color:#fff;font-size:10.5px;display:grid;place-items:center;font-weight:800}
+.verdictbox{border-radius:13px;padding:12px;border:1px solid var(--line)}
+.verdictbox.g{background:var(--green-bg);border-color:#c9e9d6}
+.verdictbox.y{background:var(--amber-bg);border-color:#f3dfa5}
+.verdictbox.o{background:var(--orange-bg);border-color:#f8cfbb}
+.verdictbox.r{background:var(--red-bg);border-color:#f6cdc8}
+.verdictbox .big{font-size:14px;font-weight:800;display:flex;align-items:center;gap:7px}
+.verdictbox ul{margin:7px 0 0;padding-left:17px;font-size:12.5px;color:#344054}
+.verdictbox li{margin:2px 0}
+.grptable{width:100%;border-collapse:collapse;font-size:12px}
+.grptable th{text-align:left;color:var(--muted);font-weight:700;font-size:10.5px;padding:5px 6px;border-bottom:1px solid var(--line)}
+.grptable td{padding:6px;border-bottom:1px solid var(--line2);vertical-align:middle}
+.grptable tr:last-child td{border-bottom:0}
+.grptable .gt{width:26px;font-weight:800;color:#475467}
+.pcard{min-width:0;border:1px solid var(--line);border-radius:13px;padding:11px;margin-bottom:8px;background:#fff}
+.pcard.top{border-color:#bcd0f7;background:linear-gradient(180deg,#f7faff,#fff)}
+.pcard .ph{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.pcard .nm{font-weight:800;font-size:13.5px;letter-spacing:-.2px}
+.pcard .rk{font-size:10.5px;font-weight:800;background:var(--navy);color:#fff;padding:2px 6px;border-radius:6px}
+.pcard .tag{font-size:10.5px;font-weight:800;padding:2px 6px;border-radius:6px;background:#eef2f9;color:#31456b}
+.pcard .tag.g{background:var(--green-bg);color:var(--green)}
+.pcard .meta{font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.55}
+.pcard .meta b{color:#344054;font-weight:700}
+.pcard .act{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:6px 10px;font-size:11.5px;font-weight:700;color:#344054;cursor:pointer;display:inline-flex;align-items:center;gap:4px;max-width:100%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn.primary{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn.ghost{background:#f8f9fb}
+.check{list-style:none;margin:0;padding:0}
+.check li{display:flex;gap:8px;padding:7px 0;border-bottom:1px dashed var(--line2);font-size:12.5px;color:#344054}
+.check li:last-child{border-bottom:0}
+.check .sn{flex:0 0 auto;width:19px;height:19px;border-radius:50%;background:#eef2f9;color:#31456b;display:grid;place-items:center;font-size:10.5px;font-weight:800}
+.check b{color:#101828}
+.note{font-size:11.5px;color:var(--muted);line-height:1.6;background:#f8f9fb;border:1px solid var(--line2);border-radius:10px;padding:9px 10px}
+.note b{color:#344054}
+.warnbox{font-size:11.5px;line-height:1.6;background:#fff8ed;border:1px solid #f8deb0;color:#7a4a00;border-radius:10px;padding:9px 10px}
+.calcbox{background:#f8f9fb;border:1px solid var(--line2);border-radius:12px;padding:11px}
+.calcbox .inrow{display:flex;gap:8px;flex-wrap:wrap}
+.calcbox label{font-size:10.5px;font-weight:700;color:var(--muted);display:block;margin-bottom:3px}
+.calcbox input{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 8px;font-size:13px;width:100%;font-variant-numeric:tabular-nums}
+.calcbox .fld{flex:1 1 120px}
+.calcres{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}
+.calcres .c{background:#fff;border:1px solid var(--line2);border-radius:9px;padding:8px}
+.calcres .k{font-size:10.5px;color:var(--muted);font-weight:700}
+.calcres .v{font-size:13px;font-weight:800;margin-top:1px;font-variant-numeric:tabular-nums}
+
+/* ---------- partners tab ---------- */
+.search{display:flex;gap:8px;margin-bottom:10px}
+.search input{flex:1;border:1px solid var(--line);background:#fff;border-radius:11px;padding:10px 12px;font-size:14px}
+.search input:focus{outline:2px solid #cfdcf8;border-color:#9fb8e8}
+.pdir{min-width:0;background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px;margin-bottom:9px;box-shadow:var(--shadow)}
+.pdir .top{display:flex;align-items:flex-start;gap:8px;min-width:0}
+.pdir .top h3{min-width:0;flex:1 1 auto}
+.pdir h3{margin:0;font-size:14.5px;letter-spacing:-.3px}
+.pdir .grade{font-size:10.5px;font-weight:800;padding:3px 6px;border-radius:6px;background:#eef2f9;color:#31456b;white-space:nowrap}
+.pdir .grade.g{background:var(--green-bg);color:var(--green)}
+.pdir .grade.o{background:var(--orange-bg);color:var(--orange)}
+.pdir .meta{font-size:11.5px;color:var(--muted);margin-top:5px;line-height:1.6}
+.pdir .meta b{color:#344054}
+.pdir .codes{margin-top:7px}
+.pdir .note{font-size:11px;background:#fbfbfc;border-color:var(--line2);margin-top:8px}
+.pdir .act{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.gapbox{background:#fff;border:1px solid #f6cdc8;border-radius:14px;padding:13px;margin-top:14px}
+.gapbox h3{margin:0 0 6px;font-size:13.5px}
+.gapbox .gi{display:flex;gap:7px;align-items:baseline;font-size:12px;color:#475467;padding:5px 0;border-bottom:1px dashed #f3e3e1}
+.gapbox .gi:last-child{border-bottom:0}
+.gapbox .gi code{font-family:ui-monospace,Menlo,monospace;font-weight:800;color:#b42318;background:#fee9e7;padding:1px 5px;border-radius:5px;font-size:11px}
+
+/* ---------- calc tab ---------- */
+.bigcard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow);margin-bottom:12px}
+.bigcard h2{margin:0 0 4px;font-size:15.5px;letter-spacing:-.3px}
+.bigcard p.sub{margin:0 0 14px;font-size:12px;color:var(--muted);line-height:1.6}
+.field{margin-bottom:10px}
+.field label{display:block;font-size:11.5px;font-weight:700;color:#475467;margin-bottom:4px}
+.field input{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 11px;font-size:15px;font-variant-numeric:tabular-nums;background:#fff}
+.field input:focus{outline:2px solid #cfdcf8;border-color:#9fb8e8}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.outs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.out{background:#f8f9fb;border:1px solid var(--line2);border-radius:11px;padding:10px}
+.out .k{font-size:11px;color:var(--muted);font-weight:700}
+.out .v{font-size:15px;font-weight:800;margin-top:2px;font-variant-numeric:tabular-nums;letter-spacing:-.3px}
+.out.hl{background:#eef4ff;border-color:#cfdcf8}
+.out.hl .v{color:#1d3b7a}
+.tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:10px}
+.tbl{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:0;min-width:460px}
+.tbl td,.tbl th{white-space:nowrap}
+.tbl th{background:#f7f8fa;color:#475467;font-size:10.5px;font-weight:800;padding:7px 6px;border-bottom:1px solid var(--line);text-align:right}
+.tbl th:first-child{text-align:left}
+.tbl td{padding:7px 6px;border-bottom:1px solid var(--line2);text-align:right;font-variant-numeric:tabular-nums}
+.tbl td:first-child{text-align:left;font-weight:700}
+.tbl tr.best td{background:#eef4ff}
+
+/* ---------- guide ---------- */
+.gcard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow);margin-bottom:12px}
+.gcard h2{margin:0 0 8px;font-size:15px;letter-spacing:-.3px}
+.gcard h3{margin:14px 0 6px;font-size:13px}
+.gcard p{font-size:12.5px;color:#475467;line-height:1.7;margin:0 0 8px}
+.gcard ul{margin:0;padding-left:18px;font-size:12.5px;color:#475467;line-height:1.75}
+.gcard li{margin:3px 0}
+.gcard li b{color:#101828}
+.badgelegend{display:grid;gap:8px}
+.bl{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;color:#475467;padding:8px;border:1px solid var(--line2);border-radius:10px}
+.bl .badge{flex:0 0 auto}
+.mini{font-size:11px;color:#98a2b3}
+.kvline{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;padding:6px 0;border-bottom:1px dashed var(--line2)}
+.kvline:last-child{border-bottom:0}
+.kvline b{font-weight:800}
+footer{padding:24px 0 40px;color:#98a2b3;font-size:11px;line-height:1.7;text-align:center}
+footer b{color:#667085}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:#101828;color:#fff;font-size:12.5px;padding:9px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:.2s;z-index:200;white-space:nowrap}
+.toast.on{opacity:1;transform:translateX(-50%)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(max-width:360px){
+  .grid{grid-template-columns:1fr}
+  .outs{grid-template-columns:1fr}
+  .two{grid-template-columns:1fr}
+  .bid h3{font-size:14.5px}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="htop">
+      <div class="brand">
+        <div class="logo">建</div>
+        <div>
+          <h1>하우재 BID LAB</h1>
+          <p>나라장터 입찰 · 협정 파트너 매칭</p>
+        </div>
+      </div>
+      <button class="iconbtn" id="btnGuide" aria-label="이용 안내">?</button>
+    </div>
+    <div class="hmeta">
+      <span>기준 <b id="asOf">-</b></span>
+      <span>진행 공고 <b id="cntAll">-</b>건</span>
+      <span>추천 <b id="cntRec">-</b>건</span>
+    </div>
+    <div class="prof" id="prof"></div>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="탭">
+  <div class="wrap in">
+    <button class="tab on" data-tab="bids"><span class="ic">📋</span>맞춤 공고</button>
+    <button class="tab" data-tab="partners"><span class="ic">🤝</span>협정사</button>
+    <button class="tab" data-tab="calc"><span class="ic">🧮</span>투찰가</button>
+    <button class="tab" data-tab="guide"><span class="ic">⚙︎</span>안내</button>
+  </div>
+</nav>
+
+<main class="wrap">
+  <section id="tab-bids">
+    <div class="summary" id="summary"></div>
+    <div class="fbar" id="filters"></div>
+    <div class="sizerow">
+      <div class="count" id="count"></div>
+      <select class="sort" id="sort" aria-label="정렬">
+        <option value="rec">추천순</option>
+        <option value="deadline">마감 임박순</option>
+        <option value="amount">금액 큰 순</option>
+      </select>
+    </div>
+    <div class="list" id="bidList"></div>
+  </section>
+
+  <section id="tab-partners" hidden>
+    <div class="search">
+      <input id="pSearch" type="search" placeholder="업체명 · 업종코드 · 지역 검색" aria-label="협정사 검색">
+    </div>
+    <div class="fbar" id="pFilters"></div>
+    <div class="list" id="partnerList"></div>
+    <div id="gapBox"></div>
+  </section>
+
+  <section id="tab-calc" hidden>
+    <div class="bigcard">
+      <h2>투찰가 계산기</h2>
+      <p class="sub">예정가격 = 기초금액 × 사정률 · 낙찰하한금액 = (예정가격 − A값) × 낙찰하한율 + A값<br>하우재 실측 기준 권고 사정률 <b>100.1 ~ 100.4%</b> · 하한 미달 탈락을 막는 최소선을 먼저 확인하세요.</p>
+      <div class="field">
+        <label for="cBase">기초금액 (원)</label>
+        <input id="cBase" type="number" inputmode="numeric" value="206500000" step="1000">
+      </div>
+      <div class="two">
+        <div class="field">
+          <label for="cA">A값 (비경쟁금액, 없으면 0)</label>
+          <input id="cA" type="number" inputmode="numeric" value="0" step="1000">
+        </div>
+        <div class="field">
+          <label for="cFloor">낙찰하한율 (%)</label>
+          <input id="cFloor" type="number" inputmode="decimal" value="87.745" step="0.001">
+        </div>
+      </div>
+      <div class="two">
+        <div class="field">
+          <label for="cRateMin">사정률 하한 (%)</label>
+          <input id="cRateMin" type="number" inputmode="decimal" value="100.1" step="0.01">
+        </div>
+        <div class="field">
+          <label for="cRateMax">사정률 상한 (%)</label>
+          <input id="cRateMax" type="number" inputmode="decimal" value="100.4" step="0.01">
+        </div>
+      </div>
+      <div class="outs" id="calcOut"></div>
+      <div id="calcWarn"></div>
+    </div>
+    <div class="bigcard">
+      <h2>사정률 구간별 금액</h2>
+      <p class="sub">권고 투찰가 = (예정가격 − A값) × (낙찰하한율 + 0.03%p) + A값 · 원단위 절사. ‘권장’ 구간이 하우재 실측 기준 100.1~100.4%입니다.</p>
+      <div class="tblwrap"><table class="tbl" id="calcTable"><thead><tr><th>사정률</th><th>예정가격</th><th>낙찰하한금액</th><th>권고 투찰가</th><th>구간</th></tr></thead><tbody></tbody></table></div>
+    </div>
+    <div class="note">A값은 발주처 산식에 따라 다릅니다(기술용역은 0인 경우가 대부분). 실제 투찰 전에는 공고문의 낙찰하한율·A값 적용 여부를 확인하세요. 이 계산기는 본인 의사결정용이며, 타사와 투찰가를 조율하는 데 쓰면 2026-05-28 개정 「공사입찰특별유의서」상 불법 브로커 처벌 대상입니다.</div>
+  </section>
+
+  <section id="tab-guide" hidden>
+    <div class="gcard">
+      <h2>판정 배지 읽는 법</h2>
+      <div class="badgelegend" id="legend"></div>
+      <p class="mini" style="margin-top:10px">판정은 ① 하우재 보유 업종(4817·4442, 1169는 등록 진행중) ② 요구 업종 조합 ③ 지역제한 ④ 공동수급 허용 ⑤ 규모·상주 조건을 대조해 계산합니다. 최종 판단은 공고문 원문 기준입니다.</p>
+    </div>
+    <div class="gcard">
+      <h2>협정(전자공동수급) 4단계</h2>
+      <ul class="check">
+        <li><span class="sn">1</span><span><b>사전 합의</b> — 전화로 자리(중복 참여) 여부·참여 의향·분담비율·대가 확인. 나라장터에 먼저 올리면 안 됩니다.</span></li>
+        <li><span class="sn">2</span><span><b>대표사 협정서 작성</b> — 입찰진행 → 협정 → 분담이행 → 사업자번호로 구성사 조회 → 비율 합계 100% → 저장 → <b>공개</b> 클릭</span></li>
+        <li><span class="sn">3</span><span><b>구성사 승인</b> — 구성사가 공동수급협정서목록에서 동의·승인 (마감 지연의 대부분이 이 단계)</span></li>
+        <li><span class="sn">4</span><span><b>대표사 최종 제출</b> — 전원 승인 확인 → 최종제출 → 진행상태 ‘최종제출’ 확인 → 입찰서 제출</span></li>
+      </ul>
+      <p class="mini" style="margin-top:8px">실무 목표: 입찰 전날 18:00까지 완료. 협정서 제출기한은 공고문 기준(입찰 마감과 다를 수 있음).</p>
+    </div>
+    <div class="gcard">
+      <h2>전문소방 1489 vs 일반소방 1490·1491</h2>
+      <p><b>1489</b>는 소방기술사를 두는 상위 업종으로 연면적·제연설비 제한 없이 모든 특정소방대상물을 설계합니다. <b>1490·1491</b>은 연면적 3만㎡(공장 1만㎡) 미만이면서 제연설비가 없는 건까지만 가능합니다.</p>
+      <ul>
+        <li>1489 요구 공고 → <b>건창 불가</b>(미보유). 나비·국제·씨엔아이로 문의</li>
+        <li>1490·1491만 요구 → 건창·서원·예다로 충분</li>
+        <li>공고 ‘허용업종’에 1489가 열려 있으면 1489 업체가 오히려 유리</li>
+      </ul>
+    </div>
+    <div class="gcard">
+      <h2>데이터 · 한계</h2>
+      <div class="kvline"><span>공고 수집 기준</span><b id="gAsOf">-</b></div>
+      <div class="kvline"><span>요구 업종</span><b>나라장터 업종제한 표 기준</b></div>
+      <div class="kvline"><span>기초금액</span><b>*표시는 추정가격×1.1 산출</b></div>
+      <div class="kvline"><span>협정사 정보</span><b>하우재_건축협정사_정리 시트(2026-11-20)</b></div>
+      <p class="mini" style="margin-top:10px">공고문 본문에만 적힌 업종·실적·지역의무비율은 자동 판정에 반영되지 않았습니다. 카드의 “공고문 확인” 배지가 있으면 원문을 먼저 보세요. 담당자 연락처는 회원 전용이라 표시하지 않았습니다.</p>
+    </div>
+    <div class="gcard">
+      <h2>실시간 연동 (선택)</h2>
+      <p>공공데이터포털에서 조달청 ‘나라장터 입찰공고정보서비스’ 활용신청 후 받은 인코딩 인증키를 넣으면, 이 브라우저에서 최신 공고를 직접 조회합니다. 키는 이 기기에만 저장됩니다.</p>
+      <div class="field">
+        <label for="apiKey">G2B_SERVICE_KEY (Encoding)</label>
+        <input id="apiKey" type="text" placeholder="인증키를 붙여넣으세요" autocomplete="off">
+      </div>
+      <div class="act" style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn primary" id="btnSaveKey">키 저장</button>
+        <button class="btn ghost" id="btnLive">실시간 공고 불러오기</button>
+        <button class="btn ghost" id="btnClearKey">키 삭제</button>
+      </div>
+      <div id="liveOut" style="margin-top:9px"></div>
+    </div>
+    <div class="gcard">
+      <h2>이 앱의 선</h2>
+      <p>협정 매칭은 <b>“업종을 함께 채울 후보를 소개”</b>하는 데까지만 합니다. 분담비율·대가·투찰가는 당사자 간 협의이고, 이 앱은 타사에 투찰가를 알려주거나 조율을 중개하지 않습니다.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <b>하우재 BID LAB</b> · 건축사사무소 하우재(230-14-00743) 내부 업무용<br>
+  공고·개찰 데이터: 나라장터 공개 공고(서울비드·조달엔 경유) / 협정사: 하우재_건축협정사_정리 시트<br>
+  <span id="footAsOf">-</span> 기준 스냅샷 · 투찰 전 공고문 원문 확인 필수
+</footer>
+
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="bd" data-close></div>
+  <div class="panel">
+    <div class="grab"></div>
+    <div class="hd" id="sheetHead"></div>
+    <div class="bd2" id="sheetBody"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const DATA = {"meta":{"asOf":"2026-11-26","collectedAt":"2026-11-26 17:05 KST","source":"나라장터 공고(서울비드·조달엔 상세) 와 하우재_건축협정사_정리 시트(2026-11-20)","count":25},"howjae":{"name":"건축사사무소 하우재","bizno":"230-14-00743","ceo":"한상범","staff":"심지연(노리짱)","phone":"010-8687-8982","tel":"0507-1497-8982","email":"arc_howjae@naver.com","addr":"서울 마포구 동교로17길 51, 푸른감성빌딩 301호","codes":["4817","4442"],"pending":["1169"],"other":"4140 산림복지전문업(유아숲교육업) — 나라장터 코드 없이 등록"},"partners":[{"id":"kc","name":"(주)건창기술단","grade":"기존거래","bizno":"204-81-48871","area":"서울 동대문구 왕산로 81, 두산베어스타워 707호","staff_n":86,"ceo":"김영규","manager":"조창준 · 이규봉","tel":"02-925-3775","fax":"02-929-3826","email":"cho9449@hanmail.net","email2":"kbong-01@nate.com","codes":["1106","1490","1491","1492","3572","3591","1108","7117"],"note":"전기·소방·통신을 한 번에 커버. 1489(전문소방)는 미보유. 인기 업체라 공동수급 1개 제한·선착순 → 공고 확인 전 전화 필수.","order":"① 02-925-3775 → 담당자 문자·메일"},{"id":"nb","name":"(주)나비환경설비컨설턴트","grade":"기존거래","bizno":"211-88-64316","area":"서울 강남구 역삼로 234, 3층 (역삼동)","staff_n":14,"ceo":"김한도","manager":"이형섭 소장","tel":"02-6245-2504","mobile":"010-8982-6044","fax":"02-6245-2507","email":"woorinabi74@naver.com","codes":["1489"],"note":"1489(전문소방시설설계업) 보유. 1490·1491·3591은 없음. 2023 창원지법 거창지원 협정 이력. 기존 시트의 02-6245-2598은 구번호.","order":"① 이형섭 소장 직통 → ② 대표번호"},{"id":"sw","name":"(주)서원이엔씨","grade":"기존거래","bizno":"885-81-01281","area":"경기 수원시 팔달구 권광로142번길 43-21 2층","staff_n":5,"ceo":"김종운","manager":"정연미 · 조윤빈 실장 · 김상호 소장","tel":"031-221-9540","mobile":"010-3277-3044","fax":"031-221-9541","email":"esam2022@naver.com","email2":"seowonelec@daum.net","codes":["1490","1491","1106","3572","3591","1493","1494","1109"],"note":"1490·1491·1106·3572·3591 전부 보유(1108 없음). 2023 서울마곡 우체국 설계 분담 17.884% 이력. 경기 남부 공고에 유리.","order":"① 정연미(입찰·협정) → ② 조윤빈(서류)"},{"id":"sme","name":"(주)서원엠이씨","grade":"기존거래","bizno":"206-86-32744","area":"서울 송파구 송파대로 201, A동 7층 A-708호","staff_n":17,"ceo":"최지호","manager":"김은진 부장 · 최유정 과장","tel":"02-420-1093","mobile":"010-2791-5144","fax":"02-420-1097","email":"seowonmec@hanmail.net","codes":["1490","1491","1106","1108","1320"],"note":"3572 대신 기술사사무소(정보통신, 1320) 보유. 2023 경찰청 강당 설계 분담(하우재 80.39%) 이력.","order":"① 김은진 부장 → ② 최유정 과장"},{"id":"gj","name":"국제엔지니어링(주)","grade":"신규발굴","bizno":"120-87-61675","area":"서울 금천구 디지털로9길 65, 6층 607호 (가산동)","staff_n":15,"ceo":"신관호","manager":"미확인(대표번호로 확인)","tel":"02-2051-5119","fax":"02-2051-7119","email":"","codes":["1489","1106","3572","3591","1492","1109","7117"],"note":"1489+1106+3572+3591 보유. 직원 15명으로 규모가 과하지 않아 협정 타진에 적합. 2026년 개찰 90건.","order":"① 02-2051-5119 → 담당자·메일 확보"},{"id":"cni","name":"(주)씨엔아이엔지니어링","grade":"신규발굴","bizno":"211-88-08371","area":"서울 강남구 선릉로 614-1, 2층 (삼성동)","staff_n":85,"ceo":"박광태","manager":"미확인(admin@ 메일)","tel":"02-548-6622","fax":"02-548-8181","email":"admin@cnieng.co.kr","email2":"ktpark@cnieng.co.kr","codes":["1489","1105","1106","3572","3591","1108","1492","1493","1494","1109"],"note":"1489+1105(종합설계)+3572까지 보유 — 1105 요구 공고를 한 곳으로 해결. 85명·2026년 개찰 129건.","order":"① 02-548-6622(담당자 확인) → ② 담당자 메일"},{"id":"yd","name":"(주)예다종합설계감리사무소","grade":"신규발굴","bizno":"229-81-06905","area":"서울 영등포구 당산로2길 12, 에이스테크노타워 606호","staff_n":70,"ceo":"이윤상","manager":"미확인(대표번호로 확인)","tel":"02-2635-3858","fax":"02-2632-1337","email":"","codes":["1490","1491","1106","3572","3591","1108","1492","1493","1494","1169","3570","7117"],"note":"1169(학술·연구용역)까지 보유 — 1169 요구 공고의 대체 파트너 후보. 1489는 없음.","order":"① 전화 → 담당자·메일 확보"},{"id":"yj","name":"주식회사 유정이엔지","grade":"신규발굴","bizno":"190-86-01140","area":"서울 종로구 종로 123, 504호 (종로3가)","staff_n":9,"ceo":"유미경","manager":"미확인(대표번호로 확인)","tel":"02-747-4505","fax":"02-765-4505","email":"","codes":["1490","1491","1106","3572","1108","1493","1494"],"note":"9명 소규모 · 서울시·교육청 소액 설계 다수. 3591(설비) 미보유.","order":"① 02-747-4505 → 문자·메일"},{"id":"kk","name":"(주)극동문화전기설계","grade":"신규발굴","bizno":"101-81-45385","area":"서울 종로구 종로 123, 고영빌딩 505호","staff_n":37,"ceo":"김경용","manager":"미확인(대표번호로 확인)","tel":"02-765-0240","fax":"02-765-4505","email":"","codes":["1490","1491","1106","3572","1108","1493","1494"],"note":"서울시립대·교육청·서울대공원 실적. 유정이엔지와 같은 건물.","order":"① 02-765-0240 → 문자·메일"},{"id":"el","name":"(주)엘림전설","grade":"신규발굴","bizno":"215-86-80385","area":"서울 송파구 가락로 89, 광동빌딩 5층 (석촌동)","staff_n":16,"ceo":"명태현","manager":"미확인(대표번호로 확인)","tel":"02-419-8552","fax":"02-419-8554","email":"","codes":["1490","1491","1106","3572","1109"],"note":"경찰청·교육청·김포공항 분담 이력. 1108·3591 없음.","order":"① 02-419-8552 → 담당자·메일"},{"id":"mk","name":"목원전기설계(주)","grade":"신규발굴","bizno":"229-81-26876","area":"서울 성동구 성수일로4길 25, 서울숲코오롱디지털타워 312호","staff_n":21,"ceo":"최상운","manager":"미확인(대표번호로 확인)","tel":"02-572-8845","fax":"02-469-8845","email":"","codes":["1490","1491","1106","3572","1108","1493","1494","7117"],"note":"경찰청·SH·김포공항 실적.","order":"① 02-572-8845 → 담당자·메일"},{"id":"sy","name":"신영BME","grade":"참고(타분야)","bizno":"","area":"(기계설계 분담)","staff_n":0,"ceo":"김종혁","manager":"이영훈 부장 · 김정훈 이사","tel":"02-582-1181","mobile":"010-7275-4635","email":"sybme@chol.com","codes":["3591"],"note":"기계설계 분담. 서울마곡 우체국·경찰청 기계설계 담당. (3591 보조 후보)","order":"① 담당자 직통"},{"id":"bs","name":"베스트구조기술사사무소(주)","grade":"참고(타분야)","bizno":"","area":"(구조설계 분담)","staff_n":0,"ceo":"최선희","manager":"이충언 이사","tel":"010-3467-7459","mobile":"010-3467-7459","email":"bestst1@naver.com","codes":[],"note":"구조설계 분담(서울마곡 우체국 구조 담당).","order":"① 최선희 대표"},{"id":"ms","name":"민성ENC","grade":"참고(타분야)","bizno":"","area":"(토목·현황측량)","staff_n":0,"ceo":"안세민","manager":"안세민 대표","tel":"031-815-5278","mobile":"010-3192-3433","email":"minsungenc1@naver.com","codes":[],"note":"토목·현황측량 분담.","order":"① 안세민 대표"},{"id":"fs","name":"포시즌(내역사무실)","grade":"참고(타분야)","bizno":"","area":"(적산·내역)","staff_n":0,"ceo":"김명종","manager":"조명재 팀장","tel":"010-7626-0703","mobile":"010-7626-0703","email":"fs-2019@naver.com","codes":[],"note":"적산·내역 담당(서울마곡 우체국·경찰청).","order":"① 김명종 소장"}],"codeNames":{"4817":"건축사사무소","4442":"산업디자인전문회사(환경디자인)","4444":"산업디자인전문회사(종합디자인)","6484":"공공디자인 전문회사","1169":"학술·연구용역","4152":"유아숲체험원","4119":"산림조합(지역조합)","4125":"산림조합중앙회","4166":"산림기술용역업(종합)","4170":"산림기술용역업(녹지조경)","1489":"전문소방시설설계업","1490":"일반소방시설설계업(기계)","1491":"일반소방시설설계업(전기)","1492":"전문소방공사감리업","1493":"일반소방공사감리업(기계)","1494":"일반소방공사감리업(전기)","1105":"설계업(종합설계)","1106":"설계업(전문설계1종)","1108":"감리업(종합감리)","1109":"감리업(전문감리)","1320":"기술사사무소(정보통신)","1351":"기술사사무소(도시계획)","1352":"기술사사무소(조경)","1358":"기술사사무소(건축전기설비)","3570":"엔지니어링사업(전기설비)","3572":"엔지니어링사업(정보통신)","3583":"엔지니어링사업(도시계획)","3584":"엔지니어링사업(조경)","3591":"엔지니어링사업(설비)","4966":"건설엔지니어링업(종합)","4967":"건설엔지니어링업(설계·사업관리-일반)","4968":"건설엔지니어링업(설계등용역-일반)","4969":"건설엔지니어링업(건설사업관리)","7117":"전력시설물설계감리자"},"bids":[{"no":"R26BK01841943","seq":"000","title":"강서시장 상품화시설 건립공사 설계용역(건축)","org":"서울특별시농수산식품공사","demand":"서울특별시농수산식품공사","category":"건축설계","base":206500000,"baseDerived":false,"est":187727272,"rate":87.745,"deadline":"2026-11-27T18:00","regClose":"11월 26일(목) 18:00","jv":"공동수급불허","regions":["서울특별시"],"regionShort":"","groups":[{"g":"A","codes":["4817"]}],"groupSource":"나라장터 업종제한","method":"적격심사제","contract":"총액계약","note":"긴급공고 · 적격심사 비대상(관리규정외 수기심사) · 투찰 11/27 18:00","link":"https://seoul.bid/bids/R26BK01841943","g2b":"https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01841943&bidPbancOrd=000"},{"no":"R26BK01841079","seq":"000","title":"제물포중학교 외벽개선, 창호교체 및 내진보강공사 감리용역(계속비) 입찰 공고","org":"인천광역시교육청 인천광역시서부교육지원청","demand":"인천광역시교육청 인천광역시서부교육지원청","category":"건축감리","base":155052000,"baseDerived":false,"est":140956364,"rate":87.745,"deadline":"2026-11-27T10:00","regClose":"11월 26일(목) 18:00","jv":"공동수급불허","regions":["인천광역시"],"regionShort":"","groups":[{"g":"A","codes":["4817"]}],"groupSource":"나라장터 업종제한","method":"적격심사제","contract":"총액계약","note":"","link":"https://seoul.bid/bids/R26BK01841079","g2b":"https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01841079&bidPbancOrd=000"},{"no":"R26BK01847499","seq":"000","title":"경기체고 다이빙장 리모델링 공사 건축사(비상주) 감리용역","org":"경기도교육청 경기도수원교육지원청","demand":"경기도교육청 경기도수원교육지원청","category":"건축감리","base":27912000,"baseDerived":true,"est":25374545,"rate":88.0,"deadline":"2026-12-01T10:00","regClose":"11월 30일(월) 18:00","jv":"공동수급불허","regions":["경기도 수원시"],"regionShort":"","groups":[{"g":"A","codes":["4817"]}],"groupSource":"나라장터 업종제한","method":"소액수의견적","contract":"총액계약","note":"","link":"https://seoul.bid/bids/R26BK01847499","g2b":"https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01847499&bidPbancOrd=000"},{"no":"R26BK01848613","seq":"000","title":"인천주안북초 외벽개선ㆍ내진보강 및 화장실 개선공사 감리용역(계속비)","org":"인천광역시교육청 인천광역시남부교육지원청","demand":"인천광역시교육청 인천광역시남부교육지원청","category":"건축감리","base":153170000,"baseDerived":false,"est":139245455,"rate":87.745,"deadline":"2026-12-01T10:00","regClose":"11월 30일(월) 18:00","jv":"공동수급불허","regions":["인천광역시"],"regionShort":"","groups":[{"g":"A","codes":["4817"]}],"groupSource":"나라장터 업종제한","method":"적격심사제","contract":"총액계약","note":"","link":"https://seoul.bid/bids/R26BK01848613","g2b":"https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01848613&bidPbancOrd=000"},{"no":"R26BK01855031","seq":"000","title":"(긴급)신둔초 공간재구조화 리모델링공사 상주감리용역","org":"경기도교육청 경기도이천교육지원청","demand":"경기도교육청 경기도이천교육지원청","category":"건축감리(상주)","base":213384000,"baseDerived":false,"est":193985455,"rate":87.745,"deadline":"2026-12-02T10:00","regClose":"12월 1일(화) 18:00","jv":"공동수급불허","regions":["경기도"],"regionShort":"","groups":[{"g":"A","codes":["4817"]}],"groupSource":"나라장터 업종제한","method":"적격심사제","contract":"총액계약","note":"","link":"https://seoul.bid/bids/R26BK01855031","g2b":"https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01855031&bidPbancOrd=000"},{"no":"R26BK01852002","seq":"000","title":"(가칭)고덕6중 신축공사 설계의 경제성(VE) 등 검토용역","org":"경기도교육청","demand":"경기도교육청","category":"설계VE","base":38400000,"baseDerived":false,"est":34909091,"rate":88.0,"deadline":"2026-12-01T10:00","regClose":"11월 30일(월) 18:00","jv":"공동수급불허","regions":["경기도"],"regionShort":"","groups":[{"g":"A","codes":["4817"]},{"g":"B","codes":["4966"]},{"g":"C","codes":["4967"]},{"g":"D","codes":["4969"]}],"groupSource":"나라장터 업종제한","method":"소액수의견적","contract":"총액계약","note":"","link":"https://seoul.bid/bids/R26BK01852002","g2b":"https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01852002&bidPbancOrd=000"},{"no":"R26BK01852042","seq":"000","title":"(가칭)고덕14초 신축공사 설계의 경제성(VE) 등 검토용역","org":"경기도교육청","demand":"경기도교육청","category":"설계VE","base":41600000,"baseDerived":false,"est":37818182,"rate":88.0,"deadline":"2026-12-01T10:00","regClose":"11월 30일(월) 18:00","jv":"공동수급불허","regions":["경기도"],"regionShort":"","groups":[{"g":"A","codes":["4817"]},{"g":"B","codes":["4966"]},{"g":"C","codes":["4967"]},{"g":"D","codes":["4969"]}],"groupSource":"나라장터 업종제한","method":"소액수의견적","contract":"총액계약","note":"","link":"https://seoul.bid/bids/R26BK01852042","g2b":"https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01852042&bidPbancOrd=000"},{"no":"R26BK01842490","seq":"000","title":"인천국제공항 화물터미널 주차타워 설계용역","org":"인천국제공항공사","demand":"인천국제공항공사","category":"건축설계(공동수급)","base":449295000,"baseDerived":false,"est":408450000,"rate":88.745,"deadline":"2026-12-17T14:00","regClose":"12월 16일(수) 18:00","jv":"분담이행","regions":[],"regionShort":"","groups":[{"g":"A","codes":["1105","4817","1489","3572"]},{"g":"B","codes":["1105","4817","1489","1320"]},{"g":"C","codes":["1105","4817","1490","1491","3572"]},{"g":"D","codes":["1105","4817","1490","1491","1320"]},{"g":"E","codes":["1106","4817","1489","3572"]},{"g":"F","codes":["1106","4817","1489","1320"]},{"g":"G","codes":["1106","4817","1490","1491","3572"]},{"g":"H","codes":["1106","4817","1490","1491","1320"]},{"g":"I","codes":["3570","4817","1489","3572"]},{"g":"J","codes":["3570","4817","1489","1320"]},{"g":"K","codes":["3570","4817","1490","1491","3572"]},{"g":"L","codes":["3570","4817","1490","1491","1320"]},{"g":"M","codes":["1358","4817","1489","3572"]},{"g":"N","codes":["1358","4817","1489","1320"]},{"g":"O","codes":["1358","4817","1490","1491","3572"]},{"g":"P","codes":["1358","1490","1491","1320","4817"]}],"groupSource":"나라장터 업종제한","method":"적격심사제","contract":"총액계약","note":"PQ(사업수행능력평가) 후 가격입찰 · 4.08억 규모","link":"https://seoul.bid/bids/R26BK01842490","g2b":"https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01842490&bidPbancOrd=000"},{"no":"R26BK01853967","seq":"000","title":"[긴급]공동주택 재정비 컨설팅 용역(럭키, 토평한일아파트)","org":"경기도 구리시","demand":"경기도 구리시","category":"정비컨설팅","base":193875000,"baseDerived":false,"est":176250000,"rate":87.745,"deadline":"2026-11-30T12:00","regClose":"11월 29일(일) 18:00","jv":"분담이행","regions":["경기도"],"regionShort":"","groups":[{"g":"A","codes":["3583","4817"]},{"g":"B","codes":["1351","4817"]}],"groupSource":"나라장터 업종제한","method":"적격심사제","contract":"총액계약","note":"","link":"https://seoul.bid/bids/R26BK01853967","g2b":"https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01853967&bidPbancOrd=000"},{"no":"R26BK01857654","seq":"000","title":"화성시 산업안전 문화공간 조성사업 디자인 및 실시설계 용역","org":"경기도 화성시","demand":"경기도 화성시","category":"환경디자인·설계","base":54420000,"baseDerived":true,"est":49472727,"rate":null,"deadline":"2026-12-08T16:00","regClose":"12월 7일(월) 18:00","jv":"분담이행","regions":[],"regionShort":"","groups":[{"g":"A","codes":["4444","3584"]},{"g":"B","codes":["4444","1352"]},{"g":"C","codes":["4442","3584"]},{"g":"D","codes":["4442","1352"]}],"groupSource":"공고문 본문","method":"협상에의한계약","contract":"총액계약","note":"업종 요건이 공고문 본문에만 있음(나라장터 업종제한 표 없음) — ①산업디자인 4444/4442 ②조경 3584/1352 동시 충족","link":"https://seoul.bid/bids/R26BK01857654","g2b":"https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01857654&bidPbancOrd=000"},{"no":"R26BK01856088","seq":"000","title":"서울시 도시공원 탐방과 야생동물 관찰문화 정책 연구","org":"서울특별시 의회사무처","demand":"서울특별시 의회사무처","category":"정책연구","base":30000000,"baseDerived":true,"est":27272727,"rate":null,"deadline":"2026-12-07T15:00","regClose":"12월 4일(금) 18:00","jv":"공동수급불허","regions":[],"regionShort":"","groups":[{"g":"A","codes":["1169"]}],"groupSource":"나라장터 업종제한","method":"협상에의한계약","contract":"총액계약","note":"학술·연구용역(1169) 요구 — 하우재 1169는 나라장터 등록 송신 전","link":"https://seoul.bid/bids/R26BK01856088","g2b":"https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01856088&bidPbancOrd=000"},{"no":"R26BK01842728","seq":"000","title":"사당동 일대 서달산 무장애숲길 조성사업 실시설계 용역","org":"서울특별시 동작구","demand":"서울특별시 동작구","category":"숲길·조경설계","base":159144000,"baseDerived":false,"est":144677000,"rate":87.745,"deadline":"2026-11-27T10:00","regClose":"11월 26일(목) 18:00","jv":"공동수급불허","regions":["서울특별시"],"regionShort":"","groups":[{"g":"A","codes":["4119"]},{"g":"B","codes":["4125"]},{"g":"C","codes":["4166"]},{"g":"D","codes":["4170"]}],"groupSource":"나라장터 업종제한","method":"적격심사제","contract":"총액계약","note":"산림조합(4119·4125) 또는 산림기술용역업(4166·4170) 요구 — 건축사사무소로는 참여 불가","link":"https://seoul.bid/bids/R26BK01842728","g2b":"https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01842728&bidPbancOrd=000"},{"no":"R26BK01851304","seq":"000","title":"2027년 예일유치원 유아숲체험 활동을 위한 유아숲체험원 선정용역","org":"조달청 서울지방조달청","demand":"서울특별시교육청 서울특별시강서교육청 예일유치원","category":"유아숲","base":706368000,"baseDerived":true,"est":642152727,"rate":null,"deadline":"2026-12-08T10:00","regClose":"12월 7일(월) 18:00","jv":"공동수급불허","regions":[],"regionShort":"","groups":[{"g":"A","codes":["4152"]}],"groupSource":"나라장터 업종제한","method":"협상에의한계약","contract":"총액계약","note":"유아숲체험원(4152) 등록 업체 대상 — 하우재 보유 4140(유아숲교육업)과 다른 업종","link":"https://seoul.bid/bids/R26BK01851304","g2b":"https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01851304&bidPbancOrd=000"},{"no":"R26BK01854904","seq":"000","title":"2026년 서울특별시교육청 학교 무선통신장비 도입 및 설치 위탁감리","org":"조달청 서울지방조달청","demand":"한국지능정보사회진흥원","category":"통신감리","base":145962000,"baseDerived":false,"est":134823636,"rate":89.745,"deadline":"2026-12-02T10:00","regClose":"12월 1일(화) 18:00","jv":"공동이행","regions":["서울특별시"],"regionShort":"","groups":[{"g":"A","codes":["3572"]},{"g":"B","codes":["1320"]}],"groupSource":"나라장터 업종제한","method":"적격심사제","contract":"총액계약","note":"","link":"https://seoul.bid/bids/R26BK01854904","g2b":"https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01854904&bidPbancOrd=000"},{"no":"R26BK01859114","seq":"000","title":"구로5동 청사 이전 건립 전기공사 감리용역","org":"서울특별시 구로구","demand":"서울특별시 구로구","category":"전기감리","base":232700000,"baseDerived":false,"est":211545455,"rate":86.745,"deadline":"2026-12-04T10:00","regClose":"12월 3일(목) 18:00","jv":"공동수급불허","regions":["서울특별시"],"regionShort":"","groups":[{"g":"A","codes":["1108"]},{"g":"B","codes":["1109"]}],"groupSource":"나라장터 업종제한","method":"적격심사제","contract":"총액계약","note":"","link":"https://seoul.bid/bids/R26BK01859114","g2b":"https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01859114&bidPbancOrd=000"},{"no":"R26BK01853396","seq":"000","title":"경기체고 다이빙장 리모델링 소방공사 감리용역","org":"경기도교육청 경기도수원교육지원청","demand":"경기도교육청 경기도수원교육지원청","category":"소방감리","base":14598000,"baseDerived":false,"est":13270820,"rate":90.0,"deadline":"2026-12-02T12:00","regClose":"12월 1일(화) 18:00","jv":"공동수급불허","regions":["경기도 수원시"],"regionShort":"","groups":[{"g":"A","codes":["1492"]},{"g":"B","codes":["1493","1494"]}],"groupSource":"나라장터 업종제한","method":"소액수의견적","contract":"총액계약","note":"","link":"https://seoul.bid/bids/R26BK01853396","g2b":"https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01853396&bidPbancOrd=000"},{"no":"R26BK01853155","seq":"002","title":"제주해양치유센터 건립사업 인테리어 실시설계","org":"제주특별자치도","demand":"제주특별자치도","category":"인테리어설계","base":99522000,"baseDerived":true,"est":90474545,"rate":88.0,"deadline":"2026-11-30T10:00","regClose":"11월 29일(일) 18:00","jv":"공동수급불허","regions":["제주특별자치도"],"regionShort":"","groups":[{"g":"A","codes":["4817"]}],"groupSource":"나라장터 업종제한","method":"소액수의견적","contract":"총액계약","note":"","link":"https://seoul.bid/bids/R26BK01853155","g2b":"https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01853155&bidPbancOrd=002"},{"no":"R26BK01853234","seq":"001","title":"통영시 도동항 어촌신활력증진사업 건축설계용역","org":"한국어촌어항공단","demand":"한국어촌어항공단","category":"건축설계","base":99810000,"baseDerived":true,"est":90736364,"rate":87.745,"deadline":"2026-12-01T10:00","regClose":"11월 30일(월) 18:00","jv":"공동수급불허","regions":["경상남도"],"regionShort":"","groups":[{"g":"A","codes":["4817"]}],"groupSource":"나라장터 업종제한","method":"적격심사제","contract":"총액계약","note":"","link":"https://seoul.bid/bids/R26BK01853234","g2b":"https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01853234&bidPbancOrd=001"},{"no":"R26BK01849879","seq":"000","title":"부산중학교 공간재구조화 교사개축 전기공사 감리용역(계속비)","org":"조달청 부산지방조달청","demand":"부산광역시교육청 부산광역시남부교육지원청","category":"전기감리","base":143089000,"baseDerived":false,"est":133157273,"rate":87.745,"deadline":"2026-12-02T10:00","regClose":"12월 1일(화) 18:00","jv":"공동이행","regions":["부산광역시"],"regionShort":"","groups":[{"g":"A","codes":["1109"]}],"groupSource":"나라장터 업종제한","method":"적격심사제","contract":"총액계약","note":"","link":"https://seoul.bid/bids/R26BK01849879","g2b":"https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01849879&bidPbancOrd=000"},{"no":"R26BK01848953","seq":"000","title":"전주풍남중 본관동 공간재구조화 리모델링공사 감리(상주)용역","org":"전북특별자치도교육청 전북특별자치도전주교육지원청","demand":"전북특별자치도교육청 전북특별자치도전주교육지원청","category":"건축감리(상주)","base":183375000,"baseDerived":false,"est":166704545,"rate":87.745,"deadline":"2026-12-01T10:00","regClose":"11월 30일(월) 18:00","jv":"공동수급불허","regions":["전북특별자치도"],"regionShort":"","groups":[{"g":"A","codes":["4817"]}],"groupSource":"나라장터 업종제한","method":"적격심사제","contract":"총액계약","note":"","link":"https://seoul.bid/bids/R26BK01848953","g2b":"https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01848953&bidPbancOrd=000"},{"no":"R26BK01854118","seq":"000","title":"경동119안전센터 재건축 건립공사 상주감리용역(건축)","org":"전남광주통합특별시 소방본부","demand":"전남광주통합특별시 목포소방서","category":"건축감리(상주)","base":221552000,"baseDerived":false,"est":201410909,"rate":86.745,"deadline":"2026-11-30T10:00","regClose":"11월 29일(일) 18:00","jv":"공동수급불허","regions":["전남광주통합특별시 목포시","전남광주통합특별시 여수시","전남광주통합특별시 순천시","전남광주통합특별시 나주시","전남광주통합특별시 광양시","전남광주통합특별시 담양군","전남광주통합특별시 곡성군","전남광주통합특별시 구례군","전남광주통합특별시 고흥군","전남광주통합특별시 보성군","전남광주통합특별시 화순군","전남광주통합특별시 장흥군","전남광주통합특별시 강진군","전남광주통합특별시 해남군","전남광주통합특별시 영암군","전남광주통합특별시 무안군","전남광주통합특별시 함평군","전남광주통합특별시 영광군","전남광주통합특별시 장성군","전남광주통합특별시 완도군","전남광주통합특별시 진도군","전남광주통합특별시 신안군"],"regionShort":"전남광주통합특별시 22개 시·군","groups":[{"g":"A","codes":["4817"]}],"groupSource":"나라장터 업종제한","method":"적격심사제","contract":"총액계약","note":"전남 22개 시·군 지역제한 · 상주감리","link":"https://seoul.bid/bids/R26BK01854118","g2b":"https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01854118&bidPbancOrd=000"},{"no":"R26BK01849157","seq":"000","title":"「오색 산림휴양복합타운 조성」 기본계획 및 타당성 조사 연구 용역","org":"경상북도 김천시","demand":"경상북도 김천시","category":"산림·연구","base":190000000,"baseDerived":false,"est":172727273,"rate":87.745,"deadline":"2026-11-30T10:00","regClose":"11월 29일(일) 18:00","jv":"공동수급불허","regions":["경상북도"],"regionShort":"","groups":[{"g":"A","codes":["1352","1169"]},{"g":"B","codes":["3584","1169"]}],"groupSource":"나라장터 업종제한","method":"적격심사제","contract":"총액계약","note":"1169 + 조경(1352/3584) 조합 · 경북 지역제한","link":"https://seoul.bid/bids/R26BK01849157","g2b":"https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01849157&bidPbancOrd=000"},{"no":"R26BK01832415","seq":"001","title":"국립정읍숲체원 조성 공사 건설사업관리(감독권한 대행)","org":"한국산림복지진흥원","demand":"한국산림복지진흥원","category":"건설사업관리","base":2575720000,"baseDerived":true,"est":2341563636,"rate":81.995,"deadline":"2026-12-16T10:00","regClose":"12월 15일(화) 18:00","jv":"공동이행","regions":[],"regionShort":"","groups":[{"g":"A","codes":["4966","4967","1492","1493"]},{"g":"B","codes":["4966","4969","1492","1494"]}],"groupSource":"나라장터 업종제한","method":"적격심사제","contract":"총액계약","note":"23.4억 규모 건설사업관리 · 건설엔지니어링(4966·4967) + 소방감리 요구","link":"https://seoul.bid/bids/R26BK01832415","g2b":"https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01832415&bidPbancOrd=001"},{"no":"R26BK01850095","seq":"001","title":"전기차용 전력변환 시스템 성능 및 전력손실 평가 지원센터 증축공사 설계용역","org":"재단법인FITI시험연구원","demand":"재단법인FITI시험연구원","category":"건축설계","base":198000000,"baseDerived":false,"est":180000000,"rate":88.745,"deadline":"2026-11-30T10:00","regClose":"11월 29일(일) 18:00","jv":"공동수급불허","regions":["충청북도"],"regionShort":"","groups":[{"g":"A","codes":["4817"]}],"groupSource":"나라장터 업종제한","method":"적격심사제","contract":"총액계약","note":"","link":"https://seoul.bid/bids/R26BK01850095","g2b":"https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01850095&bidPbancOrd=001"},{"no":"R26BK01842833","seq":"000","title":"한려해상 사천지구 해양생태놀이터 조성사업 기본·실시설계 용역","org":"국립공원공단 국립공원해양생태보전원","demand":"국립공원공단 국립공원해양생태보전원","category":"생태·디자인설계","base":300000000,"baseDerived":true,"est":272727273,"rate":null,"deadline":"2026-12-02T10:00","regClose":"12월 1일(화) 18:00","jv":"공동수급불허","regions":[],"regionShort":"","groups":[{"g":"A","codes":["4968","4444"]},{"g":"B","codes":["4968","4442"]},{"g":"C","codes":["4968","6484"]}],"groupSource":"나라장터 업종제한","method":"협상에의한계약","contract":"총액계약","note":"공동수급 불허인데 4968(건설엔지니어링 설계등용역)과 4442 조합을 요구","link":"https://seoul.bid/bids/R26BK01842833","g2b":"https://www.g2b.go.kr/link/PNPE027_01/single/?bidPbancNo=R26BK01842833&bidPbancOrd=000"}]};
+
+/* ================= 유틸 ================= */
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+const H = DATA.howjae;
+const HC = new Set(H.codes);
+const PC = DATA.partners;
+const CN = DATA.codeNames;
+const won = n => (n==null||isNaN(n)) ? '-' : Math.round(n).toLocaleString('ko-KR') + '원';
+function shortWon(n){
+  if(n==null||isNaN(n)) return '-';
+  n = Math.round(n);
+  if(n >= 100000000){ const e=Math.floor(n/100000000), m=Math.round((n%100000000)/10000); return e+'억'+(m?(' '+m.toLocaleString('ko-KR')+'만'):'')+'원'; }
+  if(n >= 10000) return Math.round(n/10000).toLocaleString('ko-KR')+'만원';
+  return n.toLocaleString('ko-KR')+'원';
+}
+const NOW = new Date();
+function dday(iso){
+  if(!iso) return {t:'미정', cls:'gray'};
+  const d = new Date(iso), ms = d - NOW;
+  if(ms < 0) return {t:'마감', cls:'gray'};
+  const h = ms/3600000;
+  if(h <= 24) return {t:'D-DAY', cls:'red'};
+  const n = Math.ceil(h/24);
+  return {t:'D-'+n, cls: n<=3 ? 'amber' : ''};
+}
+function fmtDeadline(iso){
+  if(!iso) return '-';
+  const d = new Date(iso);
+  const w = ['일','월','화','수','목','금','토'][d.getDay()];
+  return `${d.getMonth()+1}/${d.getDate()}(${w}) ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+function toast(msg){
+  const el = $('#toast'); el.textContent = msg; el.classList.add('on');
+  clearTimeout(el._t); el._t = setTimeout(()=>el.classList.remove('on'), 1600);
+}
+function copy(text, label){
+  const done = ()=>toast((label||'복사')+' 완료');
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(done).catch(()=>fallback());
+  } else fallback();
+  function fallback(){
+    const ta = document.createElement('textarea'); ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); done(); }catch(e){ toast('복사 실패 — 길게 눌러 복사하세요'); }
+    document.body.removeChild(ta);
+  }
+}
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ================= 판정 엔진 ================= */
+const CAPITAL = ['서울','경기','인천'];
+function partnerRank(p){
+  let s = 0;
+  if(p.grade === '기존거래') s += 30;
+  if(p.grade === '신규발굴') s += 10;
+  if(p.staff_n >= 60) s -= 8;
+  if(p.codes.length >= 8) s += 4;
+  return s;
+}
+function coverOptions(missing){
+  const out = [];
+  for(const p of PC){
+    if(missing.every(c => p.codes.includes(c))) out.push({partners:[p], missing});
+  }
+  if(out.length) return out.sort((a,b)=>partnerRank(b.partners[0])-partnerRank(a.partners[0])).slice(0,3);
+  const pairs = [];
+  for(let i=0;i<PC.length;i++){
+    for(let j=i+1;j<PC.length;j++){
+      const a=PC[i], b=PC[j];
+      const cov = new Set([...a.codes, ...b.codes]);
+      if(missing.every(c => cov.has(c))) pairs.push({partners:[a,b], missing});
+    }
+  }
+  pairs.sort((x,y)=>{
+    const sx = x.partners.reduce((s,p)=>s+partnerRank(p),0);
+    const sy = y.partners.reduce((s,p)=>s+partnerRank(p),0);
+    return sy - sx || x.partners.length - y.partners.length;
+  });
+  return pairs.slice(0,3);
+}
+function evaluateGroups(bid){
+  return (bid.groups||[]).map(g => {
+    const have = g.codes.filter(c => HC.has(c));
+    const pend = g.codes.filter(c => H.pending.includes(c));
+    const missing = g.codes.filter(c => !HC.has(c));
+    const coverableMissing = missing.filter(c => !H.pending.includes(c));
+    let opts = [];
+    if(have.length && coverableMissing.length && !pend.length) opts = coverOptions(coverableMissing);
+    return {g:g.g, codes:g.codes, have, pend, missing, opts,
+      solo: missing.length===0, feasible: have.length>0 && coverableMissing.length>0 && !pend.length && opts.length>0,
+      gap: have.length>0 && coverableMissing.length>0 && !pend.length && opts.length===0,
+      noHave: have.length===0};
+  });
+}
+function regionVerdict(bid){
+  if(!bid.regions || !bid.regions.length) return {ok:true, label:'지역제한 없음', far:false};
+  const cap = bid.regions.some(r => CAPITAL.some(c => r.includes(c)));
+  if(cap) return {ok:true, label:bid.regions.length>1 ? '수도권 포함' : bid.regions[0], far:false};
+  return {ok:false, label: bid.regionShort || bid.regions[0], far:true};
+}
+function judge(bid){
+  const gs = evaluateGroups(bid);
+  const solos = gs.filter(g => g.solo);
+  const feases = gs.filter(g => g.feasible);
+  const gaps = gs.filter(g => g.gap);
+  const pend = gs.some(g => g.pend.length) || (bid.groups||[]).some(g => g.codes.some(c => H.pending.includes(c)));
+  const reg = regionVerdict(bid);
+  const reasons = [], cautions = [];
+  let kind = 'none', plan = null, badge = 'r', score = 30;
+
+  if(solos.length){
+    kind = 'solo';
+    const best = solos.sort((a,b)=>a.codes.length-b.codes.length)[0];
+    plan = {type:'solo', group:best, options:[]};
+    score = 92;
+  } else if(feases.length){
+    feases.sort((a,b)=> a.missing.length - b.missing.length || a.opts[0].partners.length - b.opts[0].partners.length);
+    const best = feases[0];
+    const opts = [];
+    for(const g of feases){
+      for(const o of g.opts){
+        const key = o.partners.map(p=>p.id).sort().join('+');
+        if(!opts.find(x=>x.key===key)) opts.push({key, group:g, partners:o.partners, missing:o.missing});
+      }
+    }
+    opts.sort((a,b)=> a.partners.length - b.partners.length || a.missing.length - b.missing.length || partnerRank(b.partners[0]) - partnerRank(a.partners[0]));
+    plan = {type:'accord', group:best, options:opts.slice(0,3)};
+    const anyOrange = opts.some(o => o.missing.includes('1489'));
+    kind = anyOrange ? 'orange' : 'accord';
+    score = anyOrange ? 68 : 74;
+  } else if(gaps.length){
+    kind = 'gap';
+    const best = gaps.sort((a,b)=>a.missing.length-b.missing.length)[0];
+    plan = {type:'gap', group:best, options:[]};
+    score = 62;
+  } else {
+    kind = 'none';
+    const anyHave = gs.some(g => g.have.length>0);
+    score = anyHave ? 40 : 26;
+    const missingAll = [...new Set(gs.flatMap(g=>g.missing))];
+    if(anyHave) reasons.push('요구 업종 중 보유 업종이 있으나, 남은 업종을 채울 협정사가 시트에 없습니다.');
+    else reasons.push('요구 업종에 하우재 보유 업종(4817·4442)이 없어 대표사로 참여할 수 없습니다.');
+    if(pend) reasons.push('1169(학술·연구용역) 요구 — 하우재는 나라장터 등록 송신 전입니다.');
+    if(missingAll.length) reasons.push('필요 업종: ' + missingAll.map(c=>c+' '+codeName(c)).join(', '));
+  }
+
+  // 지역
+  if(!reg.ok){
+    reasons.unshift('지역제한: ' + reg.label + ' — 서울(마포) 사무소로는 참여 불가·출장 부담 과다');
+    score -= 42;
+  } else if(reg.label === '지역제한 없음'){
+    const farOrg = /부산|대구|광주|울산|세종|강원|충북|충남|전북|전남|경북|경남|제주/.test(bid.org||'');
+    if(farOrg){ cautions.push('전국 공고지만 발주처가 지방 — 출장·현장 대응 비용 확인'); score -= 12; }
+  }
+
+  // 규모·조건
+  const base = bid.base || bid.est || 0;
+  if(base >= 500000000){ cautions.push('규모 ' + shortWon(base) + ' — 사무소 체급(비상주·소규모) 초과'); score -= 24; }
+  else if(base >= 300000000){ cautions.push('규모 ' + shortWon(base) + ' — 인력·실적 요건 확인'); score -= 10; }
+  else if(base < 30000000){ cautions.push('소액(' + shortWon(base) + ') — 실익·수수료 대비 검토'); score -= 8; }
+  if((/상주/.test(bid.category) || /상주/.test(bid.title)) && !/비상주/.test(bid.title)){ cautions.push('상주감리 — 상주 인력 배치 가능 여부 확인'); score -= 10; }
+  if(/PQ/.test(bid.note||'') || /PQ/.test(bid.title||'')){ cautions.push('PQ(사업수행능력) 평가 — 보유 건축사·유사실적 배점 확인'); score -= 8; }
+  if((bid.jv||'').includes('불허') && kind !== 'solo'){ cautions.push('공동수급 불허 — 협정으로 업종을 채울 수 없습니다'); score -= 10; }
+  const dd = dday(bid.deadline);
+  if(dd.t === 'D-DAY'){ cautions.push('24시간 내 마감 — 협정·서류 준비가 어렵습니다'); score -= 6; }
+
+  // 배지 확정
+  let feasibleKind = ['solo','accord','orange','gap'].includes(kind);
+  const hardNo = !reg.ok || base >= 500000000 || pend || kind === 'none' ||
+                 ((bid.jv||'').includes('불허') && kind !== 'solo');
+  if(hardNo) badge = 'r';
+  else if(kind === 'orange') badge = 'o';
+  else if(kind === 'accord' || kind === 'gap') badge = 'y';
+  else badge = 'g';
+
+  score = Math.max(4, Math.min(99, Math.round(score)));
+  let label;
+  if(badge === 'g') label = '단독 가능';
+  else if(badge === 'o') label = '협정 필수 · 1489';
+  else if(badge === 'y') label = (kind==='gap' ? '협정 필수 · 업체 발굴' : '협정 필수');
+  else if(!reg.ok) label = '비추천 · 원거리';
+  else if(base >= 500000000) label = '비추천 · 규모 초과';
+  else if((bid.jv||'').includes('불허') && kind !== 'solo') label = '비추천 · 협정 불가';
+  else label = '비추천 · 자격 미달';
+  return {gs, reg, kind, plan, badge, label, score, reasons, cautions};
+}
+function codeName(c){ return CN[c] || '업종 ' + c; }
+
+/* ================= 홈 렌더 ================= */
+const state = {filter:'all', sort:'rec', tab:'bids', pQuery:'', pFilter:'all'};
+
+$('#asOf').textContent = DATA.meta.asOf;
+$('#gAsOf').textContent = DATA.meta.asOf + ' (' + DATA.meta.collectedAt + ' 수집)';
+$('#footAsOf').textContent = DATA.meta.asOf;
+
+$('#prof').innerHTML = [
+  `<span class="pc"><code>4817</code>건축사사무소</span>`,
+  `<span class="pc"><code>4442</code>산업디자인(환경)</span>`,
+  `<span class="pc"><code>4140</code>유아숲교육업</span>`,
+  `<span class="pc muted"><code>1169</code>등록 진행중</span>`
+].join('');
+
+const FILTERS = [
+  {k:'all', t:'전체'}, {k:'rec', t:'추천만'}, {k:'solo', t:'단독'}, {k:'accord', t:'협정 필요'},
+  {k:'capital', t:'서울·수도권'}, {k:'small', t:'5천만 이하'}, {k:'mid', t:'5천만~2억'}, {k:'big', t:'2억 이상'}
+];
+$('#filters').innerHTML = FILTERS.map(f=>`<button class="fchip${f.k==='all'?' on':''}" data-f="${f.k}">${f.t}</button>`).join('');
+
+const LEGEND = [
+  ['g','단독 가능','하우재 보유 업종(4817·4442)만으로 참가 자격 충족'],
+  ['y','협정 필수','보유 업종은 있으나 1490·1491·1106·3572 등 일부 업종을 협정으로 채워야 함'],
+  ['o','협정 필수 · 1489','1489(전문소방) 요구 — 건창은 불가, 나비·국제·씨엔아이 등 1489 보유 업체 필요'],
+  ['r','비추천 · 자격 미달','원거리 지역제한 · 5억 이상 체급 · 상주/PQ · 1169 미완료 · 보유 업종 없음']
+];
+$('#legend').innerHTML = LEGEND.map(([c,t,d])=>`<div class="bl"><span class="badge ${c}">${{g:'🟢',y:'🟡',o:'🟠',r:'🔴'}[c]} ${t}</span><span>${d}</span></div>`).join('');
+
+function inFilter(b, j){
+  const base = b.base || b.est || 0;
+  switch(state.filter){
+    case 'rec': return ['g','y','o'].includes(j.badge) && j.score >= 55;
+    case 'solo': return j.kind === 'solo';
+    case 'accord': return ['accord','orange','gap'].includes(j.kind);
+    case 'capital': return !j.reg.far;
+    case 'small': return base <= 50000000;
+    case 'mid': return base > 50000000 && base <= 200000000;
+    case 'big': return base > 200000000;
+    default: return true;
+  }
+}
+function cardCodes(bid){
+  const codes = [...new Set((bid.groups||[]).flatMap(g=>g.codes))];
+  return codes.slice(0,8).map(c=>{
+    const cls = HC.has(c) ? 'ok' : (H.pending.includes(c) ? 'no' : '');
+    return `<span class="cd ${cls}" title="${esc(codeName(c))}">${c}</span>`;
+  }).join('') + (codes.length>8?`<span class="cd">+${codes.length-8}</span>`:'');
+}
+function verdictLine(bid, j){
+  if(j.kind === 'solo') return {ico:'✅', txt:'보유 업종만으로 단독 참가 — 협정 불필요'};
+  if(j.kind === 'accord' || j.kind === 'orange'){
+    const o = j.plan.options[0];
+    const names = o.partners.map(p=>p.name.replace(/^\(주\)|주식회사 /,'')).join(' + ');
+    return {ico:'🤝', txt:`${names} 1곳 조합으로 충족 · 부족 ${o.missing.join('·')}`};
+  }
+  if(j.kind === 'gap'){
+    const miss = j.plan.group.missing.join('·');
+    return {ico:'🔎', txt:`${miss} 업종을 채울 협정사가 시트에 없음 — 발굴 필요`};
+  }
+  return {ico:'⚠️', txt: j.reasons[0] || '요구 자격 미충족'};
+}
+function renderBids(){
+  const rows = DATA.bids.map(b => ({b, j:judge(b)})).filter(x => inFilter(x.b, x.j));
+  rows.sort((x,y)=>{
+    if(state.sort === 'deadline') return (x.b.deadline||'').localeCompare(y.b.deadline||'');
+    if(state.sort === 'amount') return (y.b.base||0) - (x.b.base||0);
+    return y.j.score - x.j.score || (x.b.deadline||'').localeCompare(y.b.deadline||'');
+  });
+  const all = DATA.bids.map(b=>({b,j:judge(b)}));
+  const cnt = {g:0,y:0,o:0,r:0};
+  all.forEach(x=>cnt[x.j.badge]++);
+  $('#summary').innerHTML = [
+    ['g','단독 가능'],['y','협정 필요'],['o','1489 협정'],['r','비추천']
+  ].map(([k,t])=>`<div class="s ${k}"><div class="n">${cnt[k]}</div><div class="t">${t}</div></div>`).join('');
+  $('#cntAll').textContent = DATA.bids.length;
+  $('#cntRec').textContent = all.filter(x=>['g','y','o'].includes(x.j.badge) && x.j.score>=55).length;
+  $('#count').innerHTML = `<b>${rows.length}</b>건 표시 · 전체 ${DATA.bids.length}건`;
+  if(!rows.length){ $('#bidList').innerHTML = `<div class="empty">조건에 맞는 공고가 없습니다.<br>필터를 바꿔 보세요.</div>`; return; }
+  $('#bidList').innerHTML = rows.map(({b,j})=>{
+    const dd = dday(b.deadline), vl = verdictLine(b,j);
+    const regionTag = j.reg.label;
+    return `<article class="bid" data-no="${b.no}" tabindex="0" role="button" aria-label="${esc(b.title)} 상세">
+      <div class="row1">
+        <span class="badge ${j.badge}">${{g:'🟢',y:'🟡',o:'🟠',r:'🔴'}[j.badge]} ${j.label}</span>
+        <span class="fact">${esc(b.category)}</span>
+        <span class="dday ${dd.cls}">${dd.t}</span>
+      </div>
+      <h3>${esc(b.title)}</h3>
+      <div class="org"><span>${esc(b.org)}</span><span class="dot"></span><span>${b.no}${b.seq!=='000'?'-'+b.seq:''}</span></div>
+      <div class="facts">
+        <span class="fact">기초 <b>${shortWon(b.base)}</b>${b.baseDerived?'*':''}</span>
+        <span class="fact">마감 <b>${fmtDeadline(b.deadline)}</b></span>
+        <span class="fact${j.reg.far?' warn':''}">${esc(regionTag)}</span>
+      </div>
+      <div class="codes">${cardCodes(b)}</div>
+      <div class="verdict"><span class="vico">${vl.ico}</span><span>${esc(vl.txt)}</span></div>
+    </article>`;
+  }).join('');
+}
+
+/* ================= 상세 시트 ================= */
+let lastFocus = null;
+function openSheet(no){
+  const b = DATA.bids.find(x=>x.no===no); if(!b) return;
+  const j = judge(b);
+  lastFocus = document.activeElement;
+  $('#sheetHead').innerHTML = `
+    <div style="min-width:0">
+      <div class="row1" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+        <span class="badge ${j.badge}">${{g:'🟢',y:'🟡',o:'🟠',r:'🔴'}[j.badge]} ${j.label}</span>
+        <span class="fact">${esc(b.category)}</span>
+        <span class="dday ${dday(b.deadline).cls}">${dday(b.deadline).t}</span>
+      </div>
+      <h2 id="sheetTitle">${esc(b.title)}</h2>
+      <p>${esc(b.org)} · ${b.no}${b.seq!=='000'?'-'+b.seq:''} · <b>${fmtDeadline(b.deadline)} 마감</b></p>
+    </div>
+    <button class="x" data-close aria-label="닫기">✕</button>`;
+  $('#sheetBody').innerHTML = sheetBody(b, j);
+  $('#sheet').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  bindSheetCalc(b);
+  $('#sheet .panel').scrollTop = 0;
+  $('#sheetBody').scrollTop = 0;
+}
+function closeSheet(){
+  $('#sheet').classList.remove('open');
+  document.body.style.overflow = '';
+  if(lastFocus && lastFocus.focus) lastFocus.focus();
+}
+function groupRows(gs, bestG){
+  const rel = gs.filter(g=>g.solo || g.feasible || g.gap);
+  const show = rel.length ? rel.slice(0,6) : gs.slice(0,4);
+  const rest = gs.length - show.length;
+  return `<table class="grptable"><thead><tr><th class="gt">조합</th><th>요구 업종</th><th style="width:78px">하우재</th></tr></thead><tbody>
+  ${show.map(g=>`<tr${g.g===bestG?' style="background:#f7faff"':''}>
+     <td class="gt">${g.g}${g.g===bestG?'<div style="font-size:9px;color:#1d3b7a;font-weight:800">추천</div>':''}</td>
+     <td>${g.codes.map(c=>`<span class="cd ${HC.has(c)?'ok':(H.pending.includes(c)?'no':'')}">${c}</span> ${esc(codeName(c))}`).join('<br>')}</td>
+     <td>${g.solo?'<b style="color:#0b8a4b">충족</b>':g.noHave?'<span style="color:#b42318">없음</span>':(g.pend.length?'<span style="color:#b42318">1169 미등록</span>':'<span style="color:#a15c00">일부</span>')}</td>
+   </tr>`).join('')}
+  </tbody></table>
+  ${rest>0?`<div class="note" style="margin-top:6px">그 외 ${rest}개 업종 조합은 하우재 보유·협정 조합과 맞지 않아 표시하지 않았습니다.</div>`:''}`;
+}
+function partnerCard(p, rank, missing){
+  const need = missing.filter(c=>p.codes.includes(c));
+  const other = p.codes.filter(c=>!need.includes(c));
+  return `<div class="pcard ${rank===1?'top':''}">
+    <div class="ph">
+      <span class="rk">${rank}순위</span>
+      <span class="nm">${esc(p.name)}</span>
+      <span class="tag ${p.grade==='기존거래'?'g':''}">${esc(p.grade)}</span>
+      ${p.staff_n?`<span class="tag">${p.staff_n}명</span>`:''}
+    </div>
+    <div class="codes">${need.map(c=>`<span class="cd ok">${c}</span>`).join('')}${other.slice(0,6).map(c=>`<span class="cd">${c}</span>`).join('')}${other.length>6?`<span class="cd">+${other.length-6}</span>`:''}</div>
+    <div class="meta">
+      <b>${esc(p.ceo)}</b> 대표 · 담당 <b>${esc(p.manager)}</b><br>
+      ${esc(p.area)}${p.staff_n?` · 직원 ${p.staff_n}명`:''}${p.email?`<br>${esc(p.email)}`:''}
+    </div>
+    <div class="meta">${p.note ? esc(p.note) : ''}</div>
+    <div class="act">
+      ${p.tel?`<button class="btn primary" data-copy="${esc(p.tel)}" data-label="전화번호">📞 ${esc(p.tel)}</button>`:''}
+      ${p.mobile?`<button class="btn" data-copy="${esc(p.mobile)}" data-label="휴대폰">📱 ${esc(p.mobile)}</button>`:''}
+      ${p.email?`<button class="btn ghost" data-copy="${esc(p.email)}" data-label="이메일">✉️ 메일 복사</button>`:''}
+    </div>
+    <div class="meta" style="margin-top:6px;color:#98a2b3">${esc(p.order||'')}</div>
+  </div>`;
+}
+function sheetBody(b, j){
+  const dd = dday(b.deadline);
+  const hardReasons = j.reasons.concat(j.cautions);
+  let accordHtml = '';
+  if(!j.reg.ok){
+    accordHtml = `<div class="verdictbox r"><div class="big">📍 지역제한으로 참여 불가</div>
+      <ul><li>지역제한: <b>${esc(j.reg.label)}</b></li>
+      <li>${j.kind==='solo' ? '업종은 충족하지만, 주된 영업소 소재지 요건에서 탈락합니다.' : '업종을 채워도 지역 요건에서 탈락합니다.'}</li>
+      <li>전국 공고(지역제한 없음)로 같은 발주처 공고가 나오면 다시 검토하세요.</li></ul></div>`;
+  } else if((b.jv||'').includes('불허') && j.kind === 'gap'){
+    accordHtml = `<div class="verdictbox r"><div class="big">⚠️ 협정으로도 채울 수 없음</div>
+      <ul><li>부족 업종: <b>${esc(j.plan.group.missing.join('·'))}</b></li>
+      <li>공고가 <b>공동수급을 불허</b>해 다른 업체와 조합할 수 없습니다.</li>
+      <li>시트에 해당 업종 보유 업체가 있어도 이 공고에는 소용이 없습니다.</li></ul></div>`;
+  } else if(j.kind === 'solo'){
+    accordHtml = `<div class="verdictbox g" style="background:#fff"><div class="big">✅ 협정 없이 단독 참가</div>
+      <ul><li>요구 업종 ${j.plan.group.codes.join('·')} 모두 하우재 보유</li>
+      <li>${(b.jv||'').includes('불허')?'공동수급 불허 공고 — 단독이 유일한 방법':'공동수급 허용이지만 단독으로 충분'}</li></ul></div>`;
+  } else if(j.kind === 'accord' || j.kind === 'orange'){
+    const g = j.plan.group;
+    accordHtml = `<div class="note" style="margin-bottom:9px">요구 조합 <b>${g.codes.map(c=>c+' '+codeName(c)).join(' + ')}</b> 중
+      하우재 보유 <b>${g.have.join('·')||'없음'}</b> · <b style="color:#b42318">부족 ${g.missing.join('·')}</b></div>
+      ${g.missing.includes('1489')?`<div class="warnbox" style="margin-bottom:9px">1489는 <b>건창기술단이 보유하지 않습니다.</b> 1489만 있으면 되는 공고는 나비환경설비(기존거래)가 가장 빠르고, 1106·3572까지 함께 필요하면 국제엔지니어링·씨엔아이 또는 건창 조합이 맞습니다.</div>`:''}
+      ${j.plan.options.map((o,i)=>`<div style="margin-bottom:4px;font-size:11px;color:#667085">조합 ${o.group.g} 기준 · ${o.partners.length}개사로 충족</div>` + o.partners.map((p,k)=>partnerCard(p, i+1, o.missing)).join('')).join('')}`;
+  } else if(j.kind === 'gap'){
+    const miss = j.plan.group.missing.join('·');
+    accordHtml = `<div class="warnbox"><b>${miss} 보유 협정사가 시트에 없습니다.</b><br>
+      나라장터 → 입찰정보 → 업체검색(업종·지역) 또는 조달업체정보에서 해당 업종 등록업체를 찾아 시트에 추가하세요.
+      ${miss.includes('3584')||miss.includes('1352')?' 조경(3584·1352)은 조경설계 엔지니어링사·기술사사무소로 문의합니다.':''}
+      ${miss.includes('3583')||miss.includes('1351')?' 도시계획(3583·1351)은 도시계획 엔지니어링사로 문의합니다.':''}
+      ${miss.includes('4968')||miss.includes('4966')||miss.includes('4967')?' 건설엔지니어링(4966~4969)은 종합·일반 건설엔지니어링사로 문의합니다.':''}</div>`;
+  } else {
+    const missAll = [...new Set(j.gs.flatMap(g=>g.codes))];
+    accordHtml = `<div class="verdictbox r"><div class="big">⚠️ 하우재 업종으로 참여 불가</div>
+      <ul>
+        <li>요구 업종: ${missAll.map(c=>`<b>${c}</b> ${esc(codeName(c))}`).join(', ')}</li>
+        <li>보유 업종(4817·4442)이 요구 조합에 포함되지 않아 <b>대표사가 될 수 없습니다.</b></li>
+        <li>파트너가 대표사로 나서고 하우재가 구성사로 들어가는 구조만 가능하지만, 우리 몫 업종이 없어 실익이 낮습니다.</li>
+      </ul></div>`;
+  }
+
+  return `
+  <div class="grid">
+    <div class="kv"><div class="k">기초금액${b.baseDerived?' *':''}</div><div class="v">${won(b.base)}</div><div class="s">${b.baseDerived?'추정가격 × 1.1 산출':'공고 기초금액'}</div></div>
+    <div class="kv"><div class="k">추정가격</div><div class="v">${won(b.est)}</div><div class="s">부가세 제외</div></div>
+    <div class="kv"><div class="k">낙찰하한율</div><div class="v">${b.rate!=null?b.rate+'%':'-'}</div><div class="s">${esc(b.method||'')}</div></div>
+    <div class="kv"><div class="k">입찰 마감</div><div class="v">${fmtDeadline(b.deadline)}</div><div class="s">${dd.t}</div></div>
+    <div class="kv"><div class="k">참가등록 마감</div><div class="v" style="font-size:12px">${esc(b.regClose||'-')}</div><div class="s">협정은 그 전날 18:00 목표</div></div>
+    <div class="kv"><div class="k">지역제한</div><div class="v" style="font-size:12px">${esc(j.reg.label)}</div><div class="s">${j.reg.far?'수도권 밖':'참여 가능'}</div></div>
+    <div class="kv"><div class="k">공동수급</div><div class="v" style="font-size:12px">${esc(b.jv||'-')}</div><div class="s">${esc(b.contract||'')}</div></div>
+    <div class="kv"><div class="k">하우재 적합도</div><div class="v">${j.score} / 100</div><div class="s">규모·거리·조건 반영</div></div>
+  </div>
+
+  <div class="sec">
+    <h4><span class="n">1</span>판정</h4>
+    <div class="verdictbox ${j.badge}">
+      <div class="big">${{g:'🟢',y:'🟡',o:'🟠',r:'🔴'}[j.badge]} ${j.label}</div>
+      ${hardReasons.length?`<ul>${hardReasons.map(r=>`<li>${esc(r)}</li>`).join('')}</ul>`:'<ul><li>특이 리스크 없음</li></ul>'}
+    </div>
+  </div>
+
+  <div class="sec">
+    <h4><span class="n">2</span>요구 업종 (${esc(b.groupSource)})</h4>
+    ${groupRows(j.gs, j.plan && j.plan.group ? j.plan.group.g : '')}
+    ${b.note?`<div class="note" style="margin-top:8px">${esc(b.note)}</div>`:''}
+    <div class="note" style="margin-top:8px">같은 알파벳(A·B·C…)은 <b>그 조합을 모두 갖춰야</b> 하고, 조합이 여러 개면 <b>그중 하나만</b> 충족하면 됩니다.</div>
+  </div>
+
+  <div class="sec">
+    <h4><span class="n">3</span>어디와 협정해야 하나</h4>
+    ${accordHtml}
+  </div>
+
+  <div class="sec">
+    <h4><span class="n">4</span>협정 진행 체크리스트</h4>
+    <ul class="check">
+      <li><span class="sn">1</span><span><b>전화 합의</b> — 자리·의향·분담비율. 나라장터 선입력 금지</span></li>
+      <li><span class="sn">2</span><span><b>협정서 작성·공개</b> — 분담이행, 사업자번호 조회, 비율 합계 100%</span></li>
+      <li><span class="sn">3</span><span><b>구성사 승인</b> 전원 확인 (가장 자주 지연)</span></li>
+      <li><span class="sn">4</span><span><b>최종제출 → 입찰서 제출</b>, 진행상태 ‘최종제출’ 확인</span></li>
+    </ul>
+    <div class="note" style="margin-top:8px">목표: <b>${b.deadline?fmtDeadline(b.deadline):''} 입찰 마감</b> 전, 협정은 <b>전날 18:00</b>까지. 공고문의 협정 제출기한을 먼저 확인하세요.</div>
+  </div>
+
+  <div class="sec">
+    <h4><span class="n">5</span>투찰가 미리 계산</h4>
+    <div class="calcbox">
+      <div class="inrow">
+        <div class="fld"><label>기초금액</label><input id="scBase" type="number" value="${b.base||0}" step="1000"></div>
+        <div class="fld"><label>하한율(%)</label><input id="scFloor" type="number" value="${b.rate!=null?b.rate:87.745}" step="0.001"></div>
+      </div>
+      <div class="inrow" style="margin-top:8px">
+        <div class="fld"><label>사정률(%)</label><input id="scRate" type="number" value="100.2" step="0.01"></div>
+        <div class="fld"><label>A값</label><input id="scA" type="number" value="0" step="1000"></div>
+      </div>
+      <div class="calcres" id="scOut"></div>
+    </div>
+    <div class="note" style="margin-top:8px">실제 투찰 전 공고문의 예가범위·A값·적격심사 기준을 확인하세요. 계산 결과는 본인 판단용입니다.</div>
+  </div>
+
+  <div class="sec">
+    <h4><span class="n">6</span>원문</h4>
+    <div class="act" style="display:flex;gap:6px;flex-wrap:wrap">
+      <a class="btn primary" href="${b.link}" target="_blank" rel="noopener">공고 상세 보기 ↗</a>
+      <a class="btn" href="${b.g2b}" target="_blank" rel="noopener">나라장터 원문 ↗</a>
+      <button class="btn ghost" data-copy="${b.no}" data-label="공고번호">공고번호 복사</button>
+    </div>
+  </div>`;
+}
+function bindSheetCalc(b){
+  const calc = ()=>{
+    const base = +$('#scBase').value || 0, floor = (+$('#scFloor').value||0)/100, rate = (+$('#scRate').value||0)/100, A = +$('#scA').value||0;
+    const ep = base * rate;
+    const low = (ep - A) * floor + A;
+    const rec = Math.floor(((ep - A) * (floor + 0.0003) + A)/1000)*1000;
+    $('#scOut').innerHTML = `
+      <div class="c"><div class="k">예정가격</div><div class="v">${shortWon(ep)}</div></div>
+      <div class="c"><div class="k">낙찰하한금액</div><div class="v">${shortWon(low)}</div></div>
+      <div class="c"><div class="k">권고 투찰가</div><div class="v" style="color:#1d3b7a">${shortWon(rec)}</div></div>
+      <div class="c"><div class="k">하한 여유</div><div class="v" style="font-size:12px">+${won(rec-low)}</div></div>`;
+  };
+  ['#scBase','#scFloor','#scRate','#scA'].forEach(id=>{ const el=$(id); if(el) el.addEventListener('input', calc); });
+  calc();
+}
+
+/* ================= 협정사 디렉토리 ================= */
+const PFILTERS = [
+  {k:'all', t:'전체'}, {k:'1489', t:'1489 전문소방'}, {k:'1490', t:'1490·1491 일반소방'},
+  {k:'1106', t:'1106 전기설계'}, {k:'1108', t:'1108·1109 전기감리'}, {k:'3572', t:'3572·1320 통신'},
+  {k:'3591', t:'3591 설비'}, {k:'1169', t:'1169 학술'}
+];
+$('#pFilters').innerHTML = PFILTERS.map(f=>`<button class="fchip${f.k==='all'?' on':''}" data-pf="${f.k}">${f.t}</button>`).join('');
+function partnerMatch(p){
+  const q = state.pQuery.trim().toLowerCase();
+  if(state.pFilter !== 'all'){
+    const map = {'1489':['1489'],'1490':['1490','1491'],'1106':['1106'],'1108':['1108','1109'],'3572':['3572','1320'],'3591':['3591'],'1169':['1169']};
+    if(!map[state.pFilter].some(c=>p.codes.includes(c))) return false;
+  }
+  if(!q) return true;
+  return [p.name,p.ceo,p.manager,p.area,p.note,p.codes.join(' '),p.grade].join(' ').toLowerCase().includes(q);
+}
+function renderPartners(){
+  const list = PC.filter(partnerMatch);
+  $('#partnerList').innerHTML = list.length ? list.map(p=>`
+    <article class="pdir">
+      <div class="top">
+        <h3>${esc(p.name)}</h3>
+        <span class="grade ${p.grade==='기존거래'?'g':(p.grade.startsWith('참고')?'o':'')}">${esc(p.grade)}</span>
+      </div>
+      <div class="codes">${p.codes.map(c=>`<span class="cd ok" title="${esc(codeName(c))}">${c}</span>`).join('')||'<span class="cd">업종코드 없음(타분야)</span>'}</div>
+      <div class="meta"><b>${esc(p.ceo)}</b> 대표 · 담당 <b>${esc(p.manager)}</b>${p.staff_n?` · 직원 ${p.staff_n}명`:''}<br>${esc(p.area)}${p.email?`<br>${esc(p.email)}`:''}</div>
+      ${p.note?`<div class="note">${esc(p.note)}</div>`:''}
+      <div class="act">
+        ${p.tel?`<button class="btn primary" data-copy="${esc(p.tel)}" data-label="전화번호">📞 ${esc(p.tel)}</button>`:''}
+        ${p.mobile?`<button class="btn" data-copy="${esc(p.mobile)}" data-label="휴대폰">📱 ${esc(p.mobile)}</button>`:''}
+        ${p.email?`<button class="btn ghost" data-copy="${esc(p.email)}" data-label="이메일">✉️ 메일 복사</button>`:''}
+      </div>
+    </div>`).join('') : `<div class="empty">검색 결과가 없습니다.</div>`;
+
+  // 시트에 없는 업종
+  const held = new Set(HC); PC.forEach(p=>p.codes.forEach(c=>held.add(c)));
+  const gap = {};
+  DATA.bids.forEach(b=>(b.groups||[]).forEach(g=>g.codes.forEach(c=>{
+    if(!held.has(c)){ (gap[c] = gap[c] || []).push(b.title); }
+  })));
+  const keys = Object.keys(gap).sort((a,b)=>gap[b].length-gap[a].length);
+  $('#gapBox').innerHTML = keys.length ? `<div class="gapbox">
+    <h3>🔎 시트에 없는 업종 — 협정사 발굴 필요</h3>
+    ${keys.map(c=>`<div class="gi"><code>${c}</code><span><b>${esc(codeName(c))}</b> · 관련 공고 ${gap[c].length}건<br><span class="mini">${esc(gap[c][0])}${gap[c].length>1?' 외':''}</span></span></div>`).join('')}
+    <div class="mini" style="margin-top:8px">이 업종들은 현재 협정사 시트(2026-11-20)에 등록된 곳이 없어 자동 매칭되지 않습니다.</div>
+  </div>` : '';
+}
+
+/* ================= 계산기 ================= */
+function calcMain(){
+  const base = +$('#cBase').value||0, A = +$('#cA').value||0;
+  const floor = (+$('#cFloor').value||0)/100, rmin = (+$('#cRateMin').value||100)/100, rmax = (+$('#cRateMax').value||100)/100;
+  const epMin = base*rmin, epMax = base*rmax;
+  const lowMin = (epMin-A)*floor+A, lowMax = (epMax-A)*floor+A;
+  const recMin = Math.floor(((epMin-A)*(floor+0.0003)+A)/1000)*1000;
+  const recMax = Math.floor(((epMax-A)*(floor+0.0003)+A)/1000)*1000;
+  $('#calcOut').innerHTML = `
+    <div class="out"><div class="k">낙찰하한금액 (${(rmin*100).toFixed(2)}%)</div><div class="v">${won(lowMin)}</div></div>
+    <div class="out"><div class="k">낙찰하한금액 (${(rmax*100).toFixed(2)}%)</div><div class="v">${won(lowMax)}</div></div>
+    <div class="out hl"><div class="k">권고 투찰가 (하한)</div><div class="v">${won(recMin)}</div></div>
+    <div class="out hl"><div class="k">권고 투찰가 (상한)</div><div class="v">${won(recMax)}</div></div>`;
+  const rows = [];
+  for(let r=99.5; r<=101.01; r+=0.1){
+    const ep = base*r/100, low = (ep-A)*floor+A, rec = Math.floor(((ep-A)*(floor+0.0003)+A)/1000)*1000;
+    rows.push({r:+r.toFixed(2), ep, low, rec});
+  }
+  const best = rows.reduce((a,b)=> Math.abs(b.r-Math.round((rmin+rmax)/2*100)/100) < Math.abs(a.r-Math.round((rmin+rmax)/2*100)/100) ? b : a, rows[0]);
+  $('#calcTable').querySelector('tbody').innerHTML = rows.map(x=>`
+    <tr class="${x.r===best.r?'best':''}">
+      <td>${x.r.toFixed(1)}%</td><td>${won(x.ep)}</td><td>${won(x.low)}</td><td>${won(x.rec)}</td>
+      <td style="color:${(x.r>=rmin*100-0.001 && x.r<=rmax*100+0.001)?'#1d3b7a':'#98a2b3'};font-weight:${(x.r>=rmin*100-0.001 && x.r<=rmax*100+0.001)?'800':'400'}">${(x.r>=rmin*100-0.001 && x.r<=rmax*100+0.001)?'권장':'—'}</td>
+    </tr>`).join('');
+  $('#calcWarn').innerHTML = base? '' : `<div class="warnbox" style="margin-top:8px">기초금액을 입력하세요.</div>`;
+}
+
+/* ================= 이벤트 ================= */
+document.addEventListener('click', e=>{
+  const cp = e.target.closest('[data-copy]');
+  if(cp){ copy(cp.dataset.copy, cp.dataset.label); return; }
+  if(e.target.closest('[data-close]')){ closeSheet(); return; }
+  const card = e.target.closest('.bid');
+  if(card){ openSheet(card.dataset.no); return; }
+});
+document.addEventListener('keydown', e=>{
+  if(e.key === 'Escape') closeSheet();
+  if((e.key === 'Enter' || e.key === ' ') && document.activeElement && document.activeElement.classList.contains('bid')){
+    e.preventDefault(); openSheet(document.activeElement.dataset.no);
+  }
+});
+$('#filters').addEventListener('click', e=>{
+  const b = e.target.closest('[data-f]'); if(!b) return;
+  state.filter = b.dataset.f;
+  $$('#filters .fchip').forEach(x=>x.classList.toggle('on', x===b));
+  renderBids();
+});
+$('#sort').addEventListener('change', e=>{ state.sort = e.target.value; renderBids(); });
+$('#pFilters').addEventListener('click', e=>{
+  const b = e.target.closest('[data-pf]'); if(!b) return;
+  state.pFilter = b.dataset.pf;
+  $$('#pFilters .fchip').forEach(x=>x.classList.toggle('on', x===b));
+  renderPartners();
+});
+$('#pSearch').addEventListener('input', e=>{ state.pQuery = e.target.value; renderPartners(); });
+$$('.tab').forEach(t=>t.addEventListener('click', ()=>{
+  const k = t.dataset.tab;
+  $$('.tab').forEach(x=>x.classList.toggle('on', x===t));
+  ['bids','partners','calc','guide'].forEach(name=>{
+    const el = $('#tab-'+name); if(el) el.hidden = (name !== k);
+  });
+  state.tab = k;
+  window.scrollTo({top:0, behavior:'smooth'});
+  if(k === 'calc') calcMain();
+  if(k === 'partners') $('#gapBox').scrollTop = 0;
+}));
+$('#btnGuide').addEventListener('click', ()=> $$('.tab').find(t=>t.dataset.tab==='guide').click());
+['cBase','cA','cFloor','cRateMin','cRateMax'].forEach(id=>{ const el=$('#'+id); if(el) el.addEventListener('input', calcMain); });
+
+// 실시간 연동(선택)
+const KEY_STORE = 'howjae_g2b_key';
+try{ const k = localStorage.getItem(KEY_STORE); if(k) $('#apiKey').value = k; }catch(e){}
+$('#btnSaveKey').addEventListener('click', ()=>{
+  const v = $('#apiKey').value.trim();
+  try{ localStorage.setItem(KEY_STORE, v); toast(v?'키를 저장했습니다':'저장할 키가 없습니다'); }catch(e){ toast('저장 차단됨(브라우저 설정)'); }
+});
+$('#btnClearKey').addEventListener('click', ()=>{
+  try{ localStorage.removeItem(KEY_STORE); $('#apiKey').value=''; toast('키를 삭제했습니다'); }catch(e){}
+  $('#liveOut').innerHTML = '';
+});
+$('#btnLive').addEventListener('click', async ()=>{
+  const key = $('#apiKey').value.trim();
+  const out = $('#liveOut');
+  if(!key){ out.innerHTML = `<div class="warnbox">인증키를 먼저 저장하세요. 공공데이터포털 → 조달청 ‘나라장터 입찰공고정보서비스’ 활용신청 후 일반 인증키(Encoding)를 복사합니다.</div>`; return; }
+  out.innerHTML = `<div class="note">조회 중…</div>`;
+  const end = new Date(); const start = new Date(Date.now()-3*864e5);
+  const fmt = d => d.toISOString().slice(0,10).replace(/-/g,'');
+  const url = `https://apis.data.go.kr/1230000/ad/BidPublicInfoService/getBidPblancListInfoServc?serviceKey=${encodeURIComponent(key)}&numOfRows=20&pageNo=1&inqryDiv=1&inqryBgnDt=${fmt(start)}0000&inqryEndDt=${fmt(end)}2359&type=json`;
+  try{
+    const r = await fetch(url);
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    const items = (j.response && j.response.body && j.response.body.items && j.response.body.items.item) || [];
+    if(!items.length){ out.innerHTML = `<div class="note">응답은 왔지만 항목이 없습니다. 인증키 승인 상태·트래픽 한도를 확인하세요.</div>`; return; }
+    out.innerHTML = `<div class="note"><b>${items.length}건</b>을 받았습니다. 이 앱의 판정에는 반영되지 않습니다(업종 조합은 공고문 확인 필요).</div>
+      <div class="list" style="margin-top:8px">${items.slice(0,6).map(it=>`<div class="pcard"><div class="nm">${esc(it.bidNtceNm||'')}</div><div class="meta">${esc(it.dminsttNm||it.ntceInsttNm||'')} · ${esc(it.bidNtceNo||'')} · ${esc(it.bidClseDt||'')}</div></div>`).join('')}</div>`;
+  }catch(err){
+    out.innerHTML = `<div class="warnbox"><b>브라우저에서 직접 호출이 막혔습니다.</b> (${esc(err.message)})<br>
+      공공데이터포털은 CORS를 열지 않아 정적 페이지에서 바로 호출되지 않습니다. 이 경우 GitHub Actions가 키를 secret으로 받아 하루 몇 번 수집하고, 결과 JSON을 이 저장소에 커밋하는 방식이 안전합니다. 키를 서버측에 두지 않는 현재 구조에서는 화면 내 실시간 조회가 제한됩니다.</div>`;
+  }
+});
+
+/* ================= 시작 ================= */
+renderBids();
+renderPartners();
+calcMain();
+</script>
+</body>
+</html>
