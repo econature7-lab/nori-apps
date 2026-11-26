@@ -1,0 +1,908 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#16122B">
+<meta name="description" content="생년월일시로 만세력 사주를 세우고 2027 정미년 토정비결 144괘를 뽑아 드립니다. 오행 밸런스·일간 성격·분야별 운세·월별 포인트까지 한 장에. 입력값은 서버로 전송되지 않습니다.">
+<title>MZ 사주 · 2027 토정비결</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%2316122B'/><circle cx='32' cy='32' r='15' fill='none' stroke='%23D4AF63' stroke-width='2.5'/><path d='M32 17a15 15 0 0 0 0 30z' fill='%23D4AF63'/><circle cx='32' cy='32' r='3.4' fill='%2316122B'/></svg>">
+<style>
+  :root{
+    --bg:#16122B;
+    --bg-2:#1D1838;
+    --plum:#241E46;
+    --gold:#D4AF63;
+    --gold-2:#E7CD96;
+    --cream:#FAF8F4;
+    --muted:#A69FC2;
+    --muted-2:#7D769B;
+    --line:rgba(212,175,99,.20);
+    --line-soft:rgba(250,248,244,.10);
+    --surface:rgba(250,248,244,.045);
+    --surface-2:rgba(250,248,244,.075);
+    --e-mok:#6FA98C; --e-hwa:#C9614F; --e-to:#C0A16B; --e-geum:#9AA7B8; --e-su:#5D7DA8;
+    --serif:Georgia,"AppleMyungjo","Nanum Myeongjo","Noto Serif KR","Noto Serif CJK KR",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Pretendard Variable","Malgun Gothic","맑은 고딕","Noto Sans KR",system-ui,sans-serif;
+    --r:20px;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:74px}
+  body{
+    margin:0;background:var(--bg);color:var(--cream);
+    font-family:var(--sans);font-size:16px;line-height:1.62;
+    -webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:anywhere;
+    min-height:100vh;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:
+      radial-gradient(900px 500px at 82% -8%, rgba(212,175,99,.16), transparent 62%),
+      radial-gradient(760px 520px at 6% 4%, rgba(93,125,168,.16), transparent 60%),
+      radial-gradient(620px 620px at 50% 112%, rgba(201,97,79,.10), transparent 62%),
+      linear-gradient(180deg,#16122B 0%, #1A1533 46%, #241E46 100%);
+  }
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.16'/%3E%3C/svg%3E");
+    mix-blend-mode:overlay;
+  }
+  .wrap{position:relative;z-index:1;width:100%;max-width:760px;margin:0 auto;padding:0 20px}
+  h1,h2,h3,h4,p,ul,ol,figure{margin:0}
+  ul,ol{padding:0;list-style:none}
+  button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer;border:0;background:none}
+  input,select{font-family:inherit;font-size:inherit;color:inherit}
+  a{color:inherit}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:8px}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  .skip{position:absolute;left:-9999px;top:8px;z-index:100;background:var(--gold);color:#201A38;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700}
+  .skip:focus{left:14px}
+  .tnum{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+
+  /* ── 상단 바 ─────────────────────────────── */
+  .topbar{position:sticky;top:0;z-index:30;background:rgba(22,18,43,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line-soft)}
+  .topbar-in{display:flex;align-items:center;gap:10px;height:58px}
+  .back{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;color:var(--muted);text-decoration:none;padding:6px 2px;white-space:nowrap}
+  .back svg{width:11px;height:11px}
+  .back:hover{color:var(--gold-2)}
+  .brand{display:flex;align-items:center;gap:8px;min-width:0;margin-left:2px}
+  .brand-mark{width:20px;height:20px;border-radius:50%;border:1px solid var(--gold);display:grid;place-items:center;font-family:var(--serif);font-size:11px;color:var(--gold);flex:none}
+  .brand .nm{font-size:13px;font-weight:700;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .topbar-sp{flex:1}
+  .tag-free{font-size:10.5px;font-weight:700;letter-spacing:.06em;color:var(--gold-2);border:1px solid var(--line);border-radius:999px;padding:3px 9px;flex:none}
+
+  /* ── 히어로 ──────────────────────────────── */
+  .hero{padding:40px 0 22px}
+  .eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;letter-spacing:.14em;color:var(--gold);text-transform:uppercase}
+  .eyebrow i{width:16px;height:1px;background:var(--gold);display:inline-block}
+  .hero h1{font-family:var(--serif);font-weight:400;font-size:38px;line-height:1.24;letter-spacing:-.02em;margin:14px 0 0}
+  .hero h1 em{font-style:normal;color:var(--gold-2)}
+  .hero .lead{margin-top:14px;font-size:14.5px;color:var(--muted);line-height:1.72;max-width:32em}
+  .hero-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+  .hero-tags li{font-size:11.5px;color:#CFC7E2;border:1px solid var(--line-soft);background:var(--surface);border-radius:999px;padding:5px 11px}
+
+  /* ── 카드 ────────────────────────────────── */
+  .card{position:relative;background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--r);padding:22px 20px}
+  .card + .card{margin-top:12px}
+  .card-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:14px}
+  .card-head h2,.card-head h3{font-family:var(--serif);font-weight:400;letter-spacing:-.01em}
+  .card-head h2{font-size:20px}
+  .card-head h3{font-size:17px}
+  .card-head .side{font-size:11px;color:var(--muted-2);letter-spacing:.04em;white-space:nowrap}
+  .rule{height:1px;background:linear-gradient(90deg,var(--line),transparent);margin:14px 0}
+
+  /* ── 폼 ──────────────────────────────────── */
+  .form{padding:4px 2px 0}
+  .frow{margin-bottom:16px}
+  .frow > label,.flabel{display:block;font-size:12px;font-weight:700;letter-spacing:.02em;color:#CFC7E2;margin-bottom:8px}
+  .flabel .opt{font-weight:500;color:var(--muted-2);margin-left:4px}
+  .seg{display:flex;gap:6px}
+  .seg button{flex:1;border:1px solid var(--line-soft);background:rgba(250,248,244,.03);border-radius:12px;padding:11px 6px;font-size:13.5px;font-weight:600;color:var(--muted);transition:border-color .15s,background .15s,color .15s}
+  .seg button[aria-pressed="true"]{border-color:var(--gold);background:rgba(212,175,99,.14);color:var(--gold-2)}
+  .grid3{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:8px}
+  .sel{position:relative}
+  .sel select{appearance:none;-webkit-appearance:none;width:100%;background:rgba(250,248,244,.05);border:1px solid var(--line-soft);border-radius:12px;padding:12px 32px 12px 13px;font-size:14.5px;font-weight:600;color:var(--cream);outline:none}
+  .sel select:focus{border-color:var(--gold)}
+  .sel::after{content:"";position:absolute;right:13px;top:50%;width:7px;height:7px;border-right:1.4px solid var(--muted);border-bottom:1.4px solid var(--muted);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+  .sel select option{background:#231D45;color:var(--cream)}
+  .txt{width:100%;background:rgba(250,248,244,.05);border:1px solid var(--line-soft);border-radius:12px;padding:12px 13px;font-size:14.5px;outline:none}
+  .txt::placeholder{color:var(--muted-2)}
+  .txt:focus{border-color:var(--gold)}
+  .checkline{display:flex;align-items:center;gap:8px;margin-top:9px;font-size:12.5px;color:var(--muted)}
+  .checkline input{width:16px;height:16px;accent-color:var(--gold)}
+  .checkline label{display:flex;align-items:center;gap:7px;cursor:pointer}
+  .hint{font-size:11.5px;color:var(--muted-2);margin-top:7px;line-height:1.6}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:14px;padding:15px 18px;font-size:15px;font-weight:800;letter-spacing:-.01em;transition:transform .12s,filter .12s,background .15s}
+  .btn:active{transform:translateY(1px)}
+  .btn-gold{width:100%;background:linear-gradient(135deg,#E7CD96 0%,#D4AF63 52%,#BE944E 100%);color:#221B3C;box-shadow:0 14px 34px -18px rgba(212,175,99,.9)}
+  .btn-gold:hover{filter:brightness(1.05)}
+  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--gold-2)}
+  .btn-ghost:hover{background:rgba(212,175,99,.10)}
+  .btn-line{background:rgba(250,248,244,.06);border:1px solid var(--line-soft);color:var(--cream)}
+  .err{display:none;margin-top:10px;font-size:12.5px;font-weight:600;color:#F0A99B;background:rgba(201,97,79,.14);border:1px solid rgba(201,97,79,.4);border-radius:10px;padding:9px 12px;line-height:1.55}
+  .err.show{display:block}
+  .privacy-note{display:flex;gap:8px;align-items:flex-start;margin-top:14px;font-size:11.5px;line-height:1.65;color:var(--muted-2)}
+  .privacy-note b{color:#CFC7E2;font-weight:700}
+
+  /* ── 광고 슬롯 ───────────────────────────── */
+  .ad-wrap{position:relative;z-index:1;margin:14px 0 4px}
+  .ad-slot{display:flex;align-items:center;justify-content:center;gap:8px;min-height:64px;border-radius:14px;background:rgba(250,248,244,.035);border:1px dashed rgba(212,175,99,.22);color:var(--muted-2);font-size:11px;font-weight:600;text-align:center;padding:10px 14px}
+  .ad-slot .ad-badge{font-size:9px;font-weight:800;letter-spacing:.12em;border:1px solid rgba(212,175,99,.3);border-radius:4px;padding:1px 4px}
+  .ad-slot[data-state="live"]{background:transparent;border-color:transparent;padding:0;min-height:0;overflow:hidden}
+  .ad-slot[data-state="off"],.ad-wrap[hidden]{display:none!important}
+  .ad-slot.bottom{min-height:58px}
+
+  /* ── 결과: 헤드 ──────────────────────────── */
+  #viewResult{padding-top:26px}
+  .res-head{text-align:left;padding:6px 0 18px;border-bottom:1px solid var(--line-soft);margin-bottom:18px}
+  .res-who{font-size:12px;letter-spacing:.14em;color:var(--gold);font-weight:700;text-transform:uppercase}
+  .res-title{font-family:var(--serif);font-size:34px;line-height:1.26;font-weight:400;letter-spacing:-.02em;margin-top:11px}
+  .res-title .gold{color:var(--gold-2)}
+  .res-sub{margin-top:9px;font-size:13.5px;color:var(--muted)}
+  .res-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+  .chip{font-size:11.5px;font-weight:700;color:#D9D2EC;border:1px solid var(--line-soft);background:var(--surface);border-radius:999px;padding:5px 11px}
+  .chip.gold{color:var(--gold-2);border-color:rgba(212,175,99,.45);background:rgba(212,175,99,.12)}
+
+  /* ── 오행 ────────────────────────────────── */
+  .elem-bars{display:flex;flex-direction:column;gap:11px}
+  .eb{display:grid;grid-template-columns:34px 1fr 52px;align-items:center;gap:10px}
+  .eb .nm{font-family:var(--serif);font-size:14px;display:flex;align-items:baseline;gap:3px}
+  .eb .nm span{font-size:10.5px;color:var(--muted-2);font-family:var(--sans)}
+  .eb .track{height:9px;border-radius:99px;background:rgba(250,248,244,.07);overflow:hidden}
+  .eb .fill{height:100%;border-radius:99px;transform-origin:left center;transform:scaleX(0);transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+  .eb .val{font-size:12px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+  .eb .val b{color:var(--cream);font-weight:700;font-size:13px}
+  .elem-notes{margin-top:16px;padding-top:14px;border-top:1px solid var(--line-soft);display:flex;flex-direction:column;gap:8px}
+  .elem-notes p{font-size:12.5px;line-height:1.72;color:var(--muted)}
+  .elem-notes p b{color:var(--cream);font-weight:700}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+  .legend span{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:var(--muted-2)}
+  .legend i{width:8px;height:8px;border-radius:2px;display:inline-block}
+
+  /* ── 원국표 ──────────────────────────────── */
+  .chart{display:grid;gap:6px;grid-template-columns:repeat(4,1fr)}
+  .chart.n3{grid-template-columns:repeat(3,1fr)}
+  .pcol{background:rgba(250,248,244,.035);border:1px solid var(--line-soft);border-radius:14px;padding:11px 8px 12px;text-align:center}
+  .pcol.day{background:rgba(212,175,99,.10);border-color:rgba(212,175,99,.4)}
+  .pcol .lab{font-size:10.5px;letter-spacing:.08em;color:var(--muted-2);font-weight:700}
+  .pcol.day .lab{color:var(--gold-2)}
+  .hz{font-family:var(--serif);font-size:30px;line-height:1.18;margin-top:6px}
+  .pcol .ko{font-size:12px;font-weight:700;color:#DCD5EE;margin-top:1px}
+  .pcol .badge{display:inline-block;font-size:10px;font-weight:800;border-radius:6px;padding:1px 6px;margin-top:6px;color:#16122B}
+  .pcol .god{font-size:10px;color:var(--muted-2);margin-top:5px}
+  .chart-foot{margin-top:12px;font-size:11.5px;color:var(--muted-2);line-height:1.7}
+
+  /* ── 토정비결 ────────────────────────────── */
+  .gua-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .gua-no{font-family:var(--serif);font-size:44px;line-height:1;letter-spacing:-.02em;color:var(--gold-2)}
+  .gua-no small{font-size:13px;color:var(--muted);letter-spacing:.06em;margin-left:4px;font-family:var(--sans);font-weight:700}
+  .gua-meta{display:flex;flex-wrap:wrap;gap:5px}
+  .gua-meta .chip{font-size:10.5px;padding:3px 9px}
+  .tabs{display:flex;gap:2px;margin:18px 0 0;border-bottom:1px solid var(--line-soft);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:none;padding:10px 13px;font-size:12.5px;font-weight:700;color:var(--muted-2);border-bottom:2px solid transparent;white-space:nowrap}
+  .tab[aria-selected="true"]{color:var(--gold-2);border-bottom-color:var(--gold)}
+  .tabpanel{padding-top:15px;animation:fade .28s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .panel-lead{font-size:14.5px;line-height:1.78;color:#E7E2F3}
+  .panel-body{margin-top:11px;font-size:13px;line-height:1.78;color:var(--muted)}
+  .panel-body b{color:#E7E2F3}
+
+  .halves{display:grid;gap:10px;grid-template-columns:1fr}
+  .half{background:rgba(250,248,244,.035);border:1px solid var(--line-soft);border-radius:14px;padding:14px}
+  .half .h{font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--gold);margin-bottom:7px}
+  .half p{font-size:12.5px;line-height:1.74;color:var(--muted)}
+
+  .mlist{display:flex;flex-direction:column}
+  .mrow{display:grid;grid-template-columns:52px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid rgba(250,248,244,.06)}
+  .mrow:last-child{border-bottom:0}
+  .mrow .mo{display:flex;flex-direction:column;gap:3px}
+  .mrow .mo b{font-size:13.5px;font-weight:800}
+  .mrow .mo span{font-size:10px;color:var(--muted-2);letter-spacing:.04em}
+  .mrow .mt{font-size:12.5px;line-height:1.7;color:var(--muted)}
+  .mrow .mt .cat{display:inline-block;font-size:9.5px;font-weight:800;letter-spacing:.04em;border-radius:5px;padding:1px 5px;margin-right:5px;vertical-align:1px}
+  .cat-기회{background:rgba(111,169,140,.2);color:#A7D3BC}
+  .cat-확장{background:rgba(93,125,168,.24);color:#B5C8E4}
+  .cat-무난{background:rgba(250,248,244,.09);color:#C3BCD6}
+  .cat-주의{background:rgba(201,97,79,.2);color:#EFB3A5}
+
+  .lucky{display:grid;gap:9px;grid-template-columns:1fr 1fr}
+  .lcard{background:rgba(250,248,244,.035);border:1px solid var(--line-soft);border-radius:14px;padding:13px}
+  .lcard .k{font-size:10.5px;letter-spacing:.1em;color:var(--muted-2);font-weight:800}
+  .lcard .v{font-size:15px;font-weight:800;margin-top:5px;display:flex;align-items:center;gap:7px}
+  .lcard .d{font-size:11px;color:var(--muted-2);margin-top:5px;line-height:1.6}
+  .swatch{width:16px;height:16px;border-radius:5px;border:1px solid rgba(255,255,255,.3);display:inline-block;flex:none}
+  .lcard.wide{grid-column:1/-1}
+
+  .actions{display:grid;gap:8px;grid-template-columns:1.4fr 1fr;margin-top:16px}
+  .actions .btn{padding:14px 12px;font-size:14px}
+
+  /* ── 안내·푸터 ───────────────────────────── */
+  details.fine{margin-top:14px;border:1px solid var(--line-soft);background:var(--surface);border-radius:14px;padding:0 16px}
+  details.fine summary{list-style:none;cursor:pointer;padding:14px 0;font-size:12.5px;font-weight:700;color:#CFC7E2;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  details.fine summary::-webkit-details-marker{display:none}
+  details.fine summary::after{content:"+";color:var(--gold);font-size:15px;font-weight:400}
+  details.fine[open] summary::after{content:"–"}
+  .fine-body{padding:0 0 15px;font-size:12px;line-height:1.8;color:var(--muted);display:flex;flex-direction:column;gap:7px}
+  .fine-body b{color:#E7E2F3}
+  .fine-body li{padding-left:13px;position:relative}
+  .fine-body li::before{content:"";position:absolute;left:0;top:8px;width:3px;height:3px;border-radius:50%;background:var(--gold)}
+
+  footer{position:relative;z-index:1;margin-top:26px;padding:18px 0 44px;border-top:1px solid var(--line-soft);font-size:11px;color:var(--muted-2);line-height:1.85}
+  footer b{color:#CFC7E2;font-weight:800}
+  .flinks{display:flex;flex-wrap:wrap;gap:6px 14px;margin:8px 0}
+  .flinks a{font-weight:700;color:#CFC7E2;text-decoration:none;border-bottom:1px solid var(--line-soft);padding-bottom:1px}
+  .flinks a:hover{color:var(--gold-2);border-color:var(--gold)}
+
+  /* ── 모달 · 토스트 ───────────────────────── */
+  .modal{position:fixed;inset:0;z-index:60;display:none}
+  .modal.show{display:block}
+  .modal-bg{position:absolute;inset:0;background:rgba(11,9,22,.72);backdrop-filter:blur(3px)}
+  .sheet{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:100%;max-width:620px;max-height:86vh;overflow:auto;background:#1F1A3B;border:1px solid var(--line);border-bottom:0;border-radius:20px 20px 0 0;padding:20px 20px 26px}
+  .sheet-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}
+  .sheet-head h2{font-family:var(--serif);font-size:19px;font-weight:400}
+  .sheet-close{font-size:16px;color:var(--muted);padding:4px 8px;border-radius:8px;flex:none}
+  .sheet p{font-size:12.5px;line-height:1.8;color:var(--muted);margin-bottom:9px}
+  .sheet p b{color:#E7E2F3}
+  .sheet ul{margin:6px 0 10px}
+  .sheet li{font-size:12px;line-height:1.75;color:var(--muted);padding-left:12px;position:relative;margin-bottom:5px}
+  .sheet li::before{content:"";position:absolute;left:0;top:8px;width:3px;height:3px;border-radius:50%;background:var(--gold)}
+  .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,14px);z-index:80;background:var(--gold);color:#221B3C;font-size:12.5px;font-weight:800;padding:11px 18px;border-radius:999px;box-shadow:0 18px 40px -18px rgba(0,0,0,.8);opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;max-width:calc(100% - 32px);text-align:center}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+
+  @media (max-width:520px){
+    .wrap{padding:0 16px}
+    .hero{padding:30px 0 16px}
+    .hero h1{font-size:30px}
+    .hero .lead{font-size:13.5px}
+    .card{padding:18px 16px;border-radius:18px}
+    .res-title{font-size:27px}
+    .gua-no{font-size:38px}
+    .hz{font-size:26px}
+    .lucky{grid-template-columns:1fr}
+    .actions{grid-template-columns:1fr}
+    .eb{grid-template-columns:30px 1fr 46px;gap:8px}
+    .chart{gap:4px}
+    .pcol{padding:9px 4px 10px}
+    .pcol .god{font-size:9px}
+  }
+  @media (min-width:760px){
+    .halves{grid-template-columns:1fr 1fr}
+    .lucky{grid-template-columns:repeat(3,1fr)}
+    .lcard.wide{grid-column:auto}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    .eb .fill{transform:scaleX(1)!important}
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 바로 가기</a>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="back" href="../">
+      <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M7.5 1.5 3 6l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      웹앱 모음
+    </a>
+    <div class="brand"><span class="brand-mark" aria-hidden="true">4</span><span class="nm">MZ 사주 · 2027 토정비결</span></div>
+    <span class="topbar-sp"></span>
+    <span class="tag-free">무료</span>
+  </div>
+</header>
+
+<main id="main" class="wrap">
+
+  <!-- ══════════ 입력 화면 ══════════ -->
+  <section id="viewForm">
+    <div class="hero">
+      <span class="eyebrow"><i aria-hidden="true"></i>2027 정미년 · 만세력 기반</span>
+      <h1>내 사주로 보는<br><em>2027 토정비결</em></h1>
+      <p class="lead">생년월일시로 사주 여덟 글자를 세우고, 전통 작괘법으로 144괘 중 내 괘를 뽑습니다. 오행 밸런스부터 월별 포인트까지, 스샷 한 장에 담아 가세요.</p>
+      <ul class="hero-tags">
+        <li>실제 만세력 계산</li>
+        <li>서버 전송 없음</li>
+        <li>가입·설치 없이 30초</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>생년월일시 입력</h3><span class="side">1940 ~ 2026</span></div>
+      <form class="form" id="sajuForm" novalidate>
+        <div class="frow">
+          <label for="fName">이름 <span class="opt">선택</span></label>
+          <input class="txt" id="fName" type="text" inputmode="text" autocomplete="off" maxlength="12" placeholder="결과에 표시할 이름 (비워도 돼요)">
+        </div>
+
+        <div class="frow">
+          <span class="flabel" id="lblGender">성별</span>
+          <div class="seg" role="group" aria-labelledby="lblGender">
+            <button type="button" data-gender="F" aria-pressed="true">여성</button>
+            <button type="button" data-gender="M" aria-pressed="false">남성</button>
+            <button type="button" data-gender="X" aria-pressed="false">밝히지 않음</button>
+          </div>
+        </div>
+
+        <div class="frow">
+          <span class="flabel" id="lblCal">달력</span>
+          <div class="seg" role="group" aria-labelledby="lblCal">
+            <button type="button" data-cal="solar" aria-pressed="true">양력</button>
+            <button type="button" data-cal="lunar" aria-pressed="false">음력</button>
+          </div>
+          <div class="checkline" id="leapWrap" hidden>
+            <label><input type="checkbox" id="fLeap"> 윤달(閏月)에 태어났어요</label>
+          </div>
+        </div>
+
+        <div class="frow">
+          <span class="flabel">생년월일</span>
+          <div class="grid3">
+            <div class="sel"><select id="fYear" aria-label="태어난 해"></select></div>
+            <div class="sel"><select id="fMonth" aria-label="태어난 달"></select></div>
+            <div class="sel"><select id="fDay" aria-label="태어난 날"></select></div>
+          </div>
+          <p class="hint" id="calHint">양력 생일이면 그대로 넣어 주세요. 음력을 고르면 음력 생일로 계산합니다.</p>
+        </div>
+
+        <div class="frow">
+          <label for="fTime">태어난 시간</label>
+          <div class="sel"><select id="fTime"></select></div>
+          <p class="hint">모르면 ‘시간 모름’을 고르세요. 시주를 뺀 여섯 글자로 계산합니다.</p>
+        </div>
+
+        <p class="err" id="formErr" role="alert"></p>
+
+        <button class="btn btn-gold" type="submit" id="goBtn">2027 운세 보기</button>
+
+        <p class="privacy-note">
+          <span aria-hidden="true">🔒</span>
+          <span>입력하신 생년월일시는 <b>서버에 전송·저장되지 않고 내 브라우저 안에서만</b> 계산됩니다. 저장 버튼도, 로그인도 없어요.</span>
+        </p>
+      </form>
+    </div>
+
+    <details class="fine">
+      <summary>어떻게 계산하나요?</summary>
+      <div class="fine-body">
+        <ul>
+          <li><b>년주·월주</b> — 24절기 중 12절기(입춘·경칩·청명…) 시각을 기준으로 세웁니다. 입춘 전에 태어났다면 해가 바뀌지 않은 것으로 봅니다.</li>
+          <li><b>일주</b> — 60갑자 순환으로 계산합니다. 23시 이후는 전통 방식대로 다음 날 일주로 넘깁니다(조자시).</li>
+          <li><b>시주</b> — 12지시(자시 23:00~00:59 …)로 시지를 정하고, 일간에 따라 시천간을 붙입니다.</li>
+          <li><b>토정비결</b> — 세는나이와 태세수로 상괘, 그해 음력 생월의 날수와 월건수로 중괘, 음력 생일과 그날의 일진수로 하괘를 구해 만든 144괘 중 하나입니다.</li>
+          <li><b>음양력 변환</b> — 한국천문연구원 음양력 기준 음력표를 내장해 1940~2028년을 지원합니다.</li>
+          <li>표준시(KST, UTC+9) 기준입니다. 1954~1961년 출생은 당시 표준시가 UTC+8:30이었으니 최대 30분 차이가 날 수 있어요.</li>
+        </ul>
+        <p>운세 문안은 사주·오행·십성·괘 계산값에서 조합해 만듭니다. 재미와 자기 점검용으로 봐 주세요.</p>
+      </div>
+    </details>
+
+    <section class="card" id="privacy" style="margin-top:12px">
+      <div class="card-head"><h3>개인정보처리방침</h3><span class="side">요약</span></div>
+      <div class="fine-body" style="padding-bottom:0">
+        <ul>
+          <li><b>수집하는 개인정보 — 없음.</b> 생년월일시는 화면 계산에만 쓰고 어디에도 저장·전송하지 않습니다.</li>
+          <li>결과는 새로고침하면 사라집니다. 브라우저 저장소(localStorage)도 쓰지 않습니다.</li>
+          <li><b>광고</b> — 배너가 게재될 경우 광고 사업자가 쿠키·기기 식별자를 사용할 수 있으며, 이는 해당 사업자의 정책을 따릅니다.</li>
+          <li>운영: 노리짱 웹앱 · 4호 · 문의 <a href="mailto:econature7@gmail.com">econature7@gmail.com</a></li>
+        </ul>
+      </div>
+    </section>
+  </section>
+
+  <!-- ══════════ 결과 화면 ══════════ -->
+  <section id="viewResult" hidden>
+    <div class="res-head">
+      <div class="res-who" id="resWho">2027 정미년 토정비결</div>
+      <h1 class="res-title"><span class="gold" id="resTitle">—</span></h1>
+      <p class="res-sub" id="resSub">—</p>
+      <div class="res-badges" id="resBadges"></div>
+    </div>
+
+    <!-- 광고 슬롯 ① · 결과 상단 -->
+    <div class="ad-wrap">
+      <div class="ad-slot" data-ad-slot="top" aria-label="광고 영역">
+        <span class="ad-badge">AD</span>
+        <span class="ad-note">광고 영역 · 심사 승인 후 이 자리에 배너가 표시됩니다</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>타고난 기질</h2><span class="side" id="dmSide">일간</span></div>
+      <p class="panel-lead" id="dmBody">—</p>
+      <div class="res-badges" id="dmTags" style="margin-top:12px"></div>
+      <div class="rule"></div>
+      <p class="panel-body" id="dmWork">—</p>
+      <p class="panel-body" id="dmBad">—</p>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>오행 밸런스</h2><span class="side">여덟 글자 기준</span></div>
+      <div class="elem-bars" id="elemBars"></div>
+      <div class="legend" id="elemLegend"></div>
+      <div class="elem-notes" id="elemNotes"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>사주 원국표</h2><span class="side" id="chartSide">년·월·일·시</span></div>
+      <div class="chart" id="chart"></div>
+      <p class="chart-foot" id="chartFoot"></p>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>2027 정미년 토정비결</h2><span class="side">144괘 중 내 괘</span></div>
+      <div class="gua-top">
+        <div class="gua-no" id="guaNo">—<small>괘</small></div>
+        <div class="gua-meta" id="guaMeta"></div>
+      </div>
+      <div class="tabs" role="tablist" aria-label="운세 분야">
+        <button class="tab" role="tab" id="tab-sum" data-tab="summary" aria-selected="true" aria-controls="panel-summary">총운</button>
+        <button class="tab" role="tab" id="tab-money" data-tab="money" aria-selected="false" aria-controls="panel-money">재물</button>
+        <button class="tab" role="tab" id="tab-love" data-tab="love" aria-selected="false" aria-controls="panel-love">연애·관계</button>
+        <button class="tab" role="tab" id="tab-work" data-tab="work" aria-selected="false" aria-controls="panel-work">직업·학업</button>
+        <button class="tab" role="tab" id="tab-health" data-tab="health" aria-selected="false" aria-controls="panel-health">건강</button>
+        <button class="tab" role="tab" id="tab-year" data-tab="year" aria-selected="false" aria-controls="panel-year">세운</button>
+      </div>
+      <div class="tabpanel" id="panel-summary" role="tabpanel" aria-labelledby="tab-sum">
+        <div id="sumBody"></div>
+      </div>
+      <div class="tabpanel" id="panel-money" role="tabpanel" aria-labelledby="tab-money" hidden></div>
+      <div class="tabpanel" id="panel-love" role="tabpanel" aria-labelledby="tab-love" hidden></div>
+      <div class="tabpanel" id="panel-work" role="tabpanel" aria-labelledby="tab-work" hidden></div>
+      <div class="tabpanel" id="panel-health" role="tabpanel" aria-labelledby="tab-health" hidden></div>
+      <div class="tabpanel" id="panel-year" role="tabpanel" aria-labelledby="tab-year" hidden></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>상반기 · 하반기</h2><span class="side" id="halfSide">—</span></div>
+      <div class="halves" id="halves"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>월별 포인트</h2><span class="side">2027년 · 절기 기준</span></div>
+      <div class="mlist" id="mList"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>행운 정보</h2><span class="side">부족한 기운으로 채우기</span></div>
+      <div class="lucky" id="lucky"></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-gold" type="button" id="copyBtn">결과 요약 복사하기</button>
+      <button class="btn btn-line" type="button" id="againBtn">다시 보기</button>
+    </div>
+
+    <!-- 광고 슬롯 ② · 결과 하단 -->
+    <div class="ad-wrap">
+      <div class="ad-slot bottom" data-ad-slot="bottom" aria-label="광고 영역">
+        <span class="ad-badge">AD</span>
+        <span class="ad-note">광고 영역 · 이 앱은 광고와 함께 무료로 운영됩니다</span>
+      </div>
+    </div>
+
+    <details class="fine">
+      <summary>결과를 읽는 법 · 주의</summary>
+      <div class="fine-body">
+        <ul>
+          <li><b>일간</b>은 태어난 날의 천간으로, 사주에서 ‘나’를 뜻합니다. 성격과 기질의 뼈대예요.</li>
+          <li><b>오행 밸런스</b>는 여덟 글자(시간 모름이면 여섯 글자)의 천간·지지를 오행으로 나눈 비율입니다.</li>
+          <li><b>십성</b>은 2027년 정미년이 내 일간과 맺는 관계로, 그해 들어오는 기운의 성질을 나타냅니다.</li>
+          <li><b>토정비결</b>은 그해 하나의 운을 보는 방식이라 사주의 평생 풀이와는 다릅니다. 같은 사람도 해마다 괘가 바뀝니다.</li>
+          <li>판본에 따라 태세수·월건수 조견표가 조금씩 달라 괘 번호가 한 칸 어긋날 수 있습니다. 이 앱은 널리 쓰이는 조견표를 따릅니다.</li>
+          <li>결과는 재미와 자기 점검용입니다. 의료·투자·법률 판단의 근거로 쓰지 마세요.</li>
+        </ul>
+        <p>입력한 정보는 어디에도 저장되지 않았습니다. 이 화면을 닫으면 사라집니다.</p>
+      </div>
+    </details>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <b>MZ 사주 · 2027 토정비결</b> — 만세력으로 세우는 내 사주와 한 해의 괘<br>
+    <div class="flinks">
+      <a href="../">웹앱 모음</a>
+      <a href="#privacy" id="openPrivacy">개인정보처리방침</a>
+      <a href="#main" id="toTop">맨 위로</a>
+    </div>
+    입력값은 서버에 전송되지 않고 브라우저에서만 계산됩니다 · 노리짱 웹앱 · 4호
+  </div>
+</footer>
+
+<div class="modal" id="privacyModal" aria-hidden="true">
+  <div class="modal-bg" data-close="1"></div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pTitle">
+    <div class="sheet-head">
+      <h2 id="pTitle">개인정보처리방침</h2>
+      <button class="sheet-close" type="button" data-close="1" aria-label="닫기">✕</button>
+    </div>
+    <p>이 앱은 <b>서버가 없는 정적 웹페이지</b>입니다. 사주를 보려고 입력한 생년월일시는 어디로도 가지 않습니다.</p>
+    <ul>
+      <li><b>수집 항목</b> — 없음. 이름·성별·생년월일시는 현재 화면의 계산에만 쓰입니다.</li>
+      <li><b>저장</b> — 브라우저 저장소(localStorage·쿠키)에 아무것도 남기지 않습니다. 새로고침하면 입력값도 결과도 사라집니다.</li>
+      <li><b>전송</b> — 입력값을 서버로 보내는 코드가 없습니다. 모든 계산은 자바스크립트로 기기 안에서 끝납니다.</li>
+      <li><b>광고</b> — 배너가 게재될 경우 광고 사업자(예: 카카오애드핏)가 쿠키·기기 식별자를 사용할 수 있으며, 이는 해당 사업자의 개인정보처리방침을 따릅니다. 광고는 입력값과 무관합니다.</li>
+      <li><b>문의</b> — <a href="mailto:econature7@gmail.com">econature7@gmail.com</a> · 운영: 노리짱 웹앱 · 4호</li>
+    </ul>
+    <p style="margin-top:12px;font-size:11.5px">이 앱의 운세 콘텐츠는 오락 목적이며, 의학적·재정적 판단의 근거가 아닙니다.</p>
+    <button class="btn btn-ghost" type="button" data-close="1" style="width:100%;margin-top:6px">확인</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ══════════ 광고 설정 (카카오 애드핏) ══════════
+   심사 승인 후 아래 두 줄만 채우면 배너가 켜집니다.
+   1) slots 의 top / bottom 에 광고단위 ID(DAN-xxxxxxxx) 입력
+   2) mode 를 "live" 로 변경
+   ※ 지금은 mode:"off" 라서 광고 자리 자체가 화면에서 숨겨집니다. */
+window.NORI_ADS = {
+  mode: "off",                // "preview"(안내 문구) | "live"(배너) | "off"(자리 숨김)
+  slots: {
+    top: "",                  // 예: "DAN-xxxxxxxx"
+    bottom: ""
+  }
+};
+(function () {
+  "use strict";
+  function mountAds() {
+    var cfg = window.NORI_ADS || {};
+    var live = cfg.mode === "live";
+    var slots = document.querySelectorAll("[data-ad-slot]");
+    var injected = 0;
+    Array.prototype.forEach.call(slots, function (el) {
+      var unit = (cfg.slots && cfg.slots[el.getAttribute("data-ad-slot")]) || "";
+      if (cfg.mode === "off") {
+        el.setAttribute("data-state", "off");
+        var wrap = el.closest(".ad-wrap");
+        if (wrap) wrap.hidden = true;
+        return;
+      }
+      if (!live || !unit) { el.setAttribute("data-state", "preview"); return; }
+      el.setAttribute("data-state", "live");
+      el.innerHTML = '<ins class="kakao_ad_area" style="display:none" data-ad-unit="' + unit + '" data-ad-width="320" data-ad-height="100"></ins>';
+      injected++;
+    });
+    if (!injected) return;
+    var s = document.createElement("script");
+    s.async = true;
+    s.src = "//t1.daumcdn.net/ca/static/ba.min.js";
+    document.body.appendChild(s);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mountAds);
+  else mountAds();
+})();
+</script>
+<script src="./saju-data.js"></script>
+<script src="./saju-core.js"></script>
+<script src="./saju-content.js"></script>
+<script>
+(function () {
+  "use strict";
+  var S = window.SAJU, C = window.SAJU_CONTENT;
+  var $ = function (id) { return document.getElementById(id); };
+  var state = { gender: "F", cal: "solar", result: null, built: null };
+
+  /* ── 토스트 ─────────────────────────────── */
+  var toastT = null;
+  function toast(msg) {
+    var t = $("toast");
+    t.textContent = msg; t.classList.add("show");
+    clearTimeout(toastT); toastT = setTimeout(function () { t.classList.remove("show"); }, 2200);
+  }
+
+  /* ── 폼 초기화 ──────────────────────────── */
+  var yearSel = $("fYear"), monthSel = $("fMonth"), daySel = $("fDay"), timeSel = $("fTime");
+  for (var y = 2026; y >= 1940; y--) yearSel.add(new Option(y + "년", y));
+  for (var m = 1; m <= 12; m++) monthSel.add(new Option(m + "월", m));
+  var HOURS = [
+    ["", "시간 모름"], ["0", "자시 23:00 ~ 00:59"], ["1", "축시 01:00 ~ 02:59"],
+    ["2", "인시 03:00 ~ 04:59"], ["3", "묘시 05:00 ~ 06:59"], ["4", "진시 07:00 ~ 08:59"],
+    ["5", "사시 09:00 ~ 10:59"], ["6", "오시 11:00 ~ 12:59"], ["7", "미시 13:00 ~ 14:59"],
+    ["8", "신시 15:00 ~ 16:59"], ["9", "유시 17:00 ~ 18:59"], ["10", "술시 19:00 ~ 20:59"],
+    ["11", "해시 21:00 ~ 22:59"]
+  ];
+  HOURS.forEach(function (h) { timeSel.add(new Option(h[1], h[0])); });
+
+  function daysInMonth(y, mo) {
+    return new Date(y, mo, 0).getDate();
+  }
+  function refreshDays() {
+    var y = +yearSel.value, mo = +monthSel.value, prev = +daySel.value || 1;
+    var max = state.cal === "lunar" ? (S.lunarMonthLength(y, mo) || 30) : daysInMonth(y, mo);
+    daySel.innerHTML = "";
+    for (var d = 1; d <= max; d++) daySel.add(new Option(d + "일", d));
+    daySel.value = Math.min(prev, max);
+  }
+  function refreshLeap() {
+    var y = +yearSel.value, mo = +monthSel.value;
+    var wrap = $("leapWrap"), cb = $("fLeap");
+    if (state.cal !== "lunar") { wrap.hidden = true; cb.checked = false; return; }
+    wrap.hidden = false;
+    var hasLeap = S.lunarToSolar(y, mo, true, 1) !== null;
+    cb.disabled = !hasLeap;
+    if (!hasLeap) cb.checked = false;
+    cb.parentNode.style.opacity = hasLeap ? "1" : ".45";
+    cb.parentNode.setAttribute("title", hasLeap ? "" : "이 해 이 달에는 윤달이 없습니다");
+  }
+  function refreshAll() { refreshDays(); refreshLeap(); }
+
+  yearSel.value = 1990; monthSel.value = 5;
+  refreshAll(); daySel.value = 15;
+
+  yearSel.addEventListener("change", refreshAll);
+  monthSel.addEventListener("change", refreshAll);
+
+  document.querySelectorAll("[data-gender]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      state.gender = b.getAttribute("data-gender");
+      document.querySelectorAll("[data-gender]").forEach(function (x) {
+        x.setAttribute("aria-pressed", x === b ? "true" : "false");
+      });
+    });
+  });
+  document.querySelectorAll("[data-cal]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      state.cal = b.getAttribute("data-cal");
+      document.querySelectorAll("[data-cal]").forEach(function (x) {
+        x.setAttribute("aria-pressed", x === b ? "true" : "false");
+      });
+      $("calHint").textContent = state.cal === "lunar"
+        ? "음력 생일을 그대로 넣어 주세요. 양력으로 바꿔 사주를 세웁니다."
+        : "양력 생일이면 그대로 넣어 주세요. 음력을 고르면 음력 생일로 계산합니다.";
+      refreshAll();
+    });
+  });
+
+  /* ── 제출 ───────────────────────────────── */
+  $("sajuForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var err = $("formErr");
+    err.classList.remove("show");
+    var t = timeSel.value;
+    var input = {
+      name: $("fName").value.trim(),
+      gender: state.gender,
+      calendar: state.cal,
+      leap: state.cal === "lunar" ? $("fLeap").checked : false,
+      y: +yearSel.value, m: +monthSel.value, d: +daySel.value,
+      h: t === "" ? null : +t, minute: 0
+    };
+    var res = S.compute(input);
+    if (res.error) { err.textContent = res.error; err.classList.add("show"); return; }
+    var built = C.build(res);
+    state.result = res; state.built = built;
+    render(res, built);
+    $("viewForm").hidden = true;
+    $("viewResult").hidden = false;
+    window.scrollTo({ top: 0, behavior: "auto" });
+    setTimeout(function () { document.querySelectorAll(".eb .fill").forEach(function (f) { f.style.transform = "scaleX(" + f.getAttribute("data-w") + ")"; }); }, 60);
+  });
+
+  /* ── 렌더 ───────────────────────────────── */
+  var ELEM_C = ["#6FA98C", "#C9614F", "#C0A16B", "#9AA7B8", "#5D7DA8"];
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]; });
+  }
+
+  function render(res, b) {
+    var nm = res.input.name ? esc(res.input.name) : "";
+    $("resWho").textContent = (nm ? nm + " 님 · " : "") + "2027 정미년 토정비결";
+    $("resTitle").textContent = b.title;
+    $("resSub").textContent = b.subtitle;
+
+    var badge = [];
+    badge.push('<span class="chip gold">' + b.tojeong.no + "괘 · " + b.tojeong.grade + "</span>");
+    badge.push('<span class="chip">' + S.STEM[res.dayMaster.stem] + S.BRANCH[res.pillars.day.branch] + "일주</span>");
+    badge.push('<span class="chip">' + S.ELEM[res.dayMaster.elem] + " 일간 · " + (res.dayMaster.yang ? "양" : "음") + "</span>");
+    badge.push('<span class="chip">' + res.solar.y + "." + pad(res.solar.m) + "." + pad(res.solar.d) + " " + (res.hasHour ? hhmm(res.input.h) : "시간 모름") + "</span>");
+    $("resBadges").innerHTML = badge.join("");
+
+    /* 기질 */
+    $("dmSide").textContent = S.STEM[res.dayMaster.stem] + "(" + S.STEM_H[res.dayMaster.stem] + ") 일간";
+    $("dmBody").textContent = b.body;
+    $("dmTags").innerHTML = b.good.map(function (g) { return '<span class="chip">' + esc(g) + "</span>"; }).join("");
+    $("dmWork").innerHTML = "<b>잘 맞는 일</b> · " + esc(b.work);
+    $("dmBad").innerHTML = "<b>조심할 점</b> · " + esc(b.bad);
+
+    /* 오행 */
+    var bars = "";
+    for (var i = 0; i < 5; i++) {
+      var w = res.total ? res.pct[i] / 100 : 0;
+      bars += '<div class="eb"><div class="nm">' + S.ELEM[i] + '<span>' + ["木", "火", "土", "金", "水"][i] + "</span></div>"
+        + '<div class="track"><div class="fill" data-w="' + w.toFixed(3) + '" style="background:' + ELEM_C[i] + '"></div></div>'
+        + '<div class="val"><b>' + res.counts[i] + "</b>개 · " + res.pct[i] + "%</div></div>";
+    }
+    $("elemBars").innerHTML = bars;
+    $("elemLegend").innerHTML = ["목", "화", "토", "금", "수"].map(function (n, i) {
+      return '<span><i style="background:' + ELEM_C[i] + '"></i>' + n + "</span>";
+    }).join("");
+    $("elemNotes").innerHTML = b.elemLine.map(function (t) { return "<p>" + esc(t) + "</p>"; }).join("")
+      + "<p>" + esc(b.strengthLine) + "</p>";
+
+    /* 원국표 */
+    $("chartSide").textContent = res.hasHour ? "시·일·월·년" : "일·월·년 (시간 모름)";
+    $("chart").className = "chart" + (res.hasHour ? "" : " n3");
+    $("chart").innerHTML = b.cols.map(function (c) {
+      return '<div class="pcol' + (c.key === "day" ? " day" : "") + '">'
+        + '<div class="lab">' + c.label + "</div>"
+        + '<div class="hz">' + c.stemH + "</div>"
+        + '<div class="ko">' + c.stem + "</div>"
+        + '<span class="badge" style="background:' + ELEM_C[c.stemElem] + '">' + S.ELEM[c.stemElem] + "</span>"
+        + '<div class="hz">' + c.branchH + "</div>"
+        + '<div class="ko">' + c.branch + "</div>"
+        + '<span class="badge" style="background:' + ELEM_C[c.branchElem] + '">' + S.ELEM[c.branchElem] + "</span>"
+        + '<div class="god">' + c.stemGod + " · " + c.branchGod + "</div>"
+        + "</div>";
+    }).join("");
+    $("chartFoot").innerHTML = "일간 <b>" + S.STEM[res.dayMaster.stem] + "(" + S.STEM_H[res.dayMaster.stem] + ")</b> · "
+      + (res.lunar ? "음력 " + res.lunar.y + "." + pad(res.lunar.m) + "." + pad(res.lunar.d) + (res.lunar.leap ? " (윤달)" : "") : "")
+      + (res.warn.length ? " · " + esc(res.warn.join(" ")) : "");
+
+    /* 토정비결 */
+    $("guaNo").innerHTML = b.tojeong.no + "<small>괘</small>";
+    $("guaMeta").innerHTML =
+      '<span class="chip gold">상 ' + b.tojeong.sang + " · 중 " + b.tojeong.jung + " · 하 " + b.tojeong.ha + "</span>"
+      + '<span class="chip">' + esc(b.tojeong.grade) + "</span>"
+      + '<span class="chip">' + esc(b.tojeong.sangImg) + " · " + esc(b.tojeong.jungStage) + "</span>"
+      + '<span class="chip">세는나이 ' + b.tojeong.age + "세</span>";
+
+    $("sumBody").innerHTML =
+      b.summary.map(function (t, i) {
+        return '<p class="panel-lead" style="margin-top:' + (i ? "12px" : "0") + '">' + esc(t) + "</p>";
+      }).join("")
+      + '<div class="rule"></div>'
+      + '<p class="panel-body"><b>' + esc(b.tojeong.sangKw) + " · " + esc(b.tojeong.jungStage) + "</b> — " + esc(b.tojeong.sangLine) + "</p>"
+      + '<p class="panel-body">' + esc(b.tojeong.jungLine) + "</p>";
+
+    $("panel-money").innerHTML = fieldHtml("재물", b.fields.money);
+    $("panel-love").innerHTML = fieldHtml("연애·관계", b.fields.love);
+    $("panel-work").innerHTML = fieldHtml("직업·학업", b.fields.work);
+    $("panel-health").innerHTML = fieldHtml("건강", b.fields.health);
+    $("panel-year").innerHTML = seunHtml(res, b);
+
+    /* 반기 */
+    $("halfSide").textContent = b.tojeong.jungStage + "의 해";
+    $("halves").innerHTML =
+      '<div class="half"><div class="h">상반기 · 1~6월</div><p>' + esc(b.halves.first) + "</p></div>"
+      + '<div class="half"><div class="h">하반기 · 7~12월</div><p>' + esc(b.halves.second) + "</p></div>";
+
+    /* 월별 */
+    $("mList").innerHTML = b.months.map(function (mo) {
+      return '<div class="mrow"><div class="mo"><b>' + mo.m + "월</b><span>" + mo.branchName + " · " + mo.hanja + "</span></div>"
+        + '<div class="mt"><span class="cat cat-' + mo.cat + '">' + mo.cat + "</span>" + esc(mo.text) + "</div></div>";
+    }).join("");
+
+    /* 행운 */
+    $("lucky").innerHTML =
+      '<div class="lcard"><div class="k">행운의 컬러 · ' + esc(b.lucky.elem) + '</div><div class="v"><span class="swatch" style="background:' + b.lucky.hex + '"></span>' + esc(b.lucky.color) + "</div>"
+      + '<div class="d">' + esc(b.lucky.items) + "</div></div>"
+      + '<div class="lcard"><div class="k">행운의 숫자</div><div class="v">' + b.lucky.number.join(" · ") + "</div>"
+      + '<div class="d">전화번호·비밀번호를 바꾸라는 뜻은 아니에요. 기억하기 좋은 숫자로.</div></div>'
+      + '<div class="lcard"><div class="k">주의할 달</div><div class="v">' + esc(b.lucky.cautionMonths.join(", ")) + "</div>"
+      + '<div class="d">부딪히기 쉬운 달이에요. 계약·말 한마디를 한 번 더 확인하세요.</div></div>';
+
+    /* 복사용 텍스트 저장 */
+    state.copyText = buildCopyText(res, b);
+  }
+
+  function fieldHtml(label, arr) {
+    return '<p class="panel-lead">' + esc(arr[0]) + "</p><p class=\"panel-body\">" + esc(arr[1]) + "</p>";
+  }
+  function seunHtml(res, b) {
+    var rel = b.seunInfo.relations.map(function (r) {
+      return r.key === "year" ? "년지" : r.key === "month" ? "월지" : r.key === "day" ? "일지" : "시지";
+    });
+    var relTxt = b.seunInfo.relations.length
+      ? b.seunInfo.relations.map(function (r) {
+        var lab = { year: "년지", month: "월지", day: "일지", hour: "시지" }[r.key];
+        return lab + " " + S.BRANCH[r.branch] + "(" + S.BRANCH_H[r.branch] + ")" + " — " + r.tags.join("·");
+      }).join(" / ")
+      : "원국 지지와 특별히 부딪히거나 합하는 자리는 없습니다.";
+    return '<p class="panel-lead">2027년은 정미(丁未)년. 천간은 <b>정(丁)</b> 화, 지지는 <b>미(未)</b> 토입니다.</p>'
+      + '<p class="panel-body">내 일간과의 관계는 천간 <b>' + b.seunInfo.god + "</b>, 지지 <b>" + b.seunInfo.godBranch + "</b>. 한 해의 큰 기운은 ‘" + esc(b.seunInfo.kw) + "’입니다.</p>"
+      + '<p class="panel-body">미(未)는 내 일간 기준 <b>' + b.seunInfo.wunseong + "</b> 자리예요.</p>"
+      + '<div class="rule"></div>'
+      + '<p class="panel-body"><b>원국과의 관계</b><br>' + esc(relTxt) + "</p>";
+  }
+
+  function pad(n) { return ("0" + n).slice(-2); }
+  function hhmm(h) {
+    var map = ["23:00", "01:00", "03:00", "05:00", "07:00", "09:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00"];
+    return map[h] + "경";
+  }
+
+  /* ── 탭 ─────────────────────────────────── */
+  var TABS = ["summary", "money", "love", "work", "health", "year"];
+  document.querySelectorAll(".tab").forEach(function (t) {
+    t.addEventListener("click", function () {
+      var key = t.getAttribute("data-tab");
+      document.querySelectorAll(".tab").forEach(function (x) { x.setAttribute("aria-selected", x === t ? "true" : "false"); });
+      TABS.forEach(function (k) { $("panel-" + k).hidden = (k !== key); });
+    });
+    t.addEventListener("keydown", function (e) {
+      var i = TABS.indexOf(t.getAttribute("data-tab")), n = null;
+      if (e.key === "ArrowRight") n = (i + 1) % TABS.length;
+      if (e.key === "ArrowLeft") n = (i - 1 + TABS.length) % TABS.length;
+      if (n === null) return;
+      e.preventDefault();
+      var el = document.querySelector('.tab[data-tab="' + TABS[n] + '"]');
+      el.focus(); el.click();
+    });
+  });
+
+  /* ── 복사 ───────────────────────────────── */
+  function buildCopyText(res, b) {
+    var L = [];
+    L.push("🔮 2027 정미년 토정비결 · " + b.title);
+    L.push(b.subtitle + " · " + b.tojeong.no + "괘(" + b.tojeong.grade + ")");
+    L.push("");
+    L.push("▸ 총운");
+    L.push(b.summary[1]);
+    L.push(b.summary[2]);
+    L.push("");
+    L.push("▸ 오행");
+    L.push(["목", "화", "토", "금", "수"].map(function (n, i) { return n + " " + res.counts[i]; }).join(" · "));
+    L.push("");
+    L.push("▸ 2027 분야별");
+    L.push("· 재물 — " + b.fields.money[0]);
+    L.push("· 연애·관계 — " + b.fields.love[0]);
+    L.push("· 직업·학업 — " + b.fields.work[0]);
+    L.push("· 건강 — " + b.fields.health[0]);
+    L.push("");
+    L.push("▸ 행운의 컬러 " + b.lucky.color + " · 숫자 " + b.lucky.number.join(", ") + " · 주의할 달 " + b.lucky.cautionMonths.join(", "));
+    L.push("");
+    L.push("https://econature7-lab.github.io/nori-apps/saju/");
+    return L.join("\n");
+  }
+
+  $("copyBtn").addEventListener("click", function () {
+    var text = state.copyText || "";
+    if (!text) return;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { toast("복사했어요. X·카톡에 붙여 넣으세요."); },
+        function () { fallbackCopy(text); });
+    } else fallbackCopy(text);
+  });
+  function fallbackCopy(text) {
+    var ta = document.createElement("textarea");
+    ta.value = text; ta.setAttribute("readonly", "");
+    ta.style.position = "fixed"; ta.style.left = "-9999px"; ta.style.top = "0";
+    document.body.appendChild(ta); ta.select();
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    toast(ok ? "복사했어요. X·카톡에 붙여 넣으세요." : "복사가 막혔어요. 화면을 길게 눌러 선택해 주세요.");
+  }
+
+  $("againBtn").addEventListener("click", function () {
+    $("viewResult").hidden = true;
+    $("viewForm").hidden = false;
+    window.scrollTo({ top: 0, behavior: "auto" });
+    $("goBtn").focus();
+  });
+
+  /* ── 모달 ───────────────────────────────── */
+  var modal = $("privacyModal"), lastFocus = null;
+  function openModal() {
+    lastFocus = document.activeElement;
+    modal.classList.add("show"); modal.setAttribute("aria-hidden", "false");
+    var f = modal.querySelector("button[data-close]"); if (f) f.focus();
+  }
+  function closeModal() {
+    modal.classList.remove("show"); modal.setAttribute("aria-hidden", "true");
+    if (lastFocus) lastFocus.focus();
+  }
+  $("openPrivacy").addEventListener("click", function (e) { e.preventDefault(); openModal(); });
+  modal.addEventListener("click", function (e) {
+    if (e.target.hasAttribute("data-close")) closeModal();
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && modal.classList.contains("show")) closeModal();
+  });
+})();
+</script>
+</body>
+</html>
