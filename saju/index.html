@@ -255,6 +255,8 @@
   .score-side{flex:1;min-width:0;text-align:right;padding-bottom:4px}
   .score-side .g{font-size:13px;font-weight:800;color:var(--gold-2)}
   .score-side .s{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.55}
+  .score-head{font-size:15.5px;font-weight:800;color:var(--gold-2);letter-spacing:-.01em}
+  .score-line{font-size:12.5px;color:var(--muted);line-height:1.62;margin:4px 0 16px}
   .dom{display:grid;grid-template-columns:72px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid rgba(250,248,244,.06)}
   .dom:last-child{border-bottom:0;padding-bottom:0}
   .dom .k{font-size:11.5px;font-weight:800;color:#CFC7E2}
@@ -599,11 +601,9 @@ window.addEventListener("unhandledrejection", function (e) { window.__ERR.push("
         <div class="card-head"><h2>오늘의 총운</h2><span class="side" id="tGradeLabel">—</span></div>
         <div class="score-row">
           <div class="score-big"><b id="tTotal">—</b><span>점</span></div>
-          <div class="score-side">
-            <div class="g" id="tGradeHead">—</div>
-            <div class="s" id="tGradeLine">—</div>
-          </div>
         </div>
+        <p class="score-head" id="tGradeHead">—</p>
+        <p class="score-line" id="tGradeLine">—</p>
         <div class="elem-bars" id="tBars"></div>
         <div class="rule"></div>
         <p class="panel-body" id="tRelation" style="margin-top:0"></p>

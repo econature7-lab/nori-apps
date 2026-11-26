@@ -283,7 +283,7 @@
         renderSaju(res, built);
         $("viewForm").hidden = true;
         $("viewResult").hidden = false;
-        window.scrollTo({ top: 0, behavior: "auto" });
+        window.scrollTo({ top: 0, behavior: "instant" });
         animateBars();
       }
     });
@@ -342,7 +342,7 @@
       nav.setAttribute("aria-selected", k === v ? "true" : "false");
       nav.setAttribute("tabindex", k === v ? "0" : "-1");
     });
-    if (scroll !== false) window.scrollTo({ top: 0, behavior: "auto" });
+    if (scroll !== false) window.scrollTo({ top: 0, behavior: "instant" });
   }
   function navTo(v) {
     setView(v);
@@ -540,7 +540,7 @@
     renderToday(res, f);
     $("todayForm").hidden = true;
     $("todayResult").hidden = false;
-    window.scrollTo({ top: 0, behavior: "auto" });
+    window.scrollTo({ top: 0, behavior: "instant" });
     animateBars();
   }
 
@@ -616,7 +616,7 @@
     renderCompat(ra, rb, r);
     $("compatForm").hidden = true;
     $("compatResult").hidden = false;
-    window.scrollTo({ top: 0, behavior: "auto" });
+    window.scrollTo({ top: 0, behavior: "instant" });
   }
 
   function renderCompat(a, b, r) {
@@ -724,17 +724,17 @@
     $("againBtn").addEventListener("click", function () {
       $("viewResult").hidden = true;
       $("viewForm").hidden = false;
-      window.scrollTo({ top: 0, behavior: "auto" });
+      window.scrollTo({ top: 0, behavior: "instant" });
     });
     $("tAgainBtn").addEventListener("click", function () {
       $("todayResult").hidden = true;
       $("todayForm").hidden = false;
-      window.scrollTo({ top: 0, behavior: "auto" });
+      window.scrollTo({ top: 0, behavior: "instant" });
     });
     $("cAgainBtn").addEventListener("click", function () {
       $("compatResult").hidden = true;
       $("compatForm").hidden = false;
-      window.scrollTo({ top: 0, behavior: "auto" });
+      window.scrollTo({ top: 0, behavior: "instant" });
     });
 
     $("todaySavedGo").addEventListener("click", function () {
